@@ -15,14 +15,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+      "infoPlist": {
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "REASON_FOR_REQUEST",
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
       }
     },
+    "android": {
+      "permissions": [
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
+    },
+ 
     "web": {
       "favicon": "./assets/favicon.png"
     }
