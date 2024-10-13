@@ -48,30 +48,11 @@ function Items() {
         {items.map((item:Item) =>{
                 return(<>
                  <View style={style.innerView} >
-                    <ItemCard item={item}  url={itemImageUrl+item.slug+"/"+item.avatar}/>
+                    <ItemCard item={item}  url='https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'/>
                 </View>
                 </>)
             })}
-                {/* <View style={style.innerView} >
-                    <ItemCard url='https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'/>
-                </View>
-                <View style={style.innerView} >
-                    <ItemCard url='https://st3.depositphotos.com/1035886/16160/i/450/depositphotos_161601118-stock-photo-paris-postcard-collage.jpg'/>
-                </View>
-                <View style={style.innerView} >
-                    <ItemCard url='https://gratisography.com/wp-content/uploads/2024/03/gratisography-funflower-800x525.jpg'/>
-                </View>
-                <View style={style.innerView} >
-                    <ItemCard url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s'/>
-                </View>
-
-                <View style={style.innerView} >
-                    <ItemCard url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s'/>
-                </View>
-                <View style={style.innerView} >
-                    <ItemCard url='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTc9APxkj0xClmrU3PpMZglHQkx446nQPG6lA&s'/>
-                </View> */}
-        </View>
+            </View>
    </ScrollView>
   )
 
