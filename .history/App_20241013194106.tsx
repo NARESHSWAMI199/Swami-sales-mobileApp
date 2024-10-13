@@ -9,7 +9,6 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { HomeScreen } from './src/screens/HomeScreen';
-import { LandingScreen_ } from './src/screens/LandingPage';
 
 
 
@@ -18,7 +17,7 @@ const switchNavigator = createSwitchNavigator({
   landingStack: {
     screen: createStackNavigator({
       // search address screen
-      Landing: LandingScreen_,
+      Landing: LandingScreen,
     },
       {
         defaultNavigationOptions: {

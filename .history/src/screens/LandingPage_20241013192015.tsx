@@ -4,6 +4,7 @@ import  * as Location from 'expo-location'
 import { useNavigation } from '../utils'
 
 import { ApplicationState , UserState , onUpdateLocation } from '../redux'
+import { userReducer } from '../redux/reducers/userReducers'
 import { connect } from 'react-redux'
 import { HomeScreen } from './HomeScreen'
 
