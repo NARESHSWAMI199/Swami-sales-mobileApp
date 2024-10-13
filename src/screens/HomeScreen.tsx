@@ -1,27 +1,35 @@
 import React, { Component } from 'react'
 import { StyleSheet,View,Button,Text,Image } from 'react-native'
-import CustomCard from '../components/CustomCard'
+import Store from './Store'
+import CustomCard from '../components/StoreCard'
+import { ScrollView } from 'react-native'
 
 export const  HomeScreen = () => {
  return (
     <>
 <View style={style.container}>
 
-    <View style={style.container}>
-        <Text> Header </Text>
-    </View>
-
-
     <View style={style.body}>
+<<<<<<< HEAD
         {/* <CustomCard/> */}
         <Text> body </Text>
+=======
+      
+    <ScrollView
+    showsHorizontalScrollIndicator={false}
+        style={style.scrollView}
+    >
+       <Store/>
+        </ScrollView>
+
+>>>>>>> 0e7aaab (update ui)
     </View>
 
 
 
-    <View style={style.footer}>
+    {/* <View style={style.footer}>
         <Text> footer </Text>
-    </View>
+    </View> */}
 
 
 
@@ -43,7 +51,7 @@ const style = StyleSheet.create({
         backgroundColor : 'red'
     },
     body : {
-        flex : 9,
+        flex : 1,
         justifyContent:'center',
         alignItems : 'center',
         backgroundColor :'white'
@@ -51,6 +59,13 @@ const style = StyleSheet.create({
     footer : {
         flex : 1,
         backgroundColor : 'cyan'
-    }
+    },
+    scrollView: {
+        // marginHorizontal: 20,
+        flexGrow: 1,
+        width:'100%',
+        height : '100%'
+
+      },
 })
 

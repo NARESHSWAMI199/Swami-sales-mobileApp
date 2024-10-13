@@ -1,4 +1,5 @@
 import { LocationGeocodedAddress } from "expo-location"
+import { Float } from "react-native/Libraries/Types/CodegenTypes"
 
 
 
@@ -57,3 +58,16 @@ export interface UserState {
 // export interface ShoppingState {
 //     availabilty : FoodAvailability 
 // }
+
+
+export interface Item {
+    id: BigInt,
+    name: String,
+    label: string,
+    price: Float,
+    discount: Float,
+    description: string,
+    avatar: string,
+    rating: Float,
+    slug : string
+}

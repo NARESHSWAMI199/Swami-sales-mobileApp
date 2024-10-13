@@ -9,7 +9,11 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { HomeScreen } from './src/screens/HomeScreen';
+<<<<<<< HEAD
 import { LandingScreen_ } from './src/screens/LandingPage';
+=======
+import Items from './src/screens/Items';
+>>>>>>> 0e7aaab (update ui)
 
 
 
@@ -42,9 +46,9 @@ const switchNavigator = createSwitchNavigator({
       }
     },
     // home icon
-    Offer: {
+    Items: {
       screen: createStackNavigator({
-        Offer : HomeScreen
+        Items : Items
       }),
       navigationOptions: {
         tabBarIcon: ({ focused, tintColor }) => {

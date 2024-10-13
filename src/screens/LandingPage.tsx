@@ -1,11 +1,18 @@
 import React , {useState, useEffect } from 'react'
+<<<<<<< HEAD
 import { StyleSheet, View, Button, Text, Dimensions,Image, Alert } from 'react-native'
 import  * as Location from 'expo-location'
 import { useNavigation } from '../utils'
 
 import { ApplicationState , UserState , onUpdateLocation } from '../redux'
+=======
+import { StyleSheet, View, Text, Dimensions,Image, Alert } from 'react-native'
+import  * as Location from 'expo-location'
+import { useNavigation } from '../utils'
+
+import { ApplicationState  , onUpdateLocation } from '../redux'
+>>>>>>> 0e7aaab (update ui)
 import { connect } from 'react-redux'
-import { HomeScreen } from './HomeScreen'
 
 
 const screenWidth = Dimensions.get('screen').width
@@ -64,7 +71,7 @@ const _LandingScreen = () => {
 
     return (
         <>
-            <View style={style.container}>
+            <View  style={style.container}>
                 <View style={style.body}>
                     <Image source={require('../images/location.png')} style={style.location_icon} />
                     <View style={style.address_container}>
@@ -130,5 +137,4 @@ const mapToStateProps = (state : ApplicationState) => {
 
 
 let LandingScreen  = connect(mapToStateProps, {onUpdateLocation})(_LandingScreen)
-const LandingScreen_ = LandingScreen != undefined ? LandingScreen : HomeScreen
-export { LandingScreen_ }
+export { LandingScreen }
