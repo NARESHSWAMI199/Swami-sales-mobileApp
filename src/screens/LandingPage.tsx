@@ -1,17 +1,9 @@
 import React , {useState, useEffect } from 'react'
-<<<<<<< HEAD
-import { StyleSheet, View, Button, Text, Dimensions,Image, Alert } from 'react-native'
-import  * as Location from 'expo-location'
-import { useNavigation } from '../utils'
-
-import { ApplicationState , UserState , onUpdateLocation } from '../redux'
-=======
 import { StyleSheet, View, Text, Dimensions,Image, Alert } from 'react-native'
 import  * as Location from 'expo-location'
 import { useNavigation } from '../utils'
 
 import { ApplicationState  , onUpdateLocation } from '../redux'
->>>>>>> 0e7aaab (update ui)
 import { connect } from 'react-redux'
 
 

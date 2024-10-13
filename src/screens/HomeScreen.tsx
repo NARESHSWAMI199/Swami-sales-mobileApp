@@ -10,10 +10,6 @@ export const  HomeScreen = () => {
 <View style={style.container}>
 
     <View style={style.body}>
-<<<<<<< HEAD
-        {/* <CustomCard/> */}
-        <Text> body </Text>
-=======
       
     <ScrollView
     showsHorizontalScrollIndicator={false}
@@ -22,7 +18,6 @@ export const  HomeScreen = () => {
        <Store/>
         </ScrollView>
 
->>>>>>> 0e7aaab (update ui)
     </View>
 
 

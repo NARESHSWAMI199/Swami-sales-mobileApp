@@ -1,5 +1,5 @@
 import { StyleSheet, Image } from 'react-native';
-
+import { LandingScreen } from './src/screens/LandingPage';
 
 
 import { Provider } from 'react-redux';
@@ -9,11 +9,7 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { HomeScreen } from './src/screens/HomeScreen';
-<<<<<<< HEAD
-import { LandingScreen_ } from './src/screens/LandingPage';
-=======
 import Items from './src/screens/Items';
->>>>>>> 0e7aaab (update ui)
 
 
 
@@ -22,7 +18,7 @@ const switchNavigator = createSwitchNavigator({
   landingStack: {
     screen: createStackNavigator({
       // search address screen
-      Landing: LandingScreen_,
+      Landing: LandingScreen,
     },
       {
         defaultNavigationOptions: {
