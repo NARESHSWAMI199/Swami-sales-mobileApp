@@ -9,15 +9,11 @@ import { connect } from 'react-redux'
 
 const screenWidth = Dimensions.get('screen').width
 
-const _LandingScreen = () => {
-    const { navigate } = useNavigation()
-
+const _LandingScreen = (props : any) => {
     const [errorMsg,setErrorMsg] = useState("")
     const [address, setAddress] = useState<Location.LocationGeocodedAddress>()
 
     const [displayAddress, setDisplayAddress] = useState("Waiting for current location.")
-
-    
 
     useEffect (()=>{
         (async () =>{
@@ -48,7 +44,7 @@ const _LandingScreen = () => {
 
                     if (currentAddress.length > 0){
                         setTimeout(()=>{
-                            navigate('homeStack')
+                            props.navigation.navigate('tab')
                         },1000)
                     }
                     return;
@@ -61,8 +57,7 @@ const _LandingScreen = () => {
         })();
     },[])
 
-    return (
-        <>
+    return (<>
             <View  style={style.container}>
                 <View style={style.body}>
                     <Image source={require('../images/location.png')} style={style.location_icon} />

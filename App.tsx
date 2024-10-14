@@ -4,99 +4,101 @@ import { LandingScreen } from './src/screens/LandingPage';
 
 import { Provider } from 'react-redux';
 import { store } from './src/redux';
-
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen } from './src/screens/HomeScreen';
 import Items from './src/screens/Items';
+import {createStackNavigator} from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
+import ItemDetail from './src/screens/ItemDetail';
+
+const {Navigator, Screen} = createStackNavigator();
 
 
 
+const Tab = createBottomTabNavigator();
 
-const switchNavigator = createSwitchNavigator({
-  landingStack: {
-    screen: createStackNavigator({
-      // search address screen
-      Landing: LandingScreen,
-    },
-      {
-        defaultNavigationOptions: {
-          headerShown: false
-        }
-      })
-  },
-   homeStack: createBottomTabNavigator({
-
-    // home icon
-    home: {
-      screen: createStackNavigator({
-        HomePage: HomeScreen
-      }),
-      navigationOptions: {
-        tabBarIcon: ({ focused, tintColor }) => {
-          let icon = focused == true ? require("./src/images/home_red.png") :
-            require("./src/images/home.png")
-          return <Image source={icon} style={styles.tabIcon} />
-        }
-      }
-    },
-    // home icon
-    Items: {
-      screen: createStackNavigator({
-        Items : Items
-      }),
-      navigationOptions: {
-        tabBarIcon: ({ focused, tintColor }) => {
-          let icon = focused == true ? require("./src/images/offer_red.png") :
-            require("./src/images/offer.png")
-          return <Image source={icon} style={styles.tabIcon} />
-        }
-      }
-    },
-    // home icon
-    Cart : {
-      screen: createStackNavigator({
-       Cart : HomeScreen
-      }),
-      navigationOptions: {
-        tabBarIcon: ({ focused, tintColor }) => {
-          let icon = focused == true ? require("./src/images/red_cart.jpeg") :
-            require("./src/images/cart.png")
-          return <Image source={icon} style={styles.tabIcon} />
-        }
-      }
-    },
-    // home icon
-    Profile : {
-      screen: createStackNavigator({
-        Profile : HomeScreen
-      }),
-      navigationOptions: {
-        tabBarIcon: ({ focused, tintColor }) => {
-          let icon = focused == true ? require("./src/images/user_red.png") :
-            require("./src/images/profile.png")
-          return <Image source={icon} style={styles.tabIcon} />
-        }
-      }
-    }
-
-  })
+const BottomTabNavigator = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ focused, color }) => {
+            let icon = focused == true ? require("./src/images/home_red.png") :
+              require("./src/images/home.png")
+            return <Image source={icon} style={styles.tabIcon} />
+          },
+        }}
+      />
+      <Tab.Screen 
+        name="Items"
+        component={Items}
+        options={{
+          tabBarLabel: 'Items',
+          tabBarIcon:  ({ focused, color }) => {
+            let icon = focused == true ? require("./src/images/offer_red.png") :
+              require("./src/images/offer.png")
+            return <Image source={icon} style={styles.tabIcon} />
+          },
+        }}
+      />
 
 
-})
+<Tab.Screen 
+        name="Slip"
+        component={Items}
+        options={{
+          tabBarLabel: 'Slip',
+          tabBarIcon:   ({ focused, color }) => {
+            let icon = focused == true ? require("./src/images/red_cart.jpeg") :
+              require("./src/images/cart.png")
+            return <Image source={icon} style={styles.tabIcon} />
+          },
+        }}
+      />
 
 
-const AppNavigation = createAppContainer(switchNavigator)
 
-
+    <Tab.Screen
+        name="User"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'User',
+          tabBarIcon:   ({ focused, color }) => {
+            let icon = focused == true ? require("./src/images/user_red.png") :
+              require("./src/images/profile.png")
+            return <Image source={icon} style={styles.tabIcon} />
+          }
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
 export default function App() {
 
-  return (
-    <Provider store={store}>
-      <AppNavigation />
-    </Provider>
+  return (<>
+  
+  <Provider store={store}>
+      <NavigationContainer >
+        <Navigator>
+        <Screen name="landing" component={LandingScreen} />
+        <Screen name="tab" component={BottomTabNavigator} options={{title : 'Stores'}} />
+        <Screen name="home" component={HomeScreen}  />
+        <Screen name="items" component={Items}  />
+        <Screen name="itemDetail" component={ItemDetail}  />
+      </Navigator>
+    </NavigationContainer>
+  </Provider>
+  </>
+
+    
+
+  
   );
 }
 

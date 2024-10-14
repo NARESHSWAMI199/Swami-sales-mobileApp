@@ -1,5 +1,5 @@
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Button, Card, Text } from 'react-native-paper';
 import { Avatar } from 'react-native-elements';
 import { itemImageUrl } from '../utils/utils';
@@ -8,32 +8,33 @@ import { toTitleCase } from '../utils';
 
 const style = StyleSheet.create({
     card : {
-      width:'96%',
-      padding : 2,
-      margin:5,
+      width:'100%',
+      padding : 7,
+      height : 286,
+      borderWidth : 0.1,
+      shadowColor :'black',
+      borderColor : 'black',
+      textAlign : 'center',
+      alignItems : 'center',
+      //margin:5,
 
-    },
-    titleStyle:{
-      fontSize:18,
-      fontWeight : 'bold'
     },
     price : {
       fontSize : 16,
-      fontWeight :'bold',
+      fontWeight : 'bold',
       color : 'green',
-      marginRight : 'auto'
     },
     cardCover : {
         width : '100%',
-        height: 200,
-        // margin : 1
+        height: 206,
+        borderRadius : 0,
+        overflow: 'hidden'
     },
     itemTitle : {
-        fontSize : 18,
+        fontSize : 16,
         fontWeight : 'bold',
-        marginTop : 3,
-        paddingLeft :5,
-        marginRight:'auto'
+        marginTop : 8,
+        // fontFamily : 'inter',
     }
   
   
@@ -56,20 +57,18 @@ const ItemCard = (props:any) => {
     const avtar = itemImageUrl+slug+"/"+avatar
 
 return(
-  <Card style={style.card}>
-  {/* <Card.Title titleStyle={style.titleStyle} title= "Swami sales" subtitle = "jaipur" left = {(e)=> LeftContent(avtar) } /> */}
-    {/* <Card.Content> */}
-
-      {/* < Text variant = "bodyMedium" > {description.substring(0,20)} </Text> */}
-       
-        < Card.Cover style={style.cardCover} source = {{ uri: !!avatar ? avtar : props.url}} />
-            <Text variant="titleLarge" style={style.itemTitle} >{ toTitleCase(name.substring(0,15))}</Text>
-            {/* </Card.Content> */}
-          < Card.Actions >
-          <Text style={style.price} > {price} </Text>
-          < Button > Visit </Button>
-          </Card.Actions>
-          </Card>
+  <View style={style.card}>
+      < Card.Cover 
+        style={style.cardCover}
+       resizeMode='cover' source = {{ uri: !!avatar ? avtar : props.url}} />
+          <Text variant="titleLarge" style={style.itemTitle} >
+            { toTitleCase(name.substring(0,15))}
+            </Text>
+          {/* </Card.Content> */}
+        < Card.Actions >
+        <Text style={style.price} > {price +" \u20B9"} </Text>
+        </Card.Actions>
+    </View>
 );
 } 
 
