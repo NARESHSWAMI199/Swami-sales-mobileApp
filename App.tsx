@@ -87,10 +87,10 @@ export default function App() {
       <NavigationContainer >
         <Navigator>
         <Screen name="landing" component={LandingScreen} />
-        <Screen name="tab" component={BottomTabNavigator} options={{title : 'Stores'}} />
+        <Screen name="tab" component={BottomTabNavigator} options={{title : 'Swami Sales',headerTitleAlign : 'center'}} />
         <Screen name="home" component={HomeScreen}  />
         <Screen name="items" component={Items}  />
-        <Screen name="itemDetail" component={ItemDetail}  />
+        <Screen name="itemDetail" component={ItemDetail} options={{title : "Item Detail",headerTitleAlign:'center'}} />
       </Navigator>
     </NavigationContainer>
   </Provider>

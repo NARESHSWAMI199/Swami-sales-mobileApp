@@ -119,9 +119,9 @@ const style = StyleSheet.create({
 
 
 const mapToStateProps = (state : ApplicationState) => {
-    userReducer : state.userReducer
+    return {userReducer : state.userReducer}
 }   
 
 
 let LandingScreen  = connect(mapToStateProps, {onUpdateLocation})(_LandingScreen)
-export { LandingScreen }
+export { LandingScreen}
