@@ -22,8 +22,8 @@ const _LandingScreen = () => {
 
     useEffect (()=>{
         (async () =>{
-            let {status} = await Location.requestBackgroundPermissionsAsync()
-            console.log("the statusw : " + status)
+            let {status} = await Location.requestForegroundPermissionsAsync()
+            console.log("the status : " + status)
             if( status !== 'granted'){
                 setErrorMsg('Permission to access location is not granted.')
                 Alert.alert(
@@ -50,7 +50,7 @@ const _LandingScreen = () => {
                     if (currentAddress.length > 0){
                         setTimeout(()=>{
                             navigate('homeStack')
-                        },1000)
+                        },100)
                     }
                     return;
                 }

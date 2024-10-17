@@ -26,6 +26,7 @@ const BottomTabNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
+          header : ()=>null,
           tabBarLabel: 'Home',
           tabBarIcon: ({ focused, color }) => {
             let icon = focused == true ? require("./src/images/home_red.png") :
@@ -38,6 +39,7 @@ const BottomTabNavigator = () => {
         name="Items"
         component={Items}
         options={{
+          header : ()=>null,
           tabBarLabel: 'Items',
           tabBarIcon:  ({ focused, color }) => {
             let icon = focused == true ? require("./src/images/offer_red.png") :
@@ -52,6 +54,7 @@ const BottomTabNavigator = () => {
         name="Slip"
         component={Items}
         options={{
+          header : ()=>null,
           tabBarLabel: 'Slip',
           tabBarIcon:   ({ focused, color }) => {
             let icon = focused == true ? require("./src/images/red_cart.jpeg") :
@@ -67,6 +70,7 @@ const BottomTabNavigator = () => {
         name="User"
         component={HomeScreen}
         options={{
+          header : ()=>null,
           tabBarLabel: 'User',
           tabBarIcon:   ({ focused, color }) => {
             let icon = focused == true ? require("./src/images/user_red.png") :
@@ -86,7 +90,7 @@ export default function App() {
   <Provider store={store}>
       <NavigationContainer >
         <Navigator>
-        <Screen name="landing" component={LandingScreen} />
+        <Screen name="landing" component={LandingScreen}  options={{header : ()=>null}}/>
         <Screen name="tab" component={BottomTabNavigator} options={{title : 'Swami Sales',headerTitleAlign : 'center'}} />
         <Screen name="home" component={HomeScreen}  />
         <Screen name="items" component={Items}  />

@@ -18,7 +18,7 @@ const _LandingScreen = (props : any) => {
     useEffect (()=>{
         (async () =>{
             let {status} = await Location.requestForegroundPermissionsAsync()
-            console.log("the statusw : " + status)
+            console.log("the status : " + status)
             if( status !== 'granted'){
                 setErrorMsg('Permission to access location is not granted.')
                 Alert.alert(
@@ -45,7 +45,7 @@ const _LandingScreen = (props : any) => {
                     if (currentAddress.length > 0){
                         setTimeout(()=>{
                             props.navigation.navigate('tab')
-                        },1000)
+                        },100)
                     }
                     return;
                 }

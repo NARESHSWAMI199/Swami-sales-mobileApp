@@ -61,7 +61,7 @@ export interface UserState {
 
 
 export interface Item {
-    id: BigInt,
+    id: number,
     name: String,
     label: string,
     price: Float,
@@ -70,4 +70,12 @@ export interface Item {
     avatar: string,
     rating: Float,
     slug : string
+}
+
+
+
+export interface Category {
+    id: number,
+    category: string,
+    icon: string
 }

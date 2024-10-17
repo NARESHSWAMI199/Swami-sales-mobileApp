@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, TouchableOpacity } from 'react-native'
+import { Pressable, ScrollView, TouchableOpacity } from 'react-native'
 import { StyleSheet, View } from 'react-native'
 import ItemCard from '../components/ItemCard'
 import axios from 'axios'
 import { ItemsUrl } from '../utils/utils'
-import { Item, onUpdateLocation } from '../redux'
+import { Category, Item } from '../redux'
 import { Avatar, SearchBar } from 'react-native-elements';
 import {Searchbar, Text} from 'react-native-paper';
 
@@ -18,9 +18,6 @@ const style = StyleSheet.create({
         flexDirection : 'row',
         flexWrap: 'wrap',
         width:'98%',
-        // justifyContent:'center',
-        // alignContent:'center',
-        // alignItems :'center',
         backgroundColor : 'white'
     },
     innerView : {
@@ -47,21 +44,22 @@ const style = StyleSheet.create({
 })
 
 const Items = (props : any) => {
-    const [category ,setCategory] = useState([1,2,3,4])
 
-    const [search,setSearch] = useState("")
-
-          
+    const [search,setSearch] = useState(false)
     const [items, setItems] = useState([])
+    const [categories, setCategories] = useState([])
+    const [selectedCategory, setSelectedCategories] = useState(-1)
+    const [query, setQuery] = useState("")
+
 
     const updateSearch = (search : any) => {
-        setSearch(search);
+        setQuery(search);
     };
   
       /** Get wholesale using user slug. */
       useEffect(() => {
         const getItems = async () => {
-            await axios.post(ItemsUrl+"all",{searchKey : search})
+            await axios.post(ItemsUrl+"all",{searchKey : query,category : selectedCategory})
                 .then(res => {
                     let item = res.data.content;
                     setItems(item)
@@ -71,8 +69,23 @@ const Items = (props : any) => {
                 })
         }
         getItems()
-    }, [search])
+    }, [search,selectedCategory])
 
+
+    /** Get wholesale using user slug. */
+    useEffect(() => {
+        const getCategories = async () => {
+            await axios.get(ItemsUrl+"categories")
+                .then(res => {
+                    let categories = res.data;
+                    setCategories(categories)
+                })
+                .catch(err => {
+                    console.log(err.message)
+                })
+        }
+        getCategories()
+    }, [])
 
     const handleNavigation = (item : Item) => {
         // Replace 'YourDestinationScreen' with the actual name of your target screen
@@ -84,26 +97,42 @@ const Items = (props : any) => {
 
   return (
     <ScrollView style={{backgroundColor : 'white'}}>
-   <Searchbar
-      placeholder="Search"
-      onChangeText={updateSearch}
-      value={search}
-      style={{backgroundColor:'white'}}
-    />
+        <View 
+            style={{
+                display : 'flex',
+                flexDirection : 'row',
+                marginTop : 5
+            }}
+        >
+        <Searchbar
+            placeholder="Search"
+            onChangeText={updateSearch}
+            value={query}
+            onClearIconPress={()=>{
+                setQuery("")
+                setSearch(search ? false : true)
+            }}
+            onSubmitEditing={() => setSearch(search ? false : true)}
+            style={{
+                backgroundColor:'white',
+                 width : '100%'}}
+            />
+        </View>
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={style.category}>
 
-            {category.map((item , i)=> (
-                <View key={i} style={style.categoryParent} >
-                <Avatar  rounded
-                    size={50}
-                source={{
-                    uri:'https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'
-                }} />
-                <Text variant='titleLarge' style={style.categoryTitle}>
-                    {'Grocerry'}
-                </Text>
-                </View>
-
+            {categories.map((category:Category, i)=> (
+                <TouchableOpacity key={i}  style={style.categoryParent} 
+                onPress={(e)=> setSelectedCategories(category.id)}
+                >
+                    <Avatar  rounded
+                        size={50}
+                    source={{
+                        uri:category.icon
+                    }} />
+                    <Text variant='titleLarge' style={style.categoryTitle}>
+                        {category.category}
+                    </Text>
+                </TouchableOpacity>
             ))}
          
 
@@ -111,7 +140,7 @@ const Items = (props : any) => {
         <View style={style.outerView}>
         {items.map((item:Item , i) =>{
                 return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                    <ItemCard  item={item}  url='https://dfstudio-d420.kxcdn.com/wordpress/wp-content/uploads/2019/06/digital_camera_photo-1080x675.jpg'/>
+                    <ItemCard  item={item}/>
                 </TouchableOpacity>)
             })}
             </View>

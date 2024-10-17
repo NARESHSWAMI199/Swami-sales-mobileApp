@@ -9,13 +9,16 @@ import { toTitleCase } from '../utils';
 const style = StyleSheet.create({
     card : {
       width:'100%',
-      padding : 7,
+      padding : 3,
+      marginLeft : 8,
+      marginRight : 8,
       height : 286,
       borderWidth : 0.1,
       shadowColor :'black',
       borderColor : 'black',
       textAlign : 'center',
       alignItems : 'center',
+      marginBottom : 5,
       //margin:5,
 
     },
@@ -27,7 +30,7 @@ const style = StyleSheet.create({
     cardCover : {
         width : '100%',
         height: 206,
-        borderRadius : 0,
+        // borderRadius : 0,
         overflow: 'hidden'
     },
     itemTitle : {

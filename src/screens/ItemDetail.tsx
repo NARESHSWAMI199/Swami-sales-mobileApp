@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   title : {
     fontSize : 22,
     fontWeight : 'bold',
-    color : 'black'
+    color : 'black',
+    marginRight : 'auto'
   },
   priceParent : {
     display : 'flex',
@@ -54,6 +55,10 @@ const styles = StyleSheet.create({
   rating : {
     marginTop : 10,
     marginRight : 'auto',
+    display : 'flex',
+    flexDirection : 'row',
+    justifyContent : 'center',
+    alignItems : 'center'
   },
   subtitle : {
     marginTop : 12,
@@ -103,7 +108,8 @@ const ItemDetail = (props:any) => {
         </View>
         <Text style={styles.totalPrice}> {item.price +" \u20B9"}</Text>
         <View style={styles.rating}>
-          <Rating type='custom'  imageSize={30} readonly startingValue={item.rating} />
+          <Text style={{...styles.subtitle,marginTop : 0, marginRight : 10,paddingLeft : 5}}>{"Rating : "}</Text>
+          <Rating type='custom' imageSize={25} readonly startingValue={item.rating} />
         </View>
         <View style={{display : 'flex', flexDirection : 'row'}}>
           <Text style={styles.subtitle}> {"Store : "}</Text>
