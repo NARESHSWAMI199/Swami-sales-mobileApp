@@ -8,7 +8,7 @@ import { Avatar, Rating } from 'react-native-elements';
 const style = StyleSheet.create({
   card : {
     width:'100%',
-    // height : 286,
+    height : 150,
     borderWidth : 0.1,
     shadowColor :'black',
     shadowOffset : {
@@ -59,7 +59,7 @@ const StoreCard = (props:any) => {
           resizeMode='cover' source = {{ uri: !!avatar ? avtar : props.url}} />
           <View>
             <Text variant="titleLarge" style={style.itemTitle} >
-              { toTitleCase(name.substring(0,30))}
+              { toTitleCase(name.substring(0,10))}
             </Text>
             <Rating type='custom' imageSize={15} readonly startingValue={rating} />
             {/* <Text style={style.description} > {description.substring(0,20)} </Text> */}

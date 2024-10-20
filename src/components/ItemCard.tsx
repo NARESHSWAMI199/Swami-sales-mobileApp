@@ -43,11 +43,6 @@ const style = StyleSheet.create({
   
   })
 
-const LeftContent = (avtar : string) => <Avatar  rounded
-    size={40}
-  source={{
-    uri:avtar
-  }} />
 
 const ItemCard = (props:any) => {
     const {

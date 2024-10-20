@@ -11,6 +11,7 @@ interface Category {
 }
 
  const CategoryTabs = (props : any) =>{
+  
   const [items,setItems] = useState([]);
   const [index, setIndex] = useState(0);
   useEffect(()=>{
@@ -18,6 +19,18 @@ interface Category {
   },[props.items])
   return <View>
         <Tab  value={index} onChange={setIndex} dense>
+        <Tab.Item 
+            titleStyle={{ fontSize: 16, color : 'black'}}
+            // icon={{ name: 'shooes', type: 'ionicon', color: 'white' }}
+            >
+            <Avatar  rounded
+                        size={40}
+                    source={{
+                        uri:'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
+                    }} />
+              {"All"}
+              </Tab.Item>
+
           {items.map((item:Category,i)=> {
             return <Tab.Item 
             key={i}

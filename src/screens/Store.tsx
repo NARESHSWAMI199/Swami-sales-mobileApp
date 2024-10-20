@@ -48,7 +48,7 @@ function Store() {
     /** Get wholesale using user slug. */
     useEffect(() => {
       const getCategories = async () => {
-          await axios.get(ItemsUrl+"categories")
+          await axios.get(storeUrl+"categories")
               .then(res => {
                   let categories = res.data;
                   setCategories(categories)
@@ -61,32 +61,6 @@ function Store() {
   }, [])
 
   return (<View>
-    
-    <View 
-            style={{
-                display : 'flex',
-                flexDirection : 'row',
-                marginTop : 5
-            }}
-        >
-        <Searchbar
-            placeholder="Search"
-            onChangeText={updateSearch}
-            value={query}
-            onClearIconPress={()=>{
-                setQuery("")
-                setSearch(search ? false : true)
-            }}
-            onSubmitEditing={() => setSearch(search ? false : true)}
-            style={{
-                backgroundColor:'white',
-                 width : '100%'}}
-            />
-        </View>
-     <ScrollView horizontal 
-     style={{marginVertical : 20}} >
-      <CategoryTabs items={categories}/>
-     </ScrollView>
     <View style={styles.storeParent}>
         {stores.map((store : any ,i)=>(
           <View key={i} style={styles.storeView}>
@@ -111,8 +85,12 @@ const styles = StyleSheet.create({
     flex :1
   },
   storeView : {
-    width : '33%',
-    paddingHorizontal : 3
+    width : '30%',
+    paddingHorizontal : 3,
+    backgroundColor : 'white',
+    marginVertical : 10,
+    marginHorizontal : 4,
+    borderRadius : 10
   }
 
 })

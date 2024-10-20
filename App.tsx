@@ -10,6 +10,7 @@ import Items from './src/screens/Items';
 import {createStackNavigator} from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import ItemDetail from './src/screens/ItemDetail';
+import { color } from 'react-native-reanimated';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -91,7 +92,23 @@ export default function App() {
       <NavigationContainer >
         <Navigator>
         <Screen name="landing" component={LandingScreen}  options={{header : ()=>null}}/>
-        <Screen name="tab" component={BottomTabNavigator} options={{title : 'Swami Sales',headerTitleAlign : 'center'}} />
+        <Screen name="tab" component={BottomTabNavigator} options={
+          { 
+            title : 'Swami Sales',
+            headerTintColor: 'white',
+            headerTitleAlign : 'center',
+            headerStyle: {
+              backgroundColor: '#4E003A',
+              borderColor : '#4E003A',
+              elevation: 0,
+              shadowOpacity: 0,
+              borderBottomWidth: 0,
+            },
+        }}
+        
+        
+
+        />
         <Screen name="home" component={HomeScreen}  />
         <Screen name="items" component={Items}  />
         <Screen name="itemDetail" component={ItemDetail} options={{title : "Item Detail",headerTitleAlign:'center'}} />
