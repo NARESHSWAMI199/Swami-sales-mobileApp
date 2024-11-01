@@ -12,49 +12,46 @@ import Items from './Items'
 import RecentItems from './RecentItems'
 
 export const  HomeScreen = (props : any) => {
+    const { navigation } = props;
+    const hideTabBar = () => {
+        navigation.setOptions({
+          tabBarStyle: { display: 'none' },
+        });
+      };
+        const showTabBar = () => {
+        navigation.setOptions({
+          tabBarStyle: { height : 60, display: 'flex' },
+        });
+      };
+    
 
-const [categories, setCategories] = useState([])
-
-
-/** Get wholesale using user slug. */
-useEffect(() => {
-    const getCategories = async () => {
-        await axios.get(storeUrl+"categories")
-            .then(res => {
-                let categories = res.data;
-                setCategories(categories)
-            })
-            .catch(err => {
-                console.log(err.message)
-            })
+const onScroll = (event: any) => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const dif = currentOffset - (props.offset || 0);  
+    if (dif < 100) {
+         showTabBar()
+    } else {
+        hideTabBar()
     }
-    getCategories()
-}, [])
+
+
+
+    props.offset = currentOffset;
+      
+}
+
  return (<View style={style.container}>
 
     <View style={style.body}>
       
     <ScrollView
+    onScroll={onScroll}
     showsHorizontalScrollIndicator={false}
         style={style.scrollView}
     >
 
      <CustomSearch />
-     <View style={{
-        // shadowColor: "#fff",
-        // shadowOffset: {
-        //     width: 0,
-        //     height: 2,
-        // },
-        // backgroundColor : '#4E003A',
-        // shadowOpacity: 0.25,
-        // shadowRadius: 4.84,
-        // borderRadius : 10,
-        // elevation: 5,
-        // marginVertical : 1
-     }}>
-
-
+     <View>
         <Text style={{
             marginHorizontal : 10,
             fontWeight : 'bold',
@@ -64,14 +61,12 @@ useEffect(() => {
         }}>
             {"Store Categories"}
         </Text>
-        <View style={style.storeCategoryParent}>
-            {categories.map((category,i)=>{
-                return <View style={style.storeCategory}>
-                        <StoreCategoryCard key={i} category = {category} />
-                    </View>
-            })}
+        <View>
+            <StoreCategoryCard />
         </View>
-    </View>
+   
+        </View>
+ 
 
         <View style={{
             // backgroundColor : '#720D5D',
@@ -132,22 +127,10 @@ const style = StyleSheet.create({
         padding : 0
     },
     scrollView: {
-        // marginHorizontal: 20,
         flexGrow: 1,
         width:'100%',
         height : '100%',
-    },
-    storeCategoryParent : {
-        display : 'flex',
-        flexDirection : 'row',
-        flexWrap : 'wrap',
-        flex : 1,
-        marginBottom : 10
-    }, 
-    storeCategory : {
-        width : '30%',
-        padding : 5
-    },
+    }
    
  
 })

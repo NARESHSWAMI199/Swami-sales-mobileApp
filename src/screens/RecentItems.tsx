@@ -63,7 +63,7 @@ const RecentItems = (props : any) => {
   
       useEffect(() => {
         const getItems = async () => {
-            await axios.post(ItemsUrl+"all",{})
+            await axios.post(ItemsUrl+"all",{pageSize : 16})
                 .then(res => {
                     let item = res.data.content;
                     setItems(item)
@@ -85,7 +85,6 @@ const RecentItems = (props : any) => {
         <View style={style.recentItemsParent}>
         {items.map((item:Item , i) =>{
                 const avtar = itemImageUrl+item.slug+"/"+item.avatar
-                if(i < 8)
                 return(<TouchableOpacity style={style.recentItems} key={i} onPress={(e) => handleNavigation(item)}> 
                     < Card.Cover 
                         style={style.cardCover}

@@ -1,7 +1,7 @@
  
 
 
-const host = "http://192.168.1.6:8082/"
+const host = "http://192.168.1.7:8082/"
 
 export const ItemsUrl = host+"item/"
 export  const itemImageUrl = ItemsUrl+"image/"

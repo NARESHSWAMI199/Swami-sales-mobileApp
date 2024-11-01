@@ -1,20 +1,20 @@
 
 import { StyleSheet, View } from 'react-native';
-import { Button, Card, Text } from 'react-native-paper';
-import { Avatar } from 'react-native-elements';
-import { itemImageUrl } from '../utils/utils';
-import { useEffect } from 'react';
+import { Card, Text } from 'react-native-paper';
+import {storeUrl } from '../utils/utils';
+import { useEffect, useState } from 'react';
 import { toTitleCase } from '../utils';
+import axios from 'axios';
 
 const style = StyleSheet.create({
     card : {
-      width:'100%',
+      width:'22%',
       shadowColor: "#000",
       shadowOffset: {
         width: 1,
         height: 2,
       },
-      padding : 10,
+      paddingBottom : 8,
       shadowOpacity: 0.25,
       shadowRadius: 4.84,
       borderRadius : 20,
@@ -22,8 +22,8 @@ const style = StyleSheet.create({
       backgroundColor : 'white',
       textAlign : 'center',
       alignItems : 'center',
-      margin : 10,
-
+      marginTop : 10,
+      marginHorizontal : 5,
     },
     cardCover : {
         width : 50,
@@ -34,28 +34,52 @@ const style = StyleSheet.create({
         fontSize : 12,
         fontWeight : 'bold',
         marginTop : 8,
-    }
+    },
+    storeCategoryParent : {
+      display : 'flex',
+      flexDirection : 'row',
+      flexWrap : 'wrap',
+      flex : 1,
+      background : 'url("https://png.pngtree.com/png-clipart/20211202/ourmid/pngtree-christmas-luminous-effect-lamp-string-png-image_4048227.png")'
+  }, 
   
   
   })
 
-const StoreCategoryCard = (props:any) => {
-    const {
-      icon,
-      id,
-      category
-    } = props.category
+const StoreCategoryCard = () => {
+const [categories, setCategories] = useState([])
+/** Get wholesale using user slug. */
+useEffect(() => {
+    const getCategories = async () => {
+        await axios.get(storeUrl+"categories")
+            .then(res => {
+                let categories = res.data;
+                setCategories(categories)
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+    }
+    getCategories()
+}, [])
 
 return(
-  <View style={style.card}>
-      < Card.Cover 
-        style={style.cardCover}
-       resizeMode='cover' source = {{ uri: icon}} />
-          <Text variant="titleLarge" style={style.itemTitle} >
-            { toTitleCase(category)}
-            </Text>
+
+    <View style={style.storeCategoryParent}>
+        {categories.map((category : any,i)=>{
+          return (
+            <View style={style.card} key={i}>
+            < Card.Cover 
+              style={style.cardCover}
+              resizeMode='cover' source = {{ uri: category.icon}} />
+                <Text variant="titleLarge" style={style.itemTitle} >
+                  { toTitleCase(category.category)}
+                </Text>
+          </View>
+              )  
+        })}
     </View>
-);
+)
 } 
 
 

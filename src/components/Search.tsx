@@ -17,7 +17,7 @@ function CustomSearch() {
             style={{
                 display : 'flex',
                 flexDirection : 'row',
-                paddingHorizontal: 20,
+                paddingHorizontal: 10,
                 paddingBottom : 20,
                 paddingTop : 10,
                 borderRadius : 5,
