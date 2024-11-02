@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import CustomCard from '../components/StoreCard'
 import axios from 'axios'
-import { ItemsUrl, storeUrl } from '../utils/utils'
-import { ScrollView } from 'react-native-gesture-handler'
-import { store } from '../redux'
-import { StyleSheet, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import StoreCard from '../components/StoreCard'
-import CategoryTabs from '../components/Tabs'
-import { Searchbar } from 'react-native-paper'
+import { Item, Store } from '../redux'
+import { storeUrl } from '../utils/utils'
 
 
 
 
 
-function Store() {
-
+function Stores(props : any) {
   const [stores,setStores] = useState([])
   const [search,setSearch] = useState(false)
 
   const [categories, setCategories] = useState([])
-  const [selectedCategory, setSelectedCategories] = useState(-1)
   const [query, setQuery] = useState("")
 
 
@@ -28,51 +22,43 @@ function Store() {
     setQuery(search);
   };
 
-    /** Get wholesale using user slug. */
     useEffect(() => {
-      const getStores = async () => {
-          await axios.post(storeUrl+"all",{})
+           axios.post(storeUrl+"all",{pageSize  : !!props.size ? props.size : 8, orderBy :'rating'})
               .then(res => {
                   let data = res.data.content;
                   setStores(data)
-                  // console.log(data)
               })
               .catch(err => {
                   console.log(err.message)
               })
-      }
-      getStores()
-  }, [])
+    }, [])
 
 
-    /** Get wholesale using user slug. */
     useEffect(() => {
-      const getCategories = async () => {
-          await axios.get(storeUrl+"categories")
-              .then(res => {
-                  let categories = res.data;
-                  setCategories(categories)
-              })
-              .catch(err => {
-                  console.log(err.message)
-              })
-      }
-      getCategories()
-  }, [])
+      axios.post(storeUrl+"categories",{orderBy : 'category'})
+      .then(res => {
+          let categories = res.data;
+          setCategories(categories)
+      })
+      .catch(err => {
+          console.log(err.message)
+      })
+    }, [])
+
+
+  const handleNavigation = (store : Store) => {
+    props.navigation.navigate('storeDetail',store);
+  };
 
   return (<View>
     <View style={styles.storeParent}>
-        {stores.map((store : any ,i)=>(
-          <View key={i} style={styles.storeView}>
+        {stores.map((store : Store ,i)=>(
+        <TouchableOpacity key={i} style={styles.storeView} onPress={e=> handleNavigation(store)} >
               <StoreCard store={store}/>
-          </View>
+        </TouchableOpacity>
         ))}
       </View>
-  </View>
-
- 
-       
-    
+    </View>
   )
 }
 
@@ -82,17 +68,14 @@ const styles = StyleSheet.create({
     display : 'flex',
     flexDirection : 'row',
     flexWrap : 'wrap',
-    flex :1
   },
   storeView : {
-    width : '30%',
+    width : '33%',
     paddingHorizontal : 3,
     backgroundColor : 'white',
-    marginVertical : 10,
-    marginHorizontal : 4,
     borderRadius : 10
   }
 
 })
 
-export default Store
+export default Stores

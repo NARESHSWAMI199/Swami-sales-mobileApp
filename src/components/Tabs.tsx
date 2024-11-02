@@ -1,8 +1,9 @@
-import { Tab } from '@rneui/themed';
+import { Tab, TabView, Text, createTheme } from '@rneui/themed';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ThemeProvider,createTheme } from '@rneui/themed';
+import { View } from 'react-native';
 import { Avatar } from 'react-native-elements';
+import { itemsUrl } from '../utils/utils';
 
 interface Category {
    id : number,
@@ -12,54 +13,85 @@ interface Category {
 
  const CategoryTabs = (props : any) =>{
   
-  const [items,setItems] = useState([]);
   const [index, setIndex] = useState(0);
-  useEffect(()=>{
-    setItems(props.items)
-  },[props.items])
+  const [categories, setCategories] = useState([])
+
+  useEffect(() => {
+        axios.post(itemsUrl+"categories", {orderBy : 'id'})
+              .then(res => {
+                  let categories = res.data;
+                  setCategories(categories)
+              })
+              .catch(err => {
+                  console.log(err.message)
+              })
+      }, [])
+  
+
+
   return <View>
-        <Tab  value={index} onChange={setIndex} dense>
+        <Tab  value={index} onChange={(e) => setIndex(e)} variant='primary'>
         <Tab.Item 
-            titleStyle={{ fontSize: 16, color : 'black'}}
-            // icon={{ name: 'shooes', type: 'ionicon', color: 'white' }}
+            titleStyle={{ fontSize: 14, color : props.color, minWidth : 40}}
             >
-            <Avatar  rounded
-                        size={40}
-                    source={{
-                        uri:'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
-                    }} />
+            <Avatar 
+                rounded
+                size={20}
+                source={{
+                    uri:'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
+                }} 
+                    />
               {"All"}
               </Tab.Item>
 
-          {items.map((item:Category,i)=> {
+          {categories.map((category:Category,i)=> {
             return <Tab.Item 
             key={i}
-            titleStyle={{ fontSize: 16, color : 'black'}}
-            // icon={{ name: 'shooes', type: 'ionicon', color: 'white' }}
+            titleStyle={{ 
+              fontSize: 14, 
+              color : props.color, 
+              minWidth : 40
+            }}
             >
-            <Avatar  rounded
-                        size={40}
-                    source={{
-                        uri:item.icon
-                    }} />
-              {item.category}
+            <Avatar  
+              rounded
+              size={20}
+              source={{
+                  uri:category.icon
+              }} 
+            />
+              {category.category}
               </Tab.Item>
           })}
           
         </Tab>
+
+
+
+    <TabView value={index} onChange={setIndex} animationType="spring">
+      <TabView.Item style={{ backgroundColor: 'red', width: '100%' }}>
+        <Text h1>Recent</Text>
+      </TabView.Item>
+      <TabView.Item style={{ backgroundColor: 'blue', width: '100%' }}>
+        <Text h1>Favorite</Text>
+      </TabView.Item>
+      <TabView.Item style={{ backgroundColor: 'green', width: '100%' }}>
+        <Text h1>Cart</Text>
+      </TabView.Item>
+    </TabView>
+
+
       </View>
+      
 }
 
 
 
 const theme = createTheme({
-  // lightColors: {
-  //   primary: '#e7e7e8',
-  // },
   darkColors: {
-    primary: '#000',
+    primary: '#fff',
   },
-  mode: 'dark',
+  mode: 'light',
 });
 
 

@@ -72,6 +72,20 @@ export interface Item {
     slug : string
 }
 
+export interface Store {
+    id: number,
+    name: String,
+    label: string,
+    price: Float,
+    discount: Float,
+    description: string,
+    avatar: string,
+    rating: Float,
+    slug : string
+}
+
+
+
 
 
 export interface Category {
@@ -79,3 +93,12 @@ export interface Category {
     category: string,
     icon: string
 }
+
+export interface Subcategory {
+    id: number,
+    categoryId: number,
+    subcategory : string,
+    icon: string
+}
+
+

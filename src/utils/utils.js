@@ -1,10 +1,10 @@
  
 
 
-const host = "http://192.168.1.7:8082/"
+const host = "http://192.168.1.4:8082/"
 
-export const ItemsUrl = host+"item/"
-export  const itemImageUrl = ItemsUrl+"image/"
+export const itemsUrl = host+"item/"
+export  const itemImageUrl = itemsUrl+"image/"
 
 export const storeUrl = host+"store/"
 export  const storeImageUrl = storeUrl+"image/"
@@ -14,3 +14,6 @@ export const dummyImageUrl = 'https://dfstudio-d420.kxcdn.com/wordpress/wp-conte
 export const getPercentage = (discount,total) =>{
     return (discount/total)*100
 }
+
+// export const themeColor = "#4E003A";
+export const themeColor = "#0088cc";

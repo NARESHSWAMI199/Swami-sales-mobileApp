@@ -1,47 +1,42 @@
-import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View,Image, Pressable, StatusBar, BackHandler} from 'react-native'
-import { getPercentage, itemImageUrl } from '../utils/utils'
-import { Item } from '../redux';
+import React, { useState } from 'react';
+import { Image, Pressable, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { Rating } from 'react-native-elements';
+import { Text } from 'react-native-paper';
+import { Store } from '../redux';
 import { toTitleCase } from '../utils';
-import {Text } from 'react-native-paper';
-import { Rating, SearchBar } from 'react-native-elements';
+import { storeImageUrl } from '../utils/utils';
 
 
 
 
-const ItemDetail = (props:any) => {
+
+const StoreDetail = (props:any) => {
 
   const {route, navigation} = props;
   const [state,setState] = useState("")
 
-  const item : Item = route.params;
+  const store : Store = route.params;
 
 
   const updateSearch = (search :any) => {
     setState(search);
   };
 
+
+
   return (<>
     <StatusBar translucent backgroundColor="transparent"  barStyle="dark-content" />
 
   <ScrollView style={{ backgroundColor:'white'}}>
     <View style={styles.imageParent}>
-      <Image style={styles.image} source={{uri : itemImageUrl  +  item.slug + "/"+item.avatar}} />
+      <Image style={styles.image} source={{uri : storeImageUrl  +  store.slug + "/"+store.avatar}} />
     </View>
     <View style={styles.body}>
       <View>
-        <Text style={styles.title} variant="titleLarge"> {toTitleCase(item.name.trim())} </Text>
-        <View style={styles.priceParent}>
-           <Text style={styles.price} variant="titleLarge"> {item.price-item.discount +" \u20B9"} </Text>
-           <Text style={{...styles.price,marginLeft : 20} } variant="titleLarge">
-              <Text style={styles.discount}> {Math.floor(getPercentage(item.discount,item.price)*1) +"% "}</Text>
-              {"off"}
-            </Text>
-        </View>
-        <Text style={styles.totalPrice}> {item.price +" \u20B9"}</Text>
+        <Text style={styles.title} variant="titleLarge"> {toTitleCase(store.name.trim())} </Text>
         <View style={styles.rating}>
           <Text style={{...styles.subtitle,marginTop : 0, marginRight : 10,paddingLeft : 5}}>{"Rating : "}</Text>
-          <Rating type='custom' imageSize={25} readonly startingValue={item.rating} />
+          <Rating type='custom' imageSize={25} readonly startingValue={store.rating} />
         </View>
         <View style={{display : 'flex', flexDirection : 'row'}}>
           <Text style={styles.subtitle}> {"Store : "}</Text>
@@ -49,7 +44,7 @@ const ItemDetail = (props:any) => {
         </View>
         <View>
           <Text style={styles.subtitle}> {"Description : "}</Text>
-          <Text style={{fontSize : 16 , fontWeight : '500'}}> {item.description}</Text>
+          <Text style={{fontSize : 16 , fontWeight : '500'}}> {store.description}</Text>
         </View>
       </View>
 
@@ -140,4 +135,4 @@ const styles = StyleSheet.create({
 
 })
 
-export default ItemDetail
+export default StoreDetail

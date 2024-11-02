@@ -51,7 +51,7 @@ const [categories, setCategories] = useState([])
 /** Get wholesale using user slug. */
 useEffect(() => {
     const getCategories = async () => {
-        await axios.get(storeUrl+"categories")
+        await axios.post(storeUrl+"categories",{orderBy : 'category'})
             .then(res => {
                 let categories = res.data;
                 setCategories(categories)

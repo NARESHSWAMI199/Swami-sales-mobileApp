@@ -1,10 +1,10 @@
-import React , {useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Dimensions,Image, Alert } from 'react-native'
-import  * as Location from 'expo-location'
-import { useNavigation } from '../utils'
+import * as Location from 'expo-location'
+import React, { useEffect, useState } from 'react'
+import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 
-import { ApplicationState  , onUpdateLocation } from '../redux'
 import { connect } from 'react-redux'
+import { ApplicationState, onUpdateLocation } from '../redux'
+import { useFocusEffect } from '@react-navigation/native'
 
 
 const screenWidth = Dimensions.get('screen').width
@@ -15,8 +15,9 @@ const _LandingScreen = (props : any) => {
 
     const [displayAddress, setDisplayAddress] = useState("Waiting for current location.")
 
-    useEffect (()=>{
+    useFocusEffect (()=>{
         (async () =>{
+            try {
             let {status} = await Location.requestForegroundPermissionsAsync()
             console.log("the status : " + status)
             if( status !== 'granted'){
@@ -28,34 +29,35 @@ const _LandingScreen = (props : any) => {
                 );
             }
 
-
-
-            let location: any = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest })
+            let location: any = await Location.getLastKnownPositionAsync()
             const {coords} = location
 
             if (coords){
                 const { latitude ,longitude} = coords;
-
+                console.log("coords : ",coords)    
                 let  addressResponse : any = await Location.reverseGeocodeAsync({latitude,longitude})
                 
                 for(let item of addressResponse){
                     let currentAddress = `${item.name},${item.street},${item.postalCode}, ${item.country}`
                     setDisplayAddress(currentAddress)
-
+                    console.log("redirecting to home....")    
                     if (currentAddress.length > 0){
                         setTimeout(()=>{
                             props.navigation.navigate('tab')
-                        },100)
+                        },100) 
                     }
                     return;
                 }
             }
             else{
-               
+                console.log("notify the use something went wrong with location.")    
                 // notify the use something went wrong with location.
             }
+        }catch(err) {
+            console.log(err)
+        }
         })();
-    },[])
+    })
 
     return (<>
             <View  style={style.container}>
@@ -124,4 +126,4 @@ const mapToStateProps = (state : ApplicationState) => {
 
 
 let LandingScreen  = connect(mapToStateProps, {onUpdateLocation})(_LandingScreen)
-export { LandingScreen}
+export { LandingScreen }

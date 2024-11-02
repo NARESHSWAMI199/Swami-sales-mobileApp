@@ -1,18 +1,19 @@
-import React, { Component, useEffect, useState } from 'react'
-import { StyleSheet,View,Button,Text,Image } from 'react-native'
-import Store from './Store'
-import CustomCard from '../components/StoreCard'
-import { ScrollView } from 'react-native'
-import { storeUrl } from '../utils/utils'
+import { Tab, TabView } from '@rneui/themed'
 import axios from 'axios'
-import StoreCategoryCard from '../components/StoreCategory'
-import { SearchBar } from 'react-native-elements'
-import CustomSearch from '../components/Search'
+import React, { useEffect, useState } from 'react'
+import { BackHandler, Dimensions, NativeModules, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Avatar } from 'react-native-elements'
+import { Searchbar } from 'react-native-paper'
+import { ItemSubCategories, StoreSubCategories } from '../components/Subcategories'
+import { Category } from '../redux'
+import { itemsUrl, themeColor } from '../utils/utils'
 import Items from './Items'
 import RecentItems from './RecentItems'
+import Stores from './Store'
 
 export const  HomeScreen = (props : any) => {
     const { navigation } = props;
+
     const hideTabBar = () => {
         navigation.setOptions({
           tabBarStyle: { display: 'none' },
@@ -33,103 +34,220 @@ const onScroll = (event: any) => {
     } else {
         hideTabBar()
     }
-
-
-
-    props.offset = currentOffset;
-      
+    props.offset = currentOffset;   
 }
 
- return (<View style={style.container}>
+useEffect(() => {
+    navigation.addListener("beforeRemove", (e:any) => {
+        e.preventDefault();
+        BackHandler.exitApp();
+    })
+}, [navigation]);
 
-    <View style={style.body}>
-      
-    <ScrollView
-    onScroll={onScroll}
-    showsHorizontalScrollIndicator={false}
-        style={style.scrollView}
+
+const [index, setIndex] = useState(0);
+const [categories, setCategories] = useState([])
+
+useEffect(() => {
+      axios.post(itemsUrl+"categories", {orderBy : 'id'})
+            .then(res => {
+                let categories = res.data;
+                setCategories(categories)
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+    }, [])
+
+
+    const handleFilter = () => {
+        navigation.navigate('itemFilter',{});
+    }
+
+
+ return (<View
+        style={style.container}
     >
-
-     <CustomSearch />
-     <View>
-        <Text style={{
-            marginHorizontal : 10,
-            fontWeight : 'bold',
-            fontSize : 16,
-            marginVertical : 5,
-            color : 'white'
-        }}>
-            {"Store Categories"}
-        </Text>
-        <View>
-            <StoreCategoryCard />
-        </View>
-   
-        </View>
- 
-
+        <View style={{backgroundColor : themeColor}}>
         <View style={{
-            // backgroundColor : '#720D5D',
-            borderRadius : 10,
-            padding : 2
-        }} >
-            <Text style={{
-                marginHorizontal : 10,
-                fontWeight : 'bold',
-                fontSize : 16,
-                marginVertical : 10,
-                color :'white'
-            }}>
-                {"Popular Items"}
-            </Text>
-            <View>
-                <RecentItems {...props}/>
-            </View>
+            paddingHorizontal : 10
+        }}>
+            <Searchbar
+                placeholder="Search"
+                value={''}
+                onPressOut={handleFilter}
+                autoFocus={false}
+                style={{
+                    width : '100%',
+                    alignSelf : 'center',
+                    marginVertical : 10,
+                }}
+                />
+        </View>    
+       
+    
+            <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false}> 
+                <Tab  value={index} onChange={setIndex} dense>
+                    <Tab.Item 
+                        titleStyle={{ fontSize: 14, color : 'white', minWidth : 40}}
+                        >
+                        <Avatar 
+                            rounded
+                            size={20}
+                            source={{
+                                uri:'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
+                            }} 
+                     
+                                />
+                        {"All"}
+                    </Tab.Item>
+                    {categories.map((category:Category,i)=> {
+                        return <Tab.Item 
+                        key={i}
+                        titleStyle={{ 
+                            fontSize: 14, 
+                            color : 'white', 
+                            minWidth : 40
+                        }}
+                        >
+                        <Avatar  
+                        rounded
+                        size={20}
+                        source={{
+                            uri:category.icon
+                        }} 
+                        />
+                        {category.category}
+                        </Tab.Item>
+                    })}
+                
+                </Tab>
+            </ScrollView>
         </View>
 
-    
-    <View>
-        <Text style={{
-            marginHorizontal : 10,
-            fontWeight : 'bold',
-            fontSize : 16,
-            marginVertical : 10,
-            color : 'white'
-        }}>
-            {"Popular Stores"}
-        </Text>
-        <Store/>
-     </View>
+        <TabView disableSwipe value={index} onChange={(e) => setIndex(e)} animationType="spring">
 
-    </ScrollView>
+            <TabView.Item
+             style={{
+                width: '100%',
+            }}
+            >
+            <ScrollView 
+                onScroll={onScroll}
+                style={style.scrollView}>
+          
+                    <View 
+                        style={{backgroundColor : themeColor}}
+                    >
+                            <View>
+                                <Text style={{...style.titleHeadings, color : 'white',marginVertical : 12}}>
+                                    {"Popular Items"}
+                                </Text>
+                                
+                                <ScrollView 
+                                    style={{
+                                        paddingBottom : 20
+                                    }} 
+                                    horizontal 
+                                    showsHorizontalScrollIndicator={false}
+                                >
+                                    <RecentItems {...props} marginHorizontal = {5}/>
+                                </ScrollView>
+                            </View>
 
-</View>
+                     
+                    </View>   
 
+                    <View style={{backgroundColor : 'white'}}>
+                        <Text style={{...style.titleHeadings,marginVertical : 12}}>
+                            {"Item Categories"}
+                        </Text>
+                        <ItemSubCategories />
+                    </View>
+            
 
+                    <View style={{backgroundColor : 'white'}}>
+                        <Text style={style.titleHeadings}>
+                            {"Popular Stores"}
+                        </Text>
+                        <Stores {...props} />
+                    </View>
+                    <View style={{backgroundColor : 'white'}}>
+                        <Text style={{...style.titleHeadings,marginVertical : 12}}>
+                                {"Store Categories"}
+                            </Text>
+                        <StoreSubCategories />
+                    </View>
+               
+                
+                    <View style={style.mostPopularItems}>
+                        <Text style={style.titleHeadings}>
+                            {"Most Populer Items"}
+                        </Text>
+                        <RecentItems  
+                            {...props} 
+                            width = { '32%'} 
+                            size = {51}
+                        />
+                    </View>
+                    
+                    <View style={{backgroundColor : 'white'}}>
+                        <Text style={style.titleHeadings} >
+                            {"Most Populer Stores"}
+                        </Text>
+                        <Stores {...props} size = {51}/>
+                    </View>
+              </ScrollView>  
+                </TabView.Item>   
+        
+            {categories.map((category:Category,i)=> {
+                return <TabView.Item key= {i} style={{width: '100%' }}>
+                    <ScrollView 
+                            onScroll={onScroll}
+                            style={{...style.scrollView , backgroundColor : 'white'}}>
+                        <Items {...props} showCategory={false} categoryId = {category.id} />
+                    </ScrollView>
+                </TabView.Item>  
+            })}
 
-</View>
- )
+    </TabView>
+    </View>)
 }
 
 
 const style = StyleSheet.create({
     container : {
         flex : 1,
-        backgroundColor : '#4E003A',
         margin : 0,
-        borderRadius : 10
+        borderRadius : 10, 
+        marginBottom : 0,
+        backgroundColor : themeColor
     },
     body : {
         flex : 1,
         justifyContent:'center',
         alignItems : 'center',
         margin : 0,
-        padding : 0
+        padding : 0,
     },
     scrollView: {
-        flexGrow: 1,
+        flexGrow : 1,
         width:'100%',
         height : '100%',
+        position : 'absolute'
+    },
+    titleHeadings : {
+        marginHorizontal : 10,
+        fontWeight : 'bold',
+        fontSize : 16,
+        marginVertical : 20,
+    },
+    mostPopularItems : {
+        display : 'flex',
+        padding : 'auto',
+        backgroundColor : 'white',
     }
    
  
