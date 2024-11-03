@@ -1,8 +1,8 @@
 import { Tab, TabView } from '@rneui/themed'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { BackHandler, Dimensions, NativeModules, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Avatar } from 'react-native-elements'
+import { BackHandler, Dimensions, NativeModules, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Avatar, Icon } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
 import { ItemSubCategories, StoreSubCategories } from '../components/Subcategories'
 import { Category } from '../redux'
@@ -10,6 +10,7 @@ import { itemsUrl, themeColor } from '../utils/utils'
 import Items from './Items'
 import RecentItems from './RecentItems'
 import Stores from './Store'
+import AllSubcategories from './AllSubcategories'
 
 export const  HomeScreen = (props : any) => {
     const { navigation } = props;
@@ -63,6 +64,16 @@ useEffect(() => {
     const handleFilter = () => {
         navigation.navigate('itemFilter',{});
     }
+
+
+
+    const handleNavigationItems = () => {
+        props.navigation.navigate('items');
+      };
+
+    const handleNavigationStore =() => {
+        props.navigation.navigate('stores');
+      };
 
 
  return (<View
@@ -143,7 +154,7 @@ useEffect(() => {
                     >
                             <View>
                                 <Text style={{...style.titleHeadings, color : 'white',marginVertical : 12}}>
-                                    {"Popular Items"}
+                                    Popular Items
                                 </Text>
                                 
                                 <ScrollView 
@@ -160,54 +171,87 @@ useEffect(() => {
                      
                     </View>   
 
+
                     <View style={{backgroundColor : 'white'}}>
                         <Text style={{...style.titleHeadings,marginVertical : 12}}>
-                            {"Item Categories"}
+                            Item Categories
                         </Text>
-                        <ItemSubCategories />
+                        <ItemSubCategories {...props} />
                     </View>
+            
+                   <View style={{backgroundColor : 'white'}}>
+                         <AllSubcategories {...props} />
+                    </View>                     
+
             
 
                     <View style={{backgroundColor : 'white'}}>
                         <Text style={style.titleHeadings}>
-                            {"Popular Stores"}
+                            Popular Stores
                         </Text>
-                        <Stores {...props} />
+                        <ScrollView horizontal>
+                            <Stores  width = {120} {...props} />
+                        </ScrollView>
                     </View>
                     <View style={{backgroundColor : 'white'}}>
                         <Text style={{...style.titleHeadings,marginVertical : 12}}>
-                                {"Store Categories"}
-                            </Text>
-                        <StoreSubCategories />
+                                Store Categories
+                        </Text>
+                        <StoreSubCategories {...props} />
                     </View>
                
                 
                     <View style={style.mostPopularItems}>
                         <Text style={style.titleHeadings}>
-                            {"Most Populer Items"}
+                            Most Populer Items
                         </Text>
-                        <RecentItems  
+                        <Items showCategory={false}  
                             {...props} 
                             width = { '32%'} 
                             size = {51}
                         />
+
+                        <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationItems()} > 
+                            <Text style={style.paginateText}>See all items</Text>
+                            <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
+                        </TouchableOpacity>
                     </View>
                     
                     <View style={{backgroundColor : 'white'}}>
                         <Text style={style.titleHeadings} >
-                            {"Most Populer Stores"}
+                            Most Populer Stores
                         </Text>
                         <Stores {...props} size = {51}/>
+                        <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationStore()} > 
+                            <Text style={style.paginateText}>See all items</Text>
+                            <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
+                        </TouchableOpacity>
                     </View>
+
+
+
+
               </ScrollView>  
-                </TabView.Item>   
-        
+            
+            
+            </TabView.Item>  
             {categories.map((category:Category,i)=> {
                 return <TabView.Item key= {i} style={{width: '100%' }}>
                     <ScrollView 
                             onScroll={onScroll}
                             style={{...style.scrollView , backgroundColor : 'white'}}>
-                        <Items {...props} showCategory={false} categoryId = {category.id} />
+                        <View>
+                            <Text style={style.titleHeadings}>
+                                Related Categoires
+                            </Text>
+                            <ItemSubCategories categoryId={category.id} size={12} />
+                        </View>
+                        <View>
+                        <Text style={style.titleHeadings}>
+                                Related Items
+                            </Text>
+                            <Items {...props} showCategory={false} categoryId = {category.id} />
+                        </View>
                     </ScrollView>
                 </TabView.Item>  
             })}
@@ -222,8 +266,9 @@ const style = StyleSheet.create({
         flex : 1,
         margin : 0,
         borderRadius : 10, 
-        marginBottom : 0,
-        backgroundColor : themeColor
+        marginBottom : 10,
+        backgroundColor : themeColor,
+        paddingHorizontal : 5
     },
     body : {
         flex : 1,
@@ -248,6 +293,30 @@ const style = StyleSheet.create({
         display : 'flex',
         padding : 'auto',
         backgroundColor : 'white',
+    },
+    paginate : {
+        display : 'flex',
+        flexDirection : 'row',
+        backgroundColor : 'white',
+        width : '100%',
+        height : 40,
+        justifyContent : 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4.84,
+        borderRadius : 20,
+        elevation: 1,
+        paddingVertical : 10,
+        marginVertical : 10,
+    },paginateText : {
+        textAlign : 'center',
+        fontWeight : '500',
+        color : '#001475',
+        fontSize : 16
     }
    
  

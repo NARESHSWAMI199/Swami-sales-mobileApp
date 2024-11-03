@@ -44,12 +44,11 @@ const ItemSubCategoryCard = (props : any) =>  {
                     </View>
             })}        
         </View>
-            <Text style={{
-                fontWeight : 'bold',
-                fontSize : 12
-            }}>
-                {!!subcategory ? toTitleCase(subcategory.subcategory).split(' ')[0] : ""+subcategory} 
-            </Text>
+            <View>
+                <Text style={style.subcategoryTitle}>
+                    {!!subcategory ? toTitleCase(subcategory.subcategory).split(' ')[0] : ""+subcategory} 
+                </Text>
+            </View>
     </View>
   )
 
@@ -86,22 +85,22 @@ const StoreSubCategoryCard = (props : any) =>  {
     },[subcategory])
 
   return (<View style={style.main}>
-        <View style={style.container}>
-            {items.map((item : Item, index)=> {
-            const avtar = storeImageUrl+item.slug+"/"+item.avatar
-            return  <View key={index} style={style.subcategory}>
-                        <Avatar key={index} avatarStyle={{borderRadius : 5}} size={40}
-                            source={{uri : avtar}}
-                        />
-                    </View>
-            })}        
-        </View>
-            <Text style={{
-                fontWeight : 'bold',
-                fontSize : 12
-            }}>
-                {!!subcategory ? toTitleCase(subcategory.subcategory).split(' ')[0] : ""+subcategory} 
-            </Text>
+            <View style={style.container}>
+                {items.map((item : Item, index)=> {
+                    const avtar = storeImageUrl+item.slug+"/"+item.avatar
+                    return (
+                         <View key={index} style={style.subcategory}>
+                                <Avatar key={index} avatarStyle={{borderRadius : 5}} size={40}
+                                    source={{uri : avtar}}
+                                />
+                        </View>)
+                })}        
+            </View>
+            <View>
+                <Text style={style.subcategoryTitle}>
+                    {!!subcategory ? toTitleCase(subcategory.subcategory).split(' ')[0] : ""+subcategory} 
+                </Text>
+            </View>
     </View>
   )
 
@@ -115,30 +114,29 @@ const style = StyleSheet.create({
         height : 100,
         width  : 100,
         alignContent : 'center',
-        backgroundColor : '#fff',
         justifyContent : 'center',
-        borderRadius : 5,
+        borderRadius : 20,
         borderBottomColor : '#000',
     },
     subcategory : {
-        padding : 2,
+        borderColor : '#f2f5fa',
+        borderWidth : 2,
+        padding : 3,
+        backgroundColor : 'white',
+        borderRadius : 10
     },
     main : {
         alignItems :'center',
         width  : '100%',
-        padding : 5,
-        marginTop : 10,
+        padding : 10,
         alignContent : 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 1,
-            height: 2,
-        },
-        backgroundColor : 'white',
-        shadowOpacity: 0.25,
-        shadowRadius: 4.84,
-        elevation: 1,
-        borderRadius : 5
+        backgroundColor : '#f2f5fa',
+        borderRadius : 10,
+    },
+    subcategoryTitle : {
+        marginTop : 5,
+        fontSize : 14,
+        fontWeight : 'bold',
     }
   })
 

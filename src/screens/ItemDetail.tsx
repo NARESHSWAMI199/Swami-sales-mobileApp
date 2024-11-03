@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View,Image, Pressable, StatusBar, BackHandler} from 'react-native'
-import { getPercentage, itemImageUrl } from '../utils/utils'
+import { getPercentage, itemImageUrl, themeColor } from '../utils/utils'
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import {Text } from 'react-native-paper';
 import { Rating, SearchBar } from 'react-native-elements';
+import ViewMoreText from 'react-native-view-more-text';
+import { Icon } from '@rneui/themed';
 
 
 
@@ -21,51 +23,123 @@ const ItemDetail = (props:any) => {
     setState(search);
   };
 
+
+  const renderViewMore = (onPress:any) => {
+    return(
+      <View style={{
+          display : 'flex', 
+          flexDirection : 'row',
+          marginVertical : 5
+          }}>
+        <Icon name='chevron-small-down' color='black' type="entypo" />
+       <Text onPress={onPress}>       
+        View more
+        </Text>
+      </View>
+
+    )
+  }
+  const renderViewLess = (onPress:any) =>{
+    return(
+      <View 
+        style={{
+          display : 'flex',
+          flexDirection : 'row',
+          marginVertical : 5
+         }}>
+      <Icon name='chevron-small-up'  type="entypo" />
+      <Text onPress={onPress}>       
+        View less
+      </Text>
+    </View>
+    )
+  }
+
+
   return (<>
     <StatusBar translucent backgroundColor="transparent"  barStyle="dark-content" />
 
   <ScrollView style={{ backgroundColor:'white'}}>
+
     <View style={styles.imageParent}>
       <Image style={styles.image} source={{uri : itemImageUrl  +  item.slug + "/"+item.avatar}} />
     </View>
+
     <View style={styles.body}>
-      <View>
-        <Text style={styles.title} variant="titleLarge"> {toTitleCase(item.name.trim())} </Text>
+        <View>
+           <Text style={styles.title} variant="titleLarge">{toTitleCase(item.name.trim())} </Text>
+        </View>
+       
         <View style={styles.priceParent}>
-           <Text style={styles.price} variant="titleLarge"> {item.price-item.discount +" \u20B9"} </Text>
-           <Text style={{...styles.price,marginLeft : 20} } variant="titleLarge">
-              <Text style={styles.discount}> {Math.floor(getPercentage(item.discount,item.price)*1) +"% "}</Text>
-              {"off"}
+           <Text style={styles.price} variant="titleLarge">{"\u20B9 "+(item.price-item.discount)} </Text>
+           <Text style={{...styles.price,
+              marginLeft : 20} } 
+              variant="titleLarge">
+              <Text style={styles.discount}>
+                {Math.floor(getPercentage(item.discount,item.price)*1) +"% "}
+              </Text>
+              {"OFF"}
             </Text>
         </View>
-        <Text style={styles.totalPrice}> {item.price +" \u20B9"}</Text>
+
+        <View>
+          <Text style={styles.totalPrice}>{"\u20B9 " + item.price}</Text>
+        </View>
+
         <View style={styles.rating}>
-          <Text style={{...styles.subtitle,marginTop : 0, marginRight : 10,paddingLeft : 5}}>{"Rating : "}</Text>
+          <Text style={{...styles.subtitle,
+            marginTop : 0,
+            marginRight : 10,
+            }}>
+            {"Rating : "}
+          </Text>
           <Rating type='custom' imageSize={25} readonly startingValue={item.rating} />
         </View>
+
+
         <View style={{display : 'flex', flexDirection : 'row'}}>
-          <Text style={styles.subtitle}> {"Store : "}</Text>
-          <Text style={{...styles.subtitle,fontWeight : '500',fontSize : 16}}> {"Swami sales"}</Text>
+          <Text style={styles.subtitle}>Store : </Text>
+            <Text 
+              style={{...styles.subtitle,
+                fontWeight : '500',
+                fontSize : 16
+              }}
+            > 
+              {"Swami sales"}
+          </Text>
         </View>
-        <View>
-          <Text style={styles.subtitle}> {"Description : "}</Text>
-          <Text style={{fontSize : 16 , fontWeight : '500'}}> {item.description}</Text>
+         <View>
+            <Text style={styles.subtitle}>Description : </Text>
+            <ViewMoreText
+              numberOfLines={3}
+              renderViewMore={renderViewMore}
+              renderViewLess={renderViewLess}
+            >
+              <Text style={styles.description}>{item.description.trim()}</Text>
+            </ViewMoreText>
+          </View>
+     
+
+        <View style={{
+            display : 'flex',
+            alignItems : 'center'
+            }}>
+          <Pressable
+            onPress={(e) => console.log("clicked")}
+            style={styles.button}
+            accessibilityLabel="Learn more about this purple button"
+          >
+              <Text style={{
+                  fontSize : 14, 
+                  fontWeight : 'bold',
+                  color : 'white'
+                  }} >
+                  {"ADD TO SLIP"}
+              </Text>
+          </Pressable>
         </View>
       </View>
-
-      <View style={{display : 'flex',alignItems : 'center', marginTop : 64 }}>
-        <Pressable
-          onPress={(e) => console.log("clicked")}
-          style={styles.button}
-          accessibilityLabel="Learn more about this purple button"
-        >
-          <Text style={{fontSize : 18, fontWeight : 'bold'}} >{"ADD TO SLIP"}</Text>
-        </Pressable>
-      </View>
-
-    </View>
   </ScrollView>
-  
   </>
   )
 }
@@ -82,12 +156,12 @@ const styles = StyleSheet.create({
     height : 320
   },
   body : {
-    padding : 20,
-    paddingTop : 20,
+    paddingHorizontal : 15,
+    paddingTop : 10,
     opacity : 0.8
   },
   title : {
-    fontSize : 18,
+    fontSize : 16,
     fontWeight : 'bold',
     color : 'black',
     marginRight : 'auto'
@@ -125,17 +199,23 @@ const styles = StyleSheet.create({
     alignItems : 'center'
   },
   subtitle : {
-    marginTop : 12,
-    fontSize : 18,
+    marginVertical : 5,
+    fontSize : 16,
     fontWeight : '700'
   },
   button : {
     borderRadius : 20,
-    height : 50,
-    width : 172,
-    backgroundColor : '#D5DCE7',
+    height : 45,
+    width : '100%',
+    backgroundColor : themeColor,
     alignItems  : 'center',
     justifyContent : 'center',
+    color : 'white',
+    marginVertical : 20
+  },
+  description : {
+    fontSize : 14 , 
+    fontWeight : '500',
   }
 
 })

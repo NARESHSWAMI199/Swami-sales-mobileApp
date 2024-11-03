@@ -33,8 +33,8 @@ const Items = (props : any) => {
             axios.post(itemsUrl+"all",{
                 searchKey : query,
                 categoryId : selectedCategory,
-                subcategoryId : !!props.subcategory ? props.subcategory : null,
-                pageSize : 50 
+                subcategoryId : !!props.subcategoryId ? props.subcategoryId : null,
+                pageSize : !!props.size ? props.size : 99 
             })
             .then(res => {
                     let item = res.data.content;
@@ -80,7 +80,6 @@ const Items = (props : any) => {
         >
             
         <Searchbar
-            autoFocus={true}
             placeholder="Search"
             onChangeText={updateSearch}
             value={query}

@@ -10,6 +10,23 @@ import { storeUrl } from '../utils/utils'
 
 
 function Stores(props : any) {
+
+  const styles = StyleSheet.create({
+    storeParent : {
+      display : 'flex',
+      flexDirection : 'row',
+      flexWrap : 'wrap',
+    },
+    storeView : {
+      width : !!props.width ? props.width : '32%',
+      backgroundColor : 'white',
+      borderRadius : 10,
+      marginHorizontal : 2
+    }
+  
+  })
+  
+
   const [stores,setStores] = useState([])
   const [search,setSearch] = useState(false)
 
@@ -63,19 +80,5 @@ function Stores(props : any) {
 }
 
 
-const styles = StyleSheet.create({
-  storeParent : {
-    display : 'flex',
-    flexDirection : 'row',
-    flexWrap : 'wrap',
-  },
-  storeView : {
-    width : '33%',
-    paddingHorizontal : 3,
-    backgroundColor : 'white',
-    borderRadius : 10
-  }
-
-})
 
 export default Stores

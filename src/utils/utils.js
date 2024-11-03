@@ -17,3 +17,4 @@ export const getPercentage = (discount,total) =>{
 
 // export const themeColor = "#4E003A";
 export const themeColor = "#0088cc";
+export const bodyColor = "#fff";

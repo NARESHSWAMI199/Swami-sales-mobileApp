@@ -13,6 +13,8 @@ import Items from './src/screens/Items';
 import { themeColor } from './src/utils/utils';
 import StoreDetail from './src/screens/StoreDetail';
 import ItemFilters from './src/screens/ItemFilters';
+import SubCategirzedItems from './src/screens/SubCategirzedItems';
+import Stores from './src/screens/Store';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -120,9 +122,17 @@ export default function App() {
         <Screen name="home" component={HomeScreen}  />
         <Screen name="items" component={Items} 
           options={{
-            header : () => null
+            headerTitle : 'All Items'
           }}
         />
+
+        <Screen name="stores" component={Stores} 
+            options={{
+              headerTitle : 'All Stores'
+            }}
+          />
+
+        <Screen name="subCategrizedItems" component={SubCategirzedItems}/>    
         <Screen name="itemFilter" component={ItemFilters} 
           options={{
             title : "Searched Items",

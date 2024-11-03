@@ -2,7 +2,8 @@
 import { Image, StyleSheet, View } from 'react-native';
 import { Card, Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
-import { itemImageUrl } from '../utils/utils';
+import { bodyColor, itemImageUrl } from '../utils/utils';
+import { Badge } from 'react-native-elements';
 
 const ItemCard = (props:any) => {
     const {
@@ -11,7 +12,8 @@ const ItemCard = (props:any) => {
         description,
         avatar,
         slug,
-        discount
+        discount,
+        label
     } = props.item
     const avtar = itemImageUrl+slug+"/"+avatar
 
@@ -23,11 +25,43 @@ return(
         resizeMode='cover' 
         source = {{ uri: !!avatar ? avtar : props.url}} />
     </View>
-        <Text style={style.itemTitle} >
-          {toTitleCase(name.substring(0,20))}
-        </Text>
+        <View style={style.badge}>
+          {label == 'O' ?<Badge 
+              textStyle ={{
+                color : '#001475',
+                fontSize : 10
+              }}
+              badgeStyle={{
+                paddingHorizontal : 5,
+                backgroundColor : '#f1f7ed'
+              }} 
+              status='primary' 
+              value={'Old'} 
+              /> : 
+              <Badge 
+                status='success' 
+                value={'New'}
+
+                textStyle = {{
+                  color : '#001475',
+                  fontSize : 10
+                }}
+
+                badgeStyle={{
+                  paddingHorizontal : 5,
+                  backgroundColor : '#f2f5fa'
+                }} 
+               />}
+        </View>
+          <Text style={style.itemTitle} >
+            {toTitleCase(name.substring(0,20))}
+          </Text>
+      
         <Text style={style.discount} >{Math.floor((discount/price)*100) +"% OFF"} </Text>
-        <Text style={style.price} >{"\u20B9 "+price} </Text>
+        <View style={{display : 'flex', flexDirection : 'row'}}>
+          <Text style={style.price} >{"\u20B9 "+(price-discount)} </Text>
+          <Text style={style.actualPrice} >{"\u20B9 "+price} </Text>
+        </View>
     </View>
 );
 } 
@@ -40,13 +74,19 @@ const style = StyleSheet.create({
     width:'100%',
     alignContent : 'center',
     padding : 15,
-    backgroundColor : '#f2f5fa',
-    borderRadius : 10
+    // backgroundColor : '#f2f5fa',
+    // borderRadius : 10
   },
   price : {
-    fontSize : 14,
+    fontSize : 12,
     fontWeight : 'bold',
     color : 'black',
+  },
+  actualPrice : {
+    fontSize : 12,
+    fontWeight : 'bold',
+    color : '#939393',
+    textDecorationLine: 'line-through' 
   },
   discount : {
     fontSize : 12,
@@ -68,6 +108,10 @@ const style = StyleSheet.create({
     height: 80,
     flex  :1,
     borderRadius : 10
+  },
+  badge :  {
+    marginTop : 10,
+    alignSelf : 'flex-start'
   }
 
 
