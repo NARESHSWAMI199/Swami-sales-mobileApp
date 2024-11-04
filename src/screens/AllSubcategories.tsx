@@ -5,20 +5,26 @@ import axios from 'axios';
 import SubCategirzedItemsCard from '../components/SubcategrizedItemsCard';
 import { Icon } from 'react-native-elements';
 import { Subcategory } from '../redux';
+import SingleSubcategoryCard from '../components/SingleSubcategoryCard';
 
 function AllSubcategories(props:any) {
 
     const [subcategories,setSubcategories] = useState([]);
+    const [categoryId,setCategoryId] = useState()
 
     useEffect(()=>{
-        axios.post(itemsUrl +"subcategory",{pageSize : !!props.size ? props.size  : 6 ,categoryId : props.categoryId})
+        setCategoryId(props.categoryId)
+    },[props.categoryId])
+
+    useEffect(()=>{
+        axios.post(itemsUrl +"subcategory",{pageSize : !!props.size ? props.size  : 6 ,categoryId : categoryId, orderBy : 'updatedAt'})
         .then(res=>{
             let data = res.data;
             setSubcategories(data)
         }).catch(err => {
             console.log("subcategory : " ,err)
         })
-    },[])
+    },[categoryId])
     
 
 
@@ -29,21 +35,27 @@ function AllSubcategories(props:any) {
 
 
   return (
-    <View>
+    <View style={style.container}>
         {subcategories.map((subcategory,i)=>{
-            return <View key={i}>
-                    <SubCategirzedItemsCard {...props} subcategory={subcategory} />
-                    <TouchableOpacity style={style.paginate} onPress={()=>handleNavigation(subcategory)} > 
-                        <Text style={style.paginateText}>See all products</Text>
-                        <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
-                    </TouchableOpacity>
-                </View>
+            return <TouchableOpacity key={i} style={style.subcategory} onPress={() => handleNavigation(subcategory)} >
+                    <SingleSubcategoryCard {...props} subcategory={subcategory} />
+                </TouchableOpacity>
         })}
     </View>
   )
 }
 
 const style = StyleSheet.create({
+    container : {
+        display  : 'flex',
+        flexDirection : 'row',
+        flexWrap : 'wrap'
+    },
+    subcategory : {
+        width : '32%',
+        marginVertical : 5,
+        marginHorizontal : 2
+    },
     paginate : {
         display : 'flex',
         flexDirection : 'row',

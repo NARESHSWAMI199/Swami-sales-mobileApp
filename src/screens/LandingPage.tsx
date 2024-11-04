@@ -27,6 +27,8 @@ const _LandingScreen = (props : any) => {
                     "Sorry, we need location permissions to make this work!",
                     [{ text: "Okay" }]
                 );
+                
+                props.navigation.navigate('tab')
             }
 
             let location: any = await Location.getLastKnownPositionAsync()

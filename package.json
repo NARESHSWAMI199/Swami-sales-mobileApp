@@ -1,11 +1,10 @@
 {
   "name": "swami_retailer",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -19,10 +18,12 @@
     "@types/redux-thunk": "^2.1.0",
     "axios": "^1.3.5",
     "expo": "~48.0.10",
+    "expo-cli": "^6.3.10",
     "expo-location": "~15.1.1",
+    "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "react": "18.2.0",
-    "react-native": "0.71.6",
+    "react-native": "0.71.14",
     "react-native-elements": "^3.4.3",
     "react-native-exit-app": "^2.0.0",
     "react-native-gesture-handler": "~2.9.0",

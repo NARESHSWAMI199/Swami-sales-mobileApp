@@ -22,7 +22,7 @@ return(
     <View style={style.cover}>
       <Image
         style={style.cardCover}
-        resizeMode='cover' 
+        resizeMode  = 'contain'
         source = {{ uri: !!avatar ? avtar : props.url}} />
     </View>
         <View style={style.badge}>
@@ -73,9 +73,8 @@ const style = StyleSheet.create({
     flexDirection : 'column',
     width:'100%',
     alignContent : 'center',
-    padding : 15,
-    // backgroundColor : '#f2f5fa',
-    // borderRadius : 10
+    paddingHorizontal : 1,
+    paddingBottom : 5
   },
   price : {
     fontSize : 12,
@@ -91,10 +90,10 @@ const style = StyleSheet.create({
   discount : {
     fontSize : 12,
     color : 'green',
+    flexWrap : 'wrap'
   },
   cardCover : {
       width : '100%',
-      overflow: 'hidden',
       borderRadius : 10,
       backgroundColor : '#d4defc',
       flex : 1
@@ -105,7 +104,7 @@ const style = StyleSheet.create({
       marginTop : 5
   },
   cover : {
-    height: 80,
+    height: 120,
     flex  :1,
     borderRadius : 10
   },

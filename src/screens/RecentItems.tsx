@@ -24,9 +24,9 @@ const RecentItems = (props : any) => {
             color : 'green'
         },
         cardCover : {
-            width : '70%',
-            height: 50,
-            overflow: 'hidden'
+            width : '80%',
+            height: 60,
+            overflow: 'visible',
         },
         itemTitle : {
             fontSize : 12,
@@ -63,7 +63,7 @@ const RecentItems = (props : any) => {
     const [items, setItems] = useState([])
   
       useEffect(() => {
-        axios.post(itemsUrl+"all",{pageSize : !!props.size ? props.size : 8,orderBy : 'rating'})
+        axios.post(itemsUrl+"all",{pageSize : !!props.size ? props.size : 8,orderBy : 'createdAt'})
         .then(res => {
             let item = res.data.content;
             setItems(item)
@@ -85,7 +85,7 @@ const RecentItems = (props : any) => {
                 <TouchableOpacity style={style.recentItems} key={i} onPress={(e) => handleNavigation(item)}> 
                     < Card.Cover 
                         style={style.cardCover}
-                        resizeMode='cover'
+                        resizeMode='contain'
                         source = {{ uri: !!item.avatar ? avtar : props.url}} 
                     />
                     <Text variant="titleLarge" style={style.itemTitle} >

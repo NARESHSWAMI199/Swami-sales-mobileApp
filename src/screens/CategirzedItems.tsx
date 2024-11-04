@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import Items from './Items'
-import { Subcategory } from '../redux';
+import { Category, Subcategory } from '../redux';
 import { bodyColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
 
-function SubCategirzedItems(props:any) {
+function CategirzedItems(props:any) {
     const {route, navigation} = props;
-    const subcategory : Subcategory = route.params;
+    const category : Category = route.params;
 
     useEffect(()=>{
         navigation.setOptions({
-            title: toTitleCase(subcategory.subcategory),
+            title: toTitleCase(category.category),
         })
     },[])
 
   return (
     <View style={style.body}>
-        <Items {...props} size={10} showCategory={false} subcategoryId = {subcategory.id} />
+        <Items {...props} size={10} showCategory={false} categoryId = {category.id} />
     </View>
   )
 }
 
 const style = StyleSheet.create({
-
     body : {
         paddingHorizontal : 10,
         backgroundColor : bodyColor,
@@ -35,8 +34,8 @@ const style = StyleSheet.create({
         fontSize : 16,
         marginVertical : 20,
         color : 'black',
-    }
+    },
 
 })
 
-export default SubCategirzedItems
+export default CategirzedItems

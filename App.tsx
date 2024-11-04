@@ -15,6 +15,7 @@ import StoreDetail from './src/screens/StoreDetail';
 import ItemFilters from './src/screens/ItemFilters';
 import SubCategirzedItems from './src/screens/SubCategirzedItems';
 import Stores from './src/screens/Store';
+import CategirzedItems from './src/screens/CategirzedItems';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -132,7 +133,8 @@ export default function App() {
             }}
           />
 
-        <Screen name="subCategrizedItems" component={SubCategirzedItems}/>    
+        <Screen name="subCategrizedItems" component={SubCategirzedItems}/> 
+        <Screen name="categrizedItems" component={CategirzedItems}/>       
         <Screen name="itemFilter" component={ItemFilters} 
           options={{
             title : "Searched Items",
@@ -147,6 +149,7 @@ export default function App() {
           },
           header : () => null
           }} />
+
           <Screen name="storeDetail" component={StoreDetail}
               options={{
               title : "Item Detail",

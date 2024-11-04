@@ -1,12 +1,13 @@
 import { Tab, TabView } from '@rneui/themed'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { BackHandler, Dimensions, NativeModules, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Avatar, Icon } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
 import { ItemSubCategories, StoreSubCategories } from '../components/Subcategories'
 import { Category } from '../redux'
 import { itemsUrl, themeColor } from '../utils/utils'
+import AllCategories from './AllCategories'
 import Items from './Items'
 import RecentItems from './RecentItems'
 import Stores from './Store'
@@ -180,7 +181,7 @@ useEffect(() => {
                     </View>
             
                    <View style={{backgroundColor : 'white'}}>
-                         <AllSubcategories {...props} />
+                         <AllCategories  {...props} />
                     </View>                     
 
             
@@ -244,7 +245,7 @@ useEffect(() => {
                             <Text style={style.titleHeadings}>
                                 Related Categoires
                             </Text>
-                            <ItemSubCategories categoryId={category.id} size={12} />
+                            <AllSubcategories {...props} categoryId={category.id} size={6} />
                         </View>
                         <View>
                         <Text style={style.titleHeadings}>

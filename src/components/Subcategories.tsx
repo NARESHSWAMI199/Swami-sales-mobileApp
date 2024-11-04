@@ -10,7 +10,7 @@ const ItemSubCategories = (props : any)  =>  {
     const [subcategories,setSubcategories] = useState([]);
 
     useEffect(()=>{
-        axios.post(itemsUrl +"subcategory",{pageSize : !!props.size ? props.size  : 6 ,categoryId : props.categoryId , orderBy : 'subcategory',order : 'asc'})
+        axios.post(itemsUrl +"subcategory",{pageSize : !!props.size ? props.size  : 6 ,categoryId : props.categoryId , orderBy : 'updatedAt',order : 'desc'})
         .then(res=>{
             let data = res.data;
             setSubcategories(data)
@@ -28,7 +28,9 @@ const ItemSubCategories = (props : any)  =>  {
   <View style={style.main}>
         {subcategories.map((subcategory : any , index)=>{
         return <TouchableOpacity key={index} style={style.inner} onPress={()=>handleNavigation(subcategory)} > 
-                <ItemSubCategoryCard key={index} subcategory = {subcategory} />
+                {subcategory.id != 0 ?
+                    <ItemSubCategoryCard key={index} subcategory = {subcategory} />  : ''
+                }
             </TouchableOpacity>
         })}
     </View>
