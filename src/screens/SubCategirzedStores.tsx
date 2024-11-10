@@ -6,7 +6,7 @@ import { bodyColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
 import Stores from './Stores';
 
-function SubCategirzedItems(props:any) {
+function SubCategirzedStores(props:any) {
     const {route, navigation} = props;
     const {
         subcategory,
@@ -21,7 +21,7 @@ function SubCategirzedItems(props:any) {
 
   return (
     <View style={style.body}>
-        <Items {...props} 
+        <Stores {...props} 
             size={10} 
             showCategory={false} 
             subcategoryId = {id}
@@ -47,4 +47,4 @@ const style = StyleSheet.create({
 
 })
 
-export default SubCategirzedItems
+export default SubCategirzedStores

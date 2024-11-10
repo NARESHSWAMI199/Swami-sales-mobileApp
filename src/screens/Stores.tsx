@@ -101,7 +101,6 @@ function Stores(props : any) {
             .then(res => {
                 let response = res.data.content;
                 setStores(response)
-                console.log("store : " ,JSON.stringify(response[0]['name']), data.pageSize)
                 setShowSpinner(false)
             })
             .catch(err => {

@@ -63,8 +63,8 @@ const Items = (props : any) => {
     const [showSpinner,setShowSpinner] = useState(false)
     const [data,setData] = useState({
         searchKey : query,
-        categoryId : undefined,
-        subcategoryId : undefined,
+        categoryId : props.categoryId,
+        subcategoryId : props.subcategoryId,
         pageSize : 51
     })
   
@@ -75,7 +75,7 @@ const Items = (props : any) => {
     },[props.showCategory])
 
     useEffect(()=>{
-        console.log('categoryId  : ',props.categoryId ,  " : subcategoryId  ",props.subcategoryId)
+        // console.log('categoryId  : ',props.categoryId ,  " : subcategoryId  ",props.subcategoryId)
     setData({
         ...data,
         categoryId : props.categoryId,
@@ -96,7 +96,6 @@ const Items = (props : any) => {
     };
   
       useEffect(() => {
-        console.log('items : ',{...data,searchKey : query})
         axios.post(itemsUrl+"all",{...data,searchKey : query})
         .then(res => {
                 let item = res.data.content;
