@@ -1,9 +1,9 @@
  
 
 
-// const host = "http://192.168.1.6:8082/"
+const host = "http://192.168.1.5:8082/"
 
-const host = "http://202.157.82.29:8081/"
+// const host = "http://202.157.82.29:8081/"
 export const itemsUrl = host+"item/"
 export  const itemImageUrl = itemsUrl+"image/"
 

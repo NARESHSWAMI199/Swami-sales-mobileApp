@@ -14,7 +14,7 @@ import { themeColor } from './src/utils/utils';
 import StoreDetail from './src/screens/StoreDetail';
 import ItemFilters from './src/screens/ItemFilters';
 import SubCategirzedItems from './src/screens/SubCategirzedItems';
-import Stores from './src/screens/Store';
+import Stores from './src/screens/Stores';
 import CategirzedItems from './src/screens/CategirzedItems';
 
 const {Navigator, Screen} = createStackNavigator();
@@ -62,6 +62,22 @@ const BottomTabNavigator = () => {
 
 
   <Tab.Screen 
+          name="Stores"
+          component={Stores}
+          options={{
+            header : ()=>null,
+            tabBarLabel: 'Stores',
+            tabBarIcon:  ({ focused, color }) => {
+              let icon = focused == true ? require("./src/images/red_store.png") :
+                require("./src/images/store.png")
+              return <Image source={icon} style={styles.tabIcon} />
+            },
+          }}
+        />
+
+
+
+  {/* <Tab.Screen 
           name="Slip"
           component={Items}
           options={{
@@ -73,7 +89,7 @@ const BottomTabNavigator = () => {
               return <Image source={icon} style={styles.tabIcon} />
             },
           }}
-        />
+        /> */}
 
 
 

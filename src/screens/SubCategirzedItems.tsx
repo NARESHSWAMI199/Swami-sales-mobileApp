@@ -4,20 +4,28 @@ import Items from './Items'
 import { Subcategory } from '../redux';
 import { bodyColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
+import Stores from './Stores';
 
 function SubCategirzedItems(props:any) {
     const {route, navigation} = props;
-    const subcategory : Subcategory = route.params;
+    const {
+        subcategory,
+        id
+    }= route.params
 
     useEffect(()=>{
         navigation.setOptions({
-            title: toTitleCase(subcategory.subcategory),
+            title: toTitleCase(subcategory),
         })
     },[])
 
   return (
     <View style={style.body}>
-        <Items {...props} size={10} showCategory={false} subcategoryId = {subcategory.id} />
+        <Stores {...props} 
+            size={10} 
+            showCategory={false} 
+            subcategoryId = {id}
+         />
     </View>
   )
 }

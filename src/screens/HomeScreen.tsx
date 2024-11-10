@@ -10,7 +10,7 @@ import { itemsUrl, themeColor } from '../utils/utils'
 import AllCategories from './AllCategories'
 import Items from './Items'
 import RecentItems from './RecentItems'
-import Stores from './Store'
+import Stores from './Stores'
 import AllSubcategories from './AllSubcategories'
 
 export const  HomeScreen = (props : any) => {
@@ -44,7 +44,7 @@ useEffect(() => {
         e.preventDefault();
         BackHandler.exitApp();
     })
-}, [navigation]);
+}, []);
 
 
 const [index, setIndex] = useState(0);
@@ -191,7 +191,12 @@ useEffect(() => {
                             Popular Stores
                         </Text>
                         <ScrollView horizontal>
-                            <Stores  width = {120} {...props} />
+                            <Stores
+                            size = {8}
+                             width = {120} 
+                            {...props} 
+                            showCategory={false}
+                             />
                         </ScrollView>
                     </View>
                     <View style={{backgroundColor : 'white'}}>
@@ -208,8 +213,8 @@ useEffect(() => {
                         </Text>
                         <Items showCategory={false}  
                             {...props} 
-                            width = { '32%'} 
                             size = {51}
+                            selfPadding ={false}
                         />
 
                         <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationItems()} > 
@@ -218,13 +223,18 @@ useEffect(() => {
                         </TouchableOpacity>
                     </View>
                     
-                    <View style={{backgroundColor : 'white'}}>
+                    <View style={style.mostPopularStores}>
                         <Text style={style.titleHeadings} >
                             Most Populer Stores
                         </Text>
-                        <Stores {...props} size = {51}/>
+                        <Stores 
+                            {...props} 
+                            size = {100} 
+                            showCategory={false}
+                            selfPadding={false}
+                            />
                         <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationStore()} > 
-                            <Text style={style.paginateText}>See all items</Text>
+                            <Text style={style.paginateText}>See all stores</Text>
                             <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
                         </TouchableOpacity>
                     </View>
@@ -291,9 +301,14 @@ const style = StyleSheet.create({
         marginVertical : 20,
     },
     mostPopularItems : {
-        display : 'flex',
+        flex : 1,
         padding : 'auto',
         backgroundColor : 'white',
+    },
+    mostPopularStores : {
+        padding : 'auto',
+        backgroundColor : 'white',
+        flex : 1
     },
     paginate : {
         display : 'flex',

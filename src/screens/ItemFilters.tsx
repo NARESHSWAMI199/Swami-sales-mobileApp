@@ -59,7 +59,7 @@ const ItemFilters = (props : any) => {
         props.navigation.navigate('itemDetail',item);
     };
 
-  return (<>
+  return (<View style={style.body}>
     <StatusBar backgroundColor={themeColor}  barStyle="dark-content" />
    
             <View 
@@ -123,12 +123,18 @@ const ItemFilters = (props : any) => {
                 </View>
             </View>
     </ScrollView>
-   </>
+   </View>
   )
 }
 
 
 const style = StyleSheet.create({
+    body : {
+        display : 'flex',
+        flex : 1,
+        paddingHorizontal :10,
+        backgroundColor : '#d4defc',
+    },
     outerView : {
         display : 'flex',
         flex : 1,
@@ -142,7 +148,6 @@ const style = StyleSheet.create({
         margin : 2,
     },
     titleHeadings : {
-        marginHorizontal : 10,
         fontWeight : 'bold',
         fontSize : 16,
         marginVertical : 15,

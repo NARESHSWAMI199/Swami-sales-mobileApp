@@ -9,23 +9,7 @@ import { storeUrl } from '../utils/utils'
 
 
 
-function Stores(props : any) {
-
-  const styles = StyleSheet.create({
-    storeParent : {
-      display : 'flex',
-      flexDirection : 'row',
-      flexWrap : 'wrap',
-    },
-    storeView : {
-      width : !!props.width ? props.width : '32%',
-      backgroundColor : 'white',
-      borderRadius : 10,
-      marginHorizontal : 2
-    }
-  
-  })
-  
+function AllStores(props : any) {
 
   const [stores,setStores] = useState([])
   const [search,setSearch] = useState(false)
@@ -67,7 +51,7 @@ function Stores(props : any) {
     props.navigation.navigate('storeDetail',store);
   };
 
-  return (<View>
+  return (<View style={styles.body}>
     <View style={styles.storeParent}>
         {stores.map((store : Store ,i)=>(
         <TouchableOpacity key={i} style={styles.storeView} onPress={e=> handleNavigation(store)} >
@@ -81,4 +65,29 @@ function Stores(props : any) {
 
 
 
-export default Stores
+
+const styles = StyleSheet.create({
+
+    body : {
+        display: 'flex',
+        paddingHorizontal : 10,
+        flex : 1
+    },
+    storeParent : {
+      display : 'flex',
+      flexDirection : 'row',
+      flexWrap : 'wrap',
+    },
+    storeView : {
+      width : '32%',
+      backgroundColor : 'white',
+      borderRadius : 10,
+      marginHorizontal : 2
+    }
+  
+  })
+  
+
+
+
+export default AllStores
