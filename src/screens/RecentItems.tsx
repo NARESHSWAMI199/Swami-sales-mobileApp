@@ -68,7 +68,7 @@ const RecentItems = (props : any) => {
             let item = res.data.content;
             setItems(item)
         }).catch(err => {
-            console.log(err.message)
+            console.log("RecentItems.tsx : ",err.message)
         })
     }, [])
 

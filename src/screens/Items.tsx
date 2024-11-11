@@ -103,7 +103,7 @@ const Items = (props : any) => {
             })
             .catch(err => {
                 setShowSpinner(false)
-                console.log(err.message)
+                console.log("Items.tsx : ",err.message)
             })
     }, [search,data])
 
@@ -116,7 +116,7 @@ const Items = (props : any) => {
                     setCategories(categories)
                 })
                 .catch(err => {
-                    console.log(err.message)
+                    console.log("Items.tsx : ",err.message)
                 })
         }
         getCategories()

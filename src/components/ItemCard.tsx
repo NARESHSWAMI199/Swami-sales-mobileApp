@@ -1,15 +1,14 @@
 
 import { Image, StyleSheet, View } from 'react-native';
-import { Card, Text } from 'react-native-paper';
-import { toTitleCase } from '../utils';
-import { bodyColor, itemImageUrl } from '../utils/utils';
 import { Badge } from 'react-native-elements';
+import { Text } from 'react-native-paper';
+import { toTitleCase } from '../utils';
+import { itemImageUrl } from '../utils/utils';
 
 const ItemCard = (props:any) => {
     const {
         price,
         name,
-        description,
         avatar,
         slug,
         discount,
@@ -26,7 +25,8 @@ return(
         source = {{ uri: !!avatar ? avtar : props.url}} />
     </View>
         <View style={style.badge}>
-          {label == 'O' ?<Badge 
+          {label == 'O' ?
+          <Badge 
               textStyle ={{
                 color : '#001475',
                 fontSize : 10
@@ -58,7 +58,7 @@ return(
           </Text>
       
         <Text style={style.discount} >{Math.floor((discount/price)*100) +"% OFF"} </Text>
-        <View style={{display : 'flex', flexDirection : 'row'}}>
+        <View style={{display : 'flex', flexDirection : 'row',flexWrap : 'wrap'}}>
           <Text style={style.price} >{"\u20B9 "+(price-discount)} </Text>
           <Text style={style.actualPrice} >{"\u20B9 "+price} </Text>
         </View>

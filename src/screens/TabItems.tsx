@@ -29,7 +29,7 @@ function TabItems(props:any) {
             })
             .catch(err => {
                 setShowSpinner(false)
-                console.log(err.message)
+                console.log("TabItems.tsx  : ",err.message)
             })
     }, [])
 
@@ -59,19 +59,10 @@ function TabItems(props:any) {
 }
 
 const style = StyleSheet.create({
-
     body : {
-        paddingHorizontal : 10,
         backgroundColor : bodyColor,
         height : '100%',
         flex : 1
-    },
-    titleHeadings : {
-        marginHorizontal : 10,
-        fontWeight : 'bold',
-        fontSize : 16,
-        marginVertical : 20,
-        color : 'black',
     },
     outerView : {
         display : 'flex',

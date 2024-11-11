@@ -260,7 +260,7 @@ useEffect(() => {
                             <ItemSubCategories {...props} categoryId={category.id} size={6} />
                         </View>
                         <View style={{flex : 1}}>
-                        <Text style={style.titleHeadings}>
+                            <Text style={style.titleHeadings}>
                                 Related Items
                             </Text>
                             <TabItems {...props} showCategory={false} categoryId = {category.id} />
@@ -287,8 +287,6 @@ const style = StyleSheet.create({
         flex : 1,
         justifyContent:'center',
         alignItems : 'center',
-        margin : 0,
-        padding : 0,
     },
     scrollView: {
         flexGrow : 1,
@@ -297,7 +295,7 @@ const style = StyleSheet.create({
         position : 'absolute'
     },
     titleHeadings : {
-        marginHorizontal : 10,
+        paddingHorizontal : 10,
         fontWeight : 'bold',
         fontSize : 16,
         marginVertical : 20,

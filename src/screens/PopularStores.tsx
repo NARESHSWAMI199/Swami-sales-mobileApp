@@ -23,7 +23,7 @@ function PopularStores(props:any) {
               setShowSpinner(false)
           })
           .catch(err => {
-              console.log(err.message)
+              console.log("PopularStores : ",err.message)
               setShowSpinner(false)
           })
   }, [])

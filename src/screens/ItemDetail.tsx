@@ -62,7 +62,11 @@ const ItemDetail = (props:any) => {
   <ScrollView style={{ backgroundColor:'white'}}>
 
     <View style={styles.imageParent}>
-      <Image style={styles.image} source={{uri : itemImageUrl  +  item.slug + "/"+item.avatar}} />
+      <Image
+         
+        style={styles.image} 
+        source={{uri : itemImageUrl  +  item.slug + "/"+item.avatar}}
+        resizeMode='contain' />
     </View>
 
     <View style={styles.body}>

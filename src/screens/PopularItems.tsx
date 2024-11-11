@@ -41,7 +41,7 @@ function PopularItems(props:any) {
             })
             .catch(err => {
                 setShowSpinner(false)
-                console.log(err.message)
+                console.log("PopularItems : ",err.message)
             })
     }, [])
 

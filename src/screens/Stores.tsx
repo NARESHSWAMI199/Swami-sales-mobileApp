@@ -104,7 +104,7 @@ function Stores(props : any) {
                 setShowSpinner(false)
             })
             .catch(err => {
-                console.log(err.message)
+                console.log("Stores.tsx : ",err.message)
                 setShowSpinner(false)
             })
     }, [data,search])
@@ -117,7 +117,7 @@ function Stores(props : any) {
           setCategories(categories)
       })
       .catch(err => {
-          console.log(err.message)
+          console.log("Stores.tsx : ",err.message)
       })
     }, [])
 

@@ -17,7 +17,7 @@ function ItemCategories(props:any) {
             let data = res.data;
             setCategories(data)
         }).catch(err => {
-            console.log("category : " ,err)
+            console.log("ItemCategories.tsx : " ,err)
         })
     },[])
     

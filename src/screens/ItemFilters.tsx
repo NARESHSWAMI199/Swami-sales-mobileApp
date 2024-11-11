@@ -50,7 +50,7 @@ const ItemFilters = (props : any) => {
                    
                 })
                 .catch(err => {
-                    console.log(err.message)
+                    console.log("ItemFilters.tsx : ",err.message)
                 })
     }, [search,selectedCategory])
 

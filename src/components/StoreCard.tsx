@@ -36,7 +36,8 @@ const StoreCard = (props:any) => {
   return <View style={style.card}>
         < Card.Cover 
           style={style.cardCover}
-          resizeMode='cover' source = {{ uri: !!avatar ? avtar : props.url}} />
+          resizeMode='contain' 
+          source = {{ uri: !!avatar ? avtar : props.url}} />
 
           <View style={style.badge}>
             <Badge 

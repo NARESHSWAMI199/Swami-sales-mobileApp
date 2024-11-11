@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { itemsUrl, themeColor } from '../utils/utils';
 import axios from 'axios';
-import SubCategirzedItemsCard from '../components/SubcategrizedItemsCard';
-import { Icon } from 'react-native-elements';
-import { Subcategory } from '../redux';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import SingleSubcategoryCard from '../components/SingleSubcategoryCard';
+import { Subcategory } from '../redux';
+import { itemsUrl } from '../utils/utils';
 
 function ItemSubcategories(props:any) {
 
@@ -24,9 +22,8 @@ function ItemSubcategories(props:any) {
         .then(res=>{
             let data = res.data;
             setSubcategories(data)
-            if(data.length < 1) props.onShow()
         }).catch(err => {
-            console.log("subcategory : " ,err)
+            console.log("ItemSubcategories.tsx : " ,err)
         })
     },[categoryId])
     

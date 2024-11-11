@@ -33,7 +33,7 @@ function SubCategirzedStores(props:any) {
               setShowSpinner(false)
           })
           .catch(err => {
-              console.log(err.message)
+              console.log("SubCategirzedStores : ",err.message)
               setShowSpinner(false)
           })
   }, [])
