@@ -2,11 +2,12 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import CategirzedCard from '../components/CategrizedItemsCard';
 import { Category } from '../redux';
+import { toTitleCase } from '../utils';
 import { itemsUrl } from '../utils/utils';
+import ItemSubcategories from './ItemSubcategories';
 
-function AllCategories(props:any) {
+function ItemCategories(props:any) {
 
     const [categories,setCategories] = useState([]);
 
@@ -32,7 +33,15 @@ function AllCategories(props:any) {
     <View>
         {categories.map((category:Category,i)=>{
             return <View key={i}>
-                    <CategirzedCard {...props} category={category} />
+                    <View>
+                        <Text style={style.titleHeadings}>
+                            {toTitleCase(category.category)}
+                        </Text>
+                        <ItemSubcategories 
+                        {...props} 
+                        categoryId = {category.id}
+                        />
+                    </View>
                     <TouchableOpacity style={style.paginate} onPress={()=>handleNavigation(category)} > 
                         <Text style={style.paginateText}>See all products</Text>
                         <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
@@ -67,7 +76,13 @@ const style = StyleSheet.create({
         fontWeight : '500',
         color : '#001475',
         fontSize : 16
-    }
+    },    titleHeadings : {
+        marginHorizontal : 10,
+        fontWeight : 'bold',
+        fontSize : 16,
+        marginVertical : 20,
+    },
+
 })
 
-export default AllCategories
+export default ItemCategories

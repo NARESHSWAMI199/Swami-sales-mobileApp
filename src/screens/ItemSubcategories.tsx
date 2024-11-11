@@ -7,20 +7,24 @@ import { Icon } from 'react-native-elements';
 import { Subcategory } from '../redux';
 import SingleSubcategoryCard from '../components/SingleSubcategoryCard';
 
-function AllSubcategories(props:any) {
+function ItemSubcategories(props:any) {
+
+    const {
+        categoryId
+    } = props
 
     const [subcategories,setSubcategories] = useState([]);
-    const [categoryId,setCategoryId] = useState()
-
+  
     useEffect(()=>{
-        setCategoryId(props.categoryId)
-    },[props.categoryId])
-
-    useEffect(()=>{
-        axios.post(itemsUrl +"subcategory",{pageSize : !!props.size ? props.size  : 6 ,categoryId : categoryId, orderBy : 'updatedAt'})
+        axios.post(itemsUrl +"subcategory",{
+            pageSize : 6 ,
+            categoryId : categoryId, 
+            orderBy : 'updatedAt'
+        })
         .then(res=>{
             let data = res.data;
             setSubcategories(data)
+            if(data.length < 1) props.onShow()
         }).catch(err => {
             console.log("subcategory : " ,err)
         })
@@ -82,4 +86,4 @@ const style = StyleSheet.create({
     }
 })
 
-export default AllSubcategories
+export default ItemSubcategories

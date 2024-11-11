@@ -7,11 +7,12 @@ import { Searchbar } from 'react-native-paper'
 import { ItemSubCategories, StoreSubCategories } from '../components/Subcategories'
 import { Category } from '../redux'
 import { itemsUrl, themeColor } from '../utils/utils'
-import AllCategories from './AllCategories'
+import ItemCategories from './ItemCategories'
 import Items from './Items'
 import RecentItems from './RecentItems'
 import Stores from './Stores'
-import AllSubcategories from './AllSubcategories'
+import TabItems from './TabItems'
+import PopularStores from './PopularStores'
 
 export const  HomeScreen = (props : any) => {
     const { navigation } = props;
@@ -181,18 +182,19 @@ useEffect(() => {
                     </View>
             
                    <View style={{backgroundColor : 'white'}}>
-                         <AllCategories  {...props} />
+                         <ItemCategories  {...props} />
                     </View>                     
 
             
 
-                    <View style={{backgroundColor : 'white'}}>
+                    <View style={{
+                        backgroundColor : 'white'
+                        }}>
                         <Text style={style.titleHeadings}>
                             Popular Stores
                         </Text>
                         <ScrollView horizontal>
-                            <Stores
-                            size = {8}
+                            <PopularStores
                              width = {120} 
                             {...props} 
                             showCategory={false}
@@ -255,13 +257,13 @@ useEffect(() => {
                             <Text style={style.titleHeadings}>
                                 Related Categoires
                             </Text>
-                            <AllSubcategories {...props} categoryId={category.id} size={6} />
+                            <ItemSubCategories {...props} categoryId={category.id} size={6} />
                         </View>
-                        <View>
+                        <View style={{flex : 1}}>
                         <Text style={style.titleHeadings}>
                                 Related Items
                             </Text>
-                            <Items {...props} showCategory={false} categoryId = {category.id} />
+                            <TabItems {...props} showCategory={false} categoryId = {category.id} />
                         </View>
                     </ScrollView>
                 </TabView.Item>  

@@ -1,11 +1,10 @@
 import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import ItemCard from '../components/ItemCard'
 import { Item } from '../redux'
 import { itemsUrl, themeColor } from '../utils/utils'
-import { ItemSubCategories } from '../components/Subcategories'
 import RecentItems from './RecentItems'
 
 const ItemFilters = (props : any) => {

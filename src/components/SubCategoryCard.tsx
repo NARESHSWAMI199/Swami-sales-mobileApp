@@ -8,22 +8,15 @@ import { toTitleCase } from '../utils';
 
 const ItemSubCategoryCard = (props : any) =>  {
 
+    const {
+        id, 
+        subcategory 
+    } = props.subcategory
 
-    const [subcategory,setSubcategory] = useState({
-        id : 0,
-        subcategory : ''
-    });
     const [items, setItems] = useState([]);
 
     useEffect(()=>{
-        if(subcategory != undefined){
-            setSubcategory(props.subcategory)
-        }
-    },[props.subcategory])
-
-
-    useEffect(()=>{
-        axios.post(itemsUrl +"all",{pageSize : 4,subcategoryId : subcategory.id})
+        axios.post(itemsUrl +"all",{pageSize : 4,subcategoryId : id})
         .then(res=>{
             let data = res.data.content;
             setItems(data)
@@ -46,7 +39,7 @@ const ItemSubCategoryCard = (props : any) =>  {
         </View>
             <View>
                 <Text style={style.subcategoryTitle}>
-                    {!!subcategory ? toTitleCase(subcategory.subcategory).split(' ')[0] : ""+subcategory} 
+                    {!!subcategory ? toTitleCase(subcategory).substring(0,10) : ""+subcategory} 
                 </Text>
             </View>
     </View>

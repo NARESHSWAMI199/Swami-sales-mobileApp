@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Touchable, TouchableOpacity, View } from 'react-native';
-import { itemsUrl, storeUrl } from '../utils/utils';
-import {ItemSubCategoryCard,StoreSubCategoryCard} from './SubCategoryCard';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Subcategory } from '../redux';
+import { itemsUrl, storeUrl } from '../utils/utils';
+import { ItemSubCategoryCard, StoreSubCategoryCard } from './SubCategoryCard';
 
 const ItemSubCategories = (props : any)  =>  {
 
@@ -55,7 +55,7 @@ const StoreSubCategories = (props : any) =>  {
     },[])
 
     const handleNavigation = (subcategory : Subcategory) => {
-        props.navigation.navigate('subCategrizedItems',subcategory);
+        props.navigation.navigate('subCategrizedStores',subcategory);
     };
 
   return (<>

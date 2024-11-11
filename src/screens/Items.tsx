@@ -75,13 +75,12 @@ const Items = (props : any) => {
     },[props.showCategory])
 
     useEffect(()=>{
-        // console.log('categoryId  : ',props.categoryId ,  " : subcategoryId  ",props.subcategoryId)
-    setData({
-        ...data,
-        categoryId : props.categoryId,
-        pageSize : props.size,
-        subcategoryId : props.subcategoryId
-    })
+        setData({
+            ...data,
+            categoryId : props.categoryId,
+            pageSize : props.size,
+            subcategoryId : props.subcategoryId
+        })
     },[props.categoryId,props.subcategoryId,props.size])
 
 

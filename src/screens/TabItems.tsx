@@ -5,38 +5,26 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
-import { toTitleCase } from '../utils';
 import { bodyColor, itemsUrl } from '../utils/utils';
 
-function SubCategirzedItems(props:any) {
-    const {route, navigation} = props;
-    const {
-        subcategory,
-        id
-    }= route.params
 
+
+
+function TabItems(props:any) {
+    const {categoryId} = props;
     const [showSpinner,setShowSpinner] = useState(false)
-
-    useEffect(()=>{
-        navigation.setOptions({
-            title: toTitleCase(subcategory),
-        })
-    },[])
-
     const [items, setItems] = useState([])
-
-
 
     useEffect(() => {
         let data = {
-            subcategoryId : id,
+            categoryId : categoryId,
             pageSize : 99
         }
-        console.log("SubCategirzedItems")
+        console.log("TabItems")
         axios.post(itemsUrl+"all",data)
         .then(res => {
-                let item = res.data.content;
-                setItems(item)
+                let items = res.data.content;
+                setItems(items)
                 setShowSpinner(false)
             })
             .catch(err => {
@@ -53,8 +41,7 @@ function SubCategirzedItems(props:any) {
 
 
 
-  return (
-    <ScrollView style={style.body}>
+  return (<ScrollView style={style.body}>
        <View style={style.outerView}>
         <Spinner
           visible={showSpinner}
@@ -101,4 +88,4 @@ const style = StyleSheet.create({
 
 })
 
-export default SubCategirzedItems
+export default TabItems

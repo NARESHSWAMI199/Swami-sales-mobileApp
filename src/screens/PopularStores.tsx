@@ -1,31 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import Items from './Items'
-import { Store, Subcategory } from '../redux';
-import { bodyColor, storeUrl } from '../utils/utils';
-import { toTitleCase } from '../utils';
-import Stores from './Stores';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-loading-spinner-overlay';
 import StoreCard from '../components/StoreCard';
-import axios from 'axios';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Store } from '../redux';
+import { bodyColor, storeUrl } from '../utils/utils';
 
-function SubCategirzedStores(props:any) {
-    const {route, navigation} = props;
-    const {
-        subcategory,
-        id
-    }= route.params
-
+function PopularStores(props:any) {
     const [stores,setStores] = useState([])
     const [showSpinner,setShowSpinner] = useState(false)
 
     useEffect(() => {
         let data = {
-            subcategoryId : id,
-            pageSize : 99
+            pageSize : 12
         }
-        console.log("SubCategirzedStores")
+        console.log("PopularStores")
         axios.post(storeUrl+"all",data)
           .then(res => {
               let response = res.data.content;
@@ -37,13 +27,6 @@ function SubCategirzedStores(props:any) {
               setShowSpinner(false)
           })
   }, [])
-
-
-    useEffect(()=>{
-        navigation.setOptions({
-            title: toTitleCase(subcategory),
-        })
-    },[])
 
     const handleNavigation = (store : Store) => {
         props.navigation.navigate('storeDetail',store);
@@ -88,7 +71,7 @@ const style = StyleSheet.create({
         flexWrap : 'wrap',
       },
       storeView : {
-        width :'32%',
+        width : 120,
         backgroundColor : 'white',
         borderRadius : 10,
         marginHorizontal : 2
@@ -96,4 +79,4 @@ const style = StyleSheet.create({
 
 })
 
-export default SubCategirzedStores
+export default PopularStores

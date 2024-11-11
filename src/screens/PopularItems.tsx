@@ -8,7 +8,7 @@ import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import { bodyColor, itemsUrl } from '../utils/utils';
 
-function SubCategirzedItems(props:any) {
+function PopularItems(props:any) {
     const {route, navigation} = props;
     const {
         subcategory,
@@ -32,7 +32,7 @@ function SubCategirzedItems(props:any) {
             subcategoryId : id,
             pageSize : 99
         }
-        console.log("SubCategirzedItems")
+        console.log("PopularItems")
         axios.post(itemsUrl+"all",data)
         .then(res => {
                 let item = res.data.content;
@@ -101,4 +101,4 @@ const style = StyleSheet.create({
 
 })
 
-export default SubCategirzedItems
+export default PopularItems
