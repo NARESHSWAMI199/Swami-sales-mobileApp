@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
-import { Rating } from 'react-native-elements';
+import {Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
 import { Store } from '../redux';
 import { toTitleCase } from '../utils';
 import { storeImageUrl } from '../utils/utils';
+import { TabItem } from '@rneui/base/dist/Tab/Tab.Item';
+import TabItems from './TabItems';
+import ViewMoreText from 'react-native-view-more-text';
+import { Icon } from '@rneui/themed';
 
 
 
@@ -24,40 +28,106 @@ const StoreDetail = (props:any) => {
 
 
 
+  const renderViewMore = (onPress:any) => {
+    return(
+      <View style={{
+          display : 'flex', 
+          flexDirection : 'row',
+          marginVertical : 10
+          }}>
+        <Icon name='chevron-small-down' color='black' type="entypo" />
+       <Text onPress={onPress}>       
+        View more
+        </Text>
+      </View>
+
+    )
+  }
+  const renderViewLess = (onPress:any) =>{
+    return(
+      <View 
+        style={{
+          display : 'flex',
+          flexDirection : 'row',
+          marginVertical : 10
+         }}>
+      <Icon name='chevron-small-up'  type="entypo" />
+      <Text onPress={onPress}>       
+        View less
+      </Text>
+    </View>
+    )
+  }
+
+
   return (<>
     <StatusBar translucent backgroundColor="transparent"  barStyle="dark-content" />
 
   <ScrollView style={{ backgroundColor:'white'}}>
     <View style={styles.imageParent}>
-      <Image style={styles.image} source={{uri : storeImageUrl  +  store.slug + "/"+store.avatar}} />
+      <Image style={styles.image} 
+        source={{uri : storeImageUrl  +  store.slug + "/"+store.avatar}}
+        resizeMode={'contain'} />
     </View>
     <View style={styles.body}>
-      <View>
-        <Text style={styles.title} variant="titleLarge"> {toTitleCase(store.name.trim())} </Text>
+    <View style={{
+              display : 'flex', 
+              justifyContent : 'flex-start',
+              flexDirection : 'row',
+              alignItems :'flex-start'}}>
+        <Badge 
+                textStyle ={{
+                  color : '#001475',
+                  fontSize : 10,
+                }}
+                badgeStyle={{
+                  backgroundColor : '#f1f7ed',
+                }} 
+                status='primary' 
+                value={store?.storeSubCategory?.subcategory} 
+          />
+          <Badge 
+                textStyle ={{
+                  color : '#001475',
+                  fontSize : 10,
+                }}
+                badgeStyle={{
+                  backgroundColor : '#f1f7ed',
+                }} 
+                status='primary' 
+                value={store?.storeCategory?.category} 
+          />
+          </View>
+
+        <Text style={styles.title} variant="titleLarge">{toTitleCase(store.name.trim())} </Text>
         <View style={styles.rating}>
-          <Text style={{...styles.subtitle,marginTop : 0, marginRight : 10,paddingLeft : 5}}>{"Rating : "}</Text>
-          <Rating type='custom' imageSize={25} readonly startingValue={store.rating} />
+          <Text style={{...styles.subtitle,
+              marginTop : 0, 
+              marginRight : 10,
+            }}>{"Rating : "}</Text>
+          <Rating type='custom' imageSize={25} 
+          readonly 
+          startingValue={store.rating} />
         </View>
-        <View style={{display : 'flex', flexDirection : 'row'}}>
-          <Text style={styles.subtitle}> {"Store : "}</Text>
-          <Text style={{...styles.subtitle,fontWeight : '500',fontSize : 16}}> {"Swami sales"}</Text>
-        </View>
+
+
         <View>
-          <Text style={styles.subtitle}> {"Description : "}</Text>
-          <Text style={{fontSize : 16 , fontWeight : '500'}}> {store.description}</Text>
-        </View>
+          <Text style={styles.titleHeadings}>
+            Our Latest Products
+          </Text>
+          <TabItems {...props} storeId={store.id} />
       </View>
 
-      <View style={{display : 'flex',alignItems : 'center', marginTop : 64 }}>
-        <Pressable
-          onPress={(e) => console.log("clicked")}
-          style={styles.button}
-          accessibilityLabel="Learn more about this purple button"
-        >
-          <Text style={{fontSize : 18, fontWeight : 'bold'}} >{"ADD TO SLIP"}</Text>
-        </Pressable>
-      </View>
-
+        <View>
+            <Text style={styles.subtitle}>About us : </Text>
+            <ViewMoreText
+              numberOfLines={3}
+              renderViewMore={renderViewMore}
+              renderViewLess={renderViewLess}
+            >
+              <Text style={styles.description}>{store.description.trim()}</Text>
+            </ViewMoreText>
+          </View>
     </View>
   </ScrollView>
   
@@ -77,12 +147,12 @@ const styles = StyleSheet.create({
     height : 320
   },
   body : {
-    padding : 20,
-    paddingTop : 20,
+    paddingHorizontal : 10,
+    paddingTop : 10,
     opacity : 0.8
   },
   title : {
-    fontSize : 18,
+    fontSize : 16,
     fontWeight : 'bold',
     color : 'black',
     marginRight : 'auto'
@@ -121,7 +191,7 @@ const styles = StyleSheet.create({
   },
   subtitle : {
     marginTop : 12,
-    fontSize : 18,
+    fontSize : 16,
     fontWeight : '700'
   },
   button : {
@@ -131,7 +201,16 @@ const styles = StyleSheet.create({
     backgroundColor : '#D5DCE7',
     alignItems  : 'center',
     justifyContent : 'center',
-  }
+  },
+  titleHeadings : {
+    fontWeight : 'bold',
+    fontSize : 16,
+    marginVertical : 20,
+},  
+description : {
+  fontSize : 14 , 
+  fontWeight : '500',
+}
 
 })
 

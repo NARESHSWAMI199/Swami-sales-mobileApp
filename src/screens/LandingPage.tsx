@@ -32,8 +32,8 @@ const _LandingScreen = (props : any) => {
             }
 
             let location: any = await Location.getLastKnownPositionAsync()
+            if(location == null) location = await Location.getCurrentPositionAsync()
             const {coords} = location
-
             if (coords){
                 const { latitude ,longitude} = coords;
                 console.log("coords : ",coords)    

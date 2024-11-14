@@ -81,7 +81,9 @@ export interface Store {
     description: string,
     avatar: string,
     rating: Float,
-    slug : string
+    slug : string,
+    storeCategory : Category,
+    storeSubCategory : Subcategory
 }
 
 

@@ -11,13 +11,14 @@ import { bodyColor, itemsUrl } from '../utils/utils';
 
 
 function TabItems(props:any) {
-    const {categoryId} = props;
+    const {categoryId,storeId} = props;
     const [showSpinner,setShowSpinner] = useState(false)
     const [items, setItems] = useState([])
 
     useEffect(() => {
         let data = {
             categoryId : categoryId,
+            storeId : storeId,
             pageSize : 99
         }
         console.log("TabItems")

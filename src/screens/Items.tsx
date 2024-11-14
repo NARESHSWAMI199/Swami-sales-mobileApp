@@ -11,12 +11,10 @@ import { bodyColor, itemsUrl } from '../utils/utils'
 
 const Items = (props : any) => {
 
-
-
     const style = useMemo(() =>StyleSheet.create({
         body : {
             display : 'flex',
-            paddingHorizontal : !props.selfPadding ? 0 : 5,
+            paddingHorizontal :  props.selfPadding != undefined && !props.selfPadding ? 0 : 5,
             flex : 1,
             backgroundColor : bodyColor
         },

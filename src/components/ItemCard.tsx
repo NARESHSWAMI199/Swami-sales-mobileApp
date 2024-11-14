@@ -12,7 +12,10 @@ const ItemCard = (props:any) => {
         avatar,
         slug,
         discount,
-        label
+        label,
+        itemSubCategory,
+        itemCategory,
+        capacity,
     } = props.item
     const avtar = itemImageUrl+slug+"/"+avatar
 
@@ -25,7 +28,8 @@ return(
         source = {{ uri: !!avatar ? avtar : props.url}} />
     </View>
         <View style={style.badge}>
-          {label == 'O' ?
+      
+          {!!itemSubCategory ?
           <Badge 
               textStyle ={{
                 color : '#001475',
@@ -33,14 +37,14 @@ return(
               }}
               badgeStyle={{
                 paddingHorizontal : 5,
-                backgroundColor : '#f1f7ed'
+                backgroundColor : '#f2f5fa'
               }} 
               status='primary' 
-              value={'Old'} 
+              value={toTitleCase(itemSubCategory.subcategory)} 
               /> : 
               <Badge 
                 status='success' 
-                value={'New'}
+                value={itemCategory.category}
 
                 textStyle = {{
                   color : '#001475',
@@ -52,11 +56,28 @@ return(
                   backgroundColor : '#f2f5fa'
                 }} 
                />}
+
+
+
+          {!!itemSubCategory && !!itemSubCategory.unit && itemSubCategory.unit !=  "null" ?
+          <Badge 
+              textStyle ={{
+                color : '#001475',
+                fontSize : 10
+              }}
+              badgeStyle={{
+                paddingHorizontal : 5,
+                backgroundColor : '#f1f7ed'
+              }} 
+              status='primary' 
+              value={toTitleCase(capacity+ itemSubCategory.unit)} 
+              /> : ''}
+
+
         </View>
           <Text style={style.itemTitle} >
             {toTitleCase(name.substring(0,20))}
           </Text>
-      
         <Text style={style.discount} >{Math.floor((discount/price)*100) +"% OFF"} </Text>
         <View style={{display : 'flex', flexDirection : 'row',flexWrap : 'wrap'}}>
           <Text style={style.price} >{"\u20B9 "+(price-discount)} </Text>
@@ -109,6 +130,8 @@ const style = StyleSheet.create({
     borderRadius : 10
   },
   badge :  {
+    display : 'flex',
+    flexDirection : 'row',
     marginTop : 10,
     alignSelf : 'flex-start'
   }
