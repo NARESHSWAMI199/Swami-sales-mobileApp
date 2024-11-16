@@ -67,7 +67,7 @@ const StoreDetail = (props:any) => {
     <View style={styles.imageParent}>
       <Image style={styles.image} 
         source={{uri : storeImageUrl  +  store.slug + "/"+store.avatar}}
-        resizeMode={'contain'} />
+        resizeMode={'cover'} />
     </View>
     <View style={styles.body}>
     <View style={{
@@ -112,13 +112,12 @@ const StoreDetail = (props:any) => {
 
 
         <View>
-          <Text style={styles.titleHeadings}>
-            Our Latest Products
-          </Text>
-          <TabItems {...props} storeId={store.id} />
-      </View>
+            <Text style={styles.titleHeadings}>
+              Our Latest Products
+            </Text>
+            <TabItems {...props} storeId={store.id} />
+            {/* Need to add pagination here. */ }
 
-        <View>
             <Text style={styles.subtitle}>About us : </Text>
             <ViewMoreText
               numberOfLines={3}
@@ -149,7 +148,6 @@ const styles = StyleSheet.create({
   body : {
     paddingHorizontal : 10,
     paddingTop : 10,
-    opacity : 0.8
   },
   title : {
     fontSize : 16,

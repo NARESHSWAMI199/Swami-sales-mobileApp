@@ -2,9 +2,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
-import { Item } from '../redux';
+import { Item, Store } from '../redux';
 import { itemImageUrl,itemsUrl, storeImageUrl, storeUrl } from '../utils/utils';
 import { toTitleCase } from '../utils';
+
 
 const ItemSubCategoryCard = (props : any) =>  {
 
@@ -16,24 +17,30 @@ const ItemSubCategoryCard = (props : any) =>  {
     const [items, setItems] = useState([]);
 
     useEffect(()=>{
-        axios.post(itemsUrl +"all",{pageSize : 4,subcategoryId : id})
+        axios.post(itemsUrl +"all",{
+            pageSize : 4,
+            subcategoryId : id,
+            orderBy : 'rating'
+        })
         .then(res=>{
             let data = res.data.content;
             setItems(data)
         }).catch(err => {
             console.log(err)
         })
-    },[subcategory])
+    },[])
 
   return (
     <View style={style.main}>
         <View style={style.container}>
             {items.map((item : Item, index)=> {
-            const avtar = itemImageUrl+item.slug+"/"+item.avatar
+            const avtar = itemImageUrl+item.slug+"/"+item.avatars?.split(',')[0]
             return  <View key={index} style={style.subcategory}>
-                        <Avatar key={index} avatarStyle={{borderRadius : 5}} size={40}
-                            source={{uri : avtar}}
-                        />
+                    <Avatar key={index} 
+                        avatarStyle={{borderRadius : 5}} 
+                        size={40}
+                        source={{uri : avtar}}
+                    />
                     </View>
             })}        
         </View>
@@ -58,7 +65,7 @@ const StoreSubCategoryCard = (props : any) =>  {
         id : 0,
         subcategory : ''
     });
-    const [items, setItems] = useState([]);
+    const [stores, setStores] = useState([]);
 
     useEffect(()=>{
         if(subcategory != undefined){
@@ -71,7 +78,7 @@ const StoreSubCategoryCard = (props : any) =>  {
         axios.post(storeUrl +"all",{pageSize : 4,subcategoryId : subcategory.id})
         .then(res=>{
             let data = res.data.content;
-            setItems(data)
+            setStores(data)
         }).catch(err => {
             console.log(err)
         })
@@ -79,13 +86,15 @@ const StoreSubCategoryCard = (props : any) =>  {
 
   return (<View style={style.main}>
             <View style={style.container}>
-                {items.map((item : Item, index)=> {
-                    const avtar = storeImageUrl+item.slug+"/"+item.avatar
+                {stores.map((store : Store, index)=> {
+                    const avtar = storeImageUrl+store.slug+"/"+store.avatar
                     return (
                          <View key={index} style={style.subcategory}>
-                                <Avatar key={index} avatarStyle={{borderRadius : 5}} size={40}
-                                    source={{uri : avtar}}
-                                />
+                            <Avatar key={index} 
+                                avatarStyle={{borderRadius : 5}} 
+                                size={40}
+                                source={{uri : avtar}}
+                            />
                         </View>)
                 })}        
             </View>
@@ -128,7 +137,7 @@ const style = StyleSheet.create({
     },
     subcategoryTitle : {
         marginTop : 5,
-        fontSize : 14,
+        fontSize : 12,
         fontWeight : 'bold',
     }
   })

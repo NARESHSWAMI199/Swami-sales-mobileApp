@@ -303,7 +303,7 @@ const style = StyleSheet.create({
     mostPopularItems : {
         flex : 1,
         padding : 'auto',
-        backgroundColor : 'white',
+        backgroundColor : 'white'
     },
     mostPopularStores : {
         padding : 'auto',

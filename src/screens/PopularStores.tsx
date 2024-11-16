@@ -57,6 +57,7 @@ const style = StyleSheet.create({
         backgroundColor : bodyColor,
         height : '100%',
         flex : 1
+        
     },
     titleHeadings : {
         marginHorizontal : 10,

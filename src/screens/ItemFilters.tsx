@@ -6,6 +6,7 @@ import ItemCard from '../components/ItemCard'
 import { Item } from '../redux'
 import { itemsUrl, themeColor } from '../utils/utils'
 import RecentItems from './RecentItems'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 const ItemFilters = (props : any) => {
 
@@ -15,7 +16,8 @@ const ItemFilters = (props : any) => {
     const [query, setQuery] = useState("") 
     const [showPopular, setShowPuplar] = useState(true) 
     const [searchResult , setSearchResult] = useState("New Products")
-
+    // TODO : change false to true if you want show spinners
+    const [showSpinner,setShowSpinner] = useState(true)
 
     useEffect(()=>{
         setSelectedCategory(props.categoryId)
@@ -41,9 +43,11 @@ const ItemFilters = (props : any) => {
                             setSearchResult("Search Results.")
                         }
                         setShowPuplar(false)
+                        setShowSpinner(false)
                     }else{
                         setShowPuplar(true)
                         setSearchResult("New Products")
+                        setShowSpinner(false)
                     }
                     setItems(item)
               
@@ -104,12 +108,17 @@ const ItemFilters = (props : any) => {
                         showsHorizontalScrollIndicator={false}
                         style={{ flexGrow : 1,height : 130}}
                     >
-                        <RecentItems size={10}/>
+                        <RecentItems {...props} size={10}/>
                     </ScrollView>
                 </View>
             }
 
             <View>
+            <Spinner
+                visible={showSpinner}
+                textContent={'Loading...'}
+                textStyle={{color : 'white'}}
+                />
                 <Text style={style.titleHeadings}>
                     {searchResult}
                 </Text>

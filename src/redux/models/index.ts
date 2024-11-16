@@ -67,7 +67,7 @@ export interface Item {
     price: Float,
     discount: Float,
     description: string,
-    avatar: string,
+    avatars: string,
     rating: Float,
     slug : string
 }

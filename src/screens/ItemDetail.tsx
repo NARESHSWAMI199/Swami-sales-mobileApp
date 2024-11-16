@@ -7,6 +7,7 @@ import {Text } from 'react-native-paper';
 import { Rating, SearchBar } from 'react-native-elements';
 import ViewMoreText from 'react-native-view-more-text';
 import { Icon } from '@rneui/themed';
+import CustomCarousel from '../components/Carousel';
 
 
 
@@ -62,11 +63,21 @@ const ItemDetail = (props:any) => {
   <ScrollView style={{ backgroundColor:'white'}}>
 
     <View style={styles.imageParent}>
-      <Image
+      {/* <Image
          
         style={styles.image} 
         source={{uri : itemImageUrl  +  item.slug + "/"+item.avatar}}
-        resizeMode='contain' />
+        resizeMode='contain' /> */}
+
+      <CustomCarousel images={
+        item.avatars && item.avatars.split(',').map(avtar =>{
+          return ( <Image
+         style={styles.image} 
+         source={{uri : itemImageUrl  +  item.slug + "/"+avtar}}
+         resizeMode='contain' />
+         )
+         })}
+         />
     </View>
 
     <View style={styles.body}>
@@ -157,7 +168,7 @@ const styles = StyleSheet.create({
   },
   image : {
     width : '100%',
-    height : 320
+    height : 305
   },
   body : {
     paddingHorizontal : 15,

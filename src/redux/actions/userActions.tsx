@@ -18,12 +18,9 @@ export interface UserErrorAction  {
 
 export type UserAction = UpdataLocationAction | UserErrorAction 
 
-export const onUpdateLocation = (location : LocationGeocodedAddress)=> {
-
-    return async(dispatch : Dispatch<UserAction>) => {
-
+export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
+    return (dispatch : any) => {
         try {
-            // save our location in storage
             dispatch({
                 type: 'ON_UPDATE_LOCATION',
                 payload: location

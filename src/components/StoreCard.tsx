@@ -17,22 +17,10 @@ const StoreCard = (props:any) => {
         slug,
         address,
         rating,
-        subcategory
+        storeCategory,
+        storeSubCategory
     } = props.store
     const avtar = storeImageUrl+slug+"/"+avatar
-
-    const [storeSubcategory,setStoreSubcategory] = useState<Subcategory>()
-
-    useEffect(()=>{
-      axios.get(storeUrl +'subcategory/'+(subcategory))
-      .then(res => {
-        setStoreSubcategory(res.data)
-      }).catch(err => console.log(err))
-    },[subcategory])
-
-    
-
-
   return <View style={style.card}>
         < Card.Cover 
           style={style.cardCover}
@@ -50,7 +38,7 @@ const StoreCard = (props:any) => {
                   backgroundColor : '#f1f7ed'
                 }} 
                 status='primary' 
-                value={storeSubcategory?.subcategory} 
+                value={storeSubCategory?.subcategory} 
                 />
           </View>
           <View>
@@ -84,7 +72,7 @@ const StoreCard = (props:any) => {
       flexDirection : 'column',
     },
     itemTitle : {
-        fontSize : 14,
+        fontSize : 12,
         fontWeight : 'bold',
         alignSelf : 'center'
     },

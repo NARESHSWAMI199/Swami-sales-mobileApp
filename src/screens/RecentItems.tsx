@@ -80,13 +80,13 @@ const RecentItems = (props : any) => {
   return (
         <View style={style.container}>
         {items.map((item:Item , i) =>{
-                const avtar = itemImageUrl+item.slug+"/"+item.avatar
+                const avtar = itemImageUrl+item.slug+"/"+item.avatars?.split(',')[0]
                 return(
                 <TouchableOpacity style={style.recentItems} key={i} onPress={(e) => handleNavigation(item)}> 
                     < Card.Cover 
                         style={style.cardCover}
                         resizeMode='contain'
-                        source = {{ uri: !!item.avatar ? avtar : props.url}} 
+                        source = {{ uri: !!item.avatars ? avtar : props.url}} 
                     />
                     <Text variant="titleLarge" style={style.itemTitle} >
                         { toTitleCase(item.name.substring(0,10))}

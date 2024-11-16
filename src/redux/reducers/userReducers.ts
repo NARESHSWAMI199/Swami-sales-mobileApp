@@ -10,7 +10,6 @@ const initialState : UserState = {
 }
 
 const userReducer = (state: UserState = initialState, action  : UserAction) => {
-
     switch(action.type){
         case 'ON_UPDATE_LOCATION' :
             return {

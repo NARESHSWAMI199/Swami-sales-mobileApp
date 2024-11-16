@@ -16,7 +16,8 @@ const Items = (props : any) => {
             display : 'flex',
             paddingHorizontal :  props.selfPadding != undefined && !props.selfPadding ? 0 : 5,
             flex : 1,
-            backgroundColor : bodyColor
+            backgroundColor : bodyColor,
+            alignSelf : 'center'
         },
         outerView : {
             display : 'flex',
@@ -27,7 +28,7 @@ const Items = (props : any) => {
             backgroundColor : 'white'
         },
         innerView : {
-            width : '32%',
+            width : '32.10%',
             margin : 2
         },
         category : {
@@ -93,7 +94,7 @@ const Items = (props : any) => {
     };
   
       useEffect(() => {
-        axios.post(itemsUrl+"all",{...data,searchKey : query})
+        axios.post(itemsUrl+"all",{...data,searchKey : query,orderBy : 'rating'})
         .then(res => {
                 let item = res.data.content;
                 setItems(item)

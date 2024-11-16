@@ -40,24 +40,8 @@ const style = StyleSheet.create({
     display : 'flex',
     flexDirection : 'column',
     alignContent : 'center',
-    paddingHorizontal : 1,
+    // paddingHorizontal : 1,
     paddingBottom : 5
-  },
-  price : {
-    fontSize : 12,
-    fontWeight : 'bold',
-    color : 'black',
-  },
-  actualPrice : {
-    fontSize : 12,
-    fontWeight : 'bold',
-    color : '#939393',
-    textDecorationLine: 'line-through' 
-  },
-  discount : {
-    fontSize : 12,
-    color : 'green',
-    flexWrap : 'wrap'
   },
   cardCover : {
       width : '100%',
@@ -67,7 +51,7 @@ const style = StyleSheet.create({
       flex : 1
   },
   itemTitle : {
-      fontSize : 14,
+      fontSize : 12,
       fontWeight : 'bold',
       marginTop : 5,
       textAlign :'center'
@@ -77,10 +61,7 @@ const style = StyleSheet.create({
     flex  :1,
     borderRadius : 10
   },
-  badge :  {
-    marginTop : 10,
-    alignSelf : 'flex-start'
-  }
+
 
 
 })

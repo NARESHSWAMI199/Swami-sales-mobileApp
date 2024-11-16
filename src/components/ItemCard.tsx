@@ -1,6 +1,6 @@
 
 import { Image, StyleSheet, View } from 'react-native';
-import { Badge } from 'react-native-elements';
+import { Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
 import { itemImageUrl } from '../utils/utils';
@@ -9,15 +9,15 @@ const ItemCard = (props:any) => {
     const {
         price,
         name,
-        avatar,
+        avatars,
         slug,
         discount,
-        label,
+        rating,
         itemSubCategory,
         itemCategory,
         capacity,
     } = props.item
-    const avtar = itemImageUrl+slug+"/"+avatar
+    const avtar = itemImageUrl+slug+"/"+avatars?.split(',')[0]
 
 return(
   <View style={style.card}>
@@ -25,7 +25,7 @@ return(
       <Image
         style={style.cardCover}
         resizeMode  = 'contain'
-        source = {{ uri: !!avatar ? avtar : props.url}} />
+        source = {{ uri: !!avatars ? avtar : props.url}} />
     </View>
         <View style={style.badge}>
       
@@ -76,9 +76,17 @@ return(
 
         </View>
           <Text style={style.itemTitle} >
-            {toTitleCase(name.substring(0,20))}
+            {toTitleCase(name.substring(0,20)).trim()}
           </Text>
         <Text style={style.discount} >{Math.floor((discount/price)*100) +"% OFF"} </Text>
+        <View style={{
+            display : 'flex',
+            justifyContent : 'flex-start',
+            alignItems : 'flex-start',
+            marginVertical : 5
+          }}>
+            <Rating type='custom' imageSize={15} readonly startingValue={rating} />
+          </View>
         <View style={{display : 'flex', flexDirection : 'row',flexWrap : 'wrap'}}>
           <Text style={style.price} >{"\u20B9 "+(price-discount)} </Text>
           <Text style={style.actualPrice} >{"\u20B9 "+price} </Text>
@@ -94,8 +102,18 @@ const style = StyleSheet.create({
     flexDirection : 'column',
     width:'100%',
     alignContent : 'center',
-    paddingHorizontal : 1,
-    paddingBottom : 5
+    paddingHorizontal : 0.2,
+    paddingBottom : 5,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 0.1,
+
   },
   price : {
     fontSize : 12,
@@ -120,7 +138,7 @@ const style = StyleSheet.create({
       flex : 1
   },
   itemTitle : {
-      fontSize : 14,
+      fontSize : 12,
       fontWeight : 'bold',
       marginTop : 5
   },
@@ -133,7 +151,12 @@ const style = StyleSheet.create({
     display : 'flex',
     flexDirection : 'row',
     marginTop : 10,
-    alignSelf : 'flex-start'
+    alignSelf : 'flex-start',
+  },
+  rating : {
+    width : 10,
+    padding : 100
+    // height : 1
   }
 
 
