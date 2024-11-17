@@ -213,7 +213,7 @@ useEffect(() => {
                         <Text style={style.titleHeadings}>
                             Most Populer Items
                         </Text>
-                        <Items showCategory={false}  
+                        <TabItems showCategory={false}  
                             {...props} 
                             size = {51}
                             selfPadding ={false}
@@ -229,7 +229,7 @@ useEffect(() => {
                         <Text style={style.titleHeadings} >
                             Most Populer Stores
                         </Text>
-                        <Stores 
+                        <TabItems 
                             {...props} 
                             size = {100} 
                             showCategory={false}

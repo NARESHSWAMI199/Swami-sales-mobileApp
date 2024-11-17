@@ -15,21 +15,20 @@ const Items = (props : any) => {
         body : {
             display : 'flex',
             paddingHorizontal :  props.selfPadding != undefined && !props.selfPadding ? 0 : 5,
-            flex : 1,
             backgroundColor : bodyColor,
-            alignSelf : 'center'
+            flexDirection : 'column',
         },
         outerView : {
             display : 'flex',
-            flex : 1,
             flexDirection : 'row',
-            flexWrap: 'wrap',
-            width:'98%',
-            backgroundColor : 'white'
+            backgroundColor : bodyColor,
+            flexWrap : 'wrap',
+            justifyContent : 'center',
+            alignItems : 'flex-start'
         },
         innerView : {
-            width : '32.10%',
-            margin : 2
+            width : '32.33%',
+            paddingHorizontal : 1
         },
         category : {
             display : 'flex',
@@ -59,7 +58,7 @@ const Items = (props : any) => {
     const [showCategory, setShowCategory] = useState(true)
     const {route, navigation} = props;
     // TODO : change false to true if you want show spinners
-    const [showSpinner,setShowSpinner] = useState(false)
+    const [showSpinner,setShowSpinner] = useState(true)
     const [data,setData] = useState({
         searchKey : query,
         categoryId : props.categoryId,
@@ -155,7 +154,10 @@ const Items = (props : any) => {
             />
         </View>
  
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={style.category}>
+        <ScrollView 
+            showsHorizontalScrollIndicator={false} 
+            horizontal={true} 
+            style={style.category}>
 
             {categories.map((category:Category, i)=> (
                 <TouchableOpacity key={i}  style={style.categoryParent} 
@@ -177,7 +179,9 @@ const Items = (props : any) => {
         </ScrollView>
         </>
         }
-        <View style={style.outerView}>
+        <View 
+        style={style.outerView}
+        >
         <Spinner
           visible={showSpinner}
           textContent={'Loading...'}
