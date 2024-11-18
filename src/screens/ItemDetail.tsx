@@ -4,10 +4,11 @@ import { getPercentage, itemImageUrl, themeColor } from '../utils/utils'
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import {Text } from 'react-native-paper';
-import { Rating, SearchBar } from 'react-native-elements';
+import { Avatar, Rating, SearchBar } from 'react-native-elements';
 import ViewMoreText from 'react-native-view-more-text';
 import { Icon } from '@rneui/themed';
 import CustomCarousel from '../components/Carousel';
+import CommentView from '../components/CommentView';
 
 
 
@@ -153,6 +154,13 @@ const ItemDetail = (props:any) => {
               </Text>
           </Pressable>
         </View>
+
+
+
+
+      {/* Comments Section */}
+      <CommentView  itemId = { item.id} />
+
       </View>
   </ScrollView>
   </>
@@ -232,7 +240,6 @@ const styles = StyleSheet.create({
     fontSize : 14 , 
     fontWeight : '500',
   }
-
 })
 
 export default ItemDetail

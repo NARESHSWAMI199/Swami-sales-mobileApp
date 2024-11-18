@@ -29,7 +29,7 @@ const ItemSubCategories = (props : any)  =>  {
         {subcategories.map((subcategory : any , index)=>{
         return <TouchableOpacity key={index} style={style.inner} onPress={()=>handleNavigation(subcategory)} > 
                 {subcategory.id != 0 ?
-                    <ItemSubCategoryCard key={index} subcategory = {subcategory} />  : ''
+                    <ItemSubCategoryCard subcategory = {subcategory} />  : ''
                 }
             </TouchableOpacity>
         })}

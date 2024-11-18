@@ -28,7 +28,7 @@ const ItemSubCategoryCard = (props : any) =>  {
         }).catch(err => {
             console.log(err)
         })
-    },[])
+    },[props.subcategory])
 
   return (
     <View style={style.main}>
