@@ -1,10 +1,12 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Modal, StyleSheet, Text, View } from "react-native"
-import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
-import { Avatar } from "react-native-elements"
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native"
+import { Avatar, Button } from "react-native-elements"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import CommentRepliesView from "./CommentReplies"
+import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
+import { Icon } from "@rneui/themed"
+
 
 
 
@@ -30,21 +32,20 @@ const CommentView = (props:any) =>{
         setShowRepliesModal(true)
     }
 
-    const setModalVisible = () =>{
-
+    const closeModel = () =>{
+        setShowRepliesModal(false)
     }
 
 
     return (
-        <>
-        <View style={style.body}>
+        <><View style={style.body}>
         {comments.map((comment : any,index : number) => {
             return (
-                <View style={{
+                <View key={index}  style={{
                     display : 'flex',
                     flexDirection : 'column',
                 }}>
-                <View key={index} style={style.messageBody}>
+                <View style={style.messageBody}>
                     <View>
                         <Avatar size={40}  
                         rounded
@@ -76,15 +77,13 @@ const CommentView = (props:any) =>{
                             height: '50%',
                             marginTop: 'auto',
                         }}>
-                        <View style={style.footer}>
-                            <TouchableOpacity
-                                style={style.close}
-                                onPress={() => setShowRepliesModal(false)}>
-                                <Text>Close</Text>
-                            </TouchableOpacity>                            
-                            <View style={{
-                                paddingTop : 10
-                            }}>
+                        <View style={style.footer}>                  
+                            <View>
+                                <Pressable style={style.goBack} onPress={closeModel}>
+                                    <Icon name="close" type="material" size={20} color="black" />
+                                </Pressable>   
+                            </View>
+                            <View>
                                 <CommentRepliesView parentId={parentId} itemId={1} />
                             </View>
                         </View>
@@ -101,7 +100,7 @@ const CommentView = (props:any) =>{
 
 const style = StyleSheet.create({
     body : {
-        marginVertical : 5
+        marginBottom : 20
     },
 
     messageBody : {
@@ -162,7 +161,7 @@ const style = StyleSheet.create({
         fontSize: 18,
         padding: 26,
       },
-      close : {
+      goBack : {
         display : 'flex',
         justifyContent : 'flex-end',
         alignItems : 'flex-end',
