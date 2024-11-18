@@ -5,7 +5,7 @@ import { Avatar, Button } from "react-native-elements"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import CommentRepliesView from "./CommentReplies"
 import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
-import { Icon } from "@rneui/themed"
+import { Icon, Input } from "@rneui/themed"
 
 
 
@@ -13,12 +13,12 @@ import { Icon } from "@rneui/themed"
 const CommentView = (props:any) =>{
 
     const [comments,setComments] = useState<any>([])
-    const [parentId ,setParentId] = useState<number>(0)
+    const [parent ,setParent] = useState<any>({})
     const [showRepliesModel,setShowRepliesModal] = useState(false)
     
     useEffect(()=>{
         // TODO : Currently itemId is static need to dynamic
-        axios.post(commentUrl+"all",{itemId : 1})
+        axios.post(commentUrl+"all",{itemId : 74})
         .then(res=>{
             setComments(res.data)
         })
@@ -28,7 +28,8 @@ const CommentView = (props:any) =>{
     },[])
 
 
-    const showReplies = () =>{
+    const showReplies = (parent:any) =>{
+        setParent(parent)
         setShowRepliesModal(true)
     }
 
@@ -37,13 +38,12 @@ const CommentView = (props:any) =>{
     }
 
 
-    return (
-        <><View style={style.body}>
+    return (<View style={style.body}>
         {comments.map((comment : any,index : number) => {
             return (
                 <View key={index}  style={{
                     display : 'flex',
-                    flexDirection : 'column',
+                    flexDirection : 'column'
                 }}>
                 <View style={style.messageBody}>
                     <View>
@@ -57,7 +57,7 @@ const CommentView = (props:any) =>{
                         <Text style={style.message}>
                             {comment.message}
                         </Text>
-                        <TouchableOpacity onPress={() =>showReplies()}>
+                        <TouchableOpacity onPress={() =>showReplies(comment)}>
                             <Text style={style.totalReplies} >
                                 replies {comment.repliesCount}
                             </Text>
@@ -84,7 +84,7 @@ const CommentView = (props:any) =>{
                                 </Pressable>   
                             </View>
                             <View>
-                                <CommentRepliesView parentId={parentId} itemId={1} />
+                                <CommentRepliesView parent={parent} itemId={74} />
                             </View>
                         </View>
                     </View>
@@ -93,33 +93,45 @@ const CommentView = (props:any) =>{
             )
         } )}
     </View>
-        </>
     )
 }
 
 
 const style = StyleSheet.create({
     body : {
-        marginBottom : 20
+        marginBottom : 20,
+        backgroundColor : 'green'
     },
 
     messageBody : {
         display : 'flex',
         flexDirection : 'row',
-        flexWrap : 'wrap',
         textAlign : 'center',
-        height : 40,
+        minHeight : 80,
+        alignItems : 'center',
+        shadowColor: "#000",
+        paddingHorizontal : 10,
+        width : '100%',
+        shadowOffset: {
+            width: 0,
+            height: 3,
+        },
+        shadowOpacity: 0.27,
+        shadowRadius: 4.65,
+        elevation: 1,
+        backgroundColor : bodyColor,
     },
     messageView :{
         alignSelf : 'center',
-        paddingLeft : 5
+        paddingLeft : 5,
     },
     message : {
         fontSize : 14,
         fontWeight : 'bold',
+        paddingRight : 40
     },
     totalReplies : {
-        fontSize : 10,
+        fontSize : 12,
         color : 'blue'
     },
     footer: {
@@ -129,12 +141,10 @@ const style = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 10,
-        paddingHorizontal : 10
       },
       textInput: {
         alignSelf: 'stretch',
         color: 'black',
-        padding: 20,
         backgroundColor: '#ddd',
         borderTopWidth: 2,
         borderTopColor: '#ddd',
@@ -166,8 +176,7 @@ const style = StyleSheet.create({
         justifyContent : 'flex-end',
         alignItems : 'flex-end',
         paddingHorizontal : 10,
-        paddingVertical : 10,
-        // backgroundColor : 'red'
+        paddingVertical : 10
       }
 })
 
