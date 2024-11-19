@@ -50,42 +50,46 @@ const CommentRepliesView = (props:any) =>{
             <View style={{...style.replyMain,backgroundColor : '#f5fafa'}}>
                 <View  style={{...style.replyBody}}>
                     <View>
-                        <Avatar size={40}  
+                        <Avatar size={25}  
                         rounded
                         source={{
                             uri : userImageUrl+parentComment?.user?.slug+"/"+parentComment?.user?.avtar
                         }} />
                     </View>
                     <View style={style.messageView}>
-                        <Text>
-                            {"@ "+parentComment?.user?.username}
-                        </Text>
-                        <Text style={style.message}>
-                            {parentComment.message}
-                        </Text>
+                        <View>
+                            <Text style={{
+                                fontSize : 10,
+                            }}>
+                                {"@ "+parentComment?.user?.username?.toLowerCase()}
+                            </Text>
+                            <Text style={style.message}>
+                                {parentComment.message}
+                            </Text>
+                            
+                            <View style={style.replyActions}>
+                                    <Icon 
+                                        style={style.iconStyle}
+                                        name='thumbs-up'
+                                        type='font-awesome'
+                                        size={20}
+                                    />
+                                    <Icon
+                                        style={style.iconStyle}
+                                        name='thumbs-down'
+                                        type='font-awesome'
+                                        size={20}
+                                    />
+                                    <Icon
+                                        style={style.iconStyle}
+                                        name='reply'
+                                        type='font-awesome'
+                                        size={20}
+                                    />
+                            </View>
+                        </View>
                     </View>
                 </View>
-
-                <View style={style.replyActions}>
-                            <Icon 
-                                style={style.iconStyle}
-                                name='thumbs-up'
-                                type='font-awesome'
-                                size={20}
-                            />
-                            <Icon
-                                style={style.iconStyle}
-                                name='thumbs-down'
-                                type='font-awesome'
-                                size={20}
-                            />
-                            <Icon
-                                style={style.iconStyle}
-                                name='reply'
-                                type='font-awesome'
-                                size={20}
-                            />
-                        </View>
                 </View>
 
         {/* All Replies */}
@@ -94,42 +98,46 @@ const CommentRepliesView = (props:any) =>{
             <View key={index} style={style.replyMain}>
                 <View style={{...style.replyBody,marginLeft : 30}}>
                     <View>
-                        <Avatar size={30}  
+                        <Avatar size={25}  
                         rounded
                         source={{
                             uri : userImageUrl+reply.user.slug+"/"+reply.user.avtar
                         }} />
                     </View>
                     <View style={style.messageView}>
+                        <Text style={{
+                                fontSize : 10,
+                            }}>
+                                {"@"+reply?.user?.username?.toLowerCase()}
+                        </Text>
                         <Text style={style.message}>
                             {reply.message}
                         </Text>
+
+                        <View style={{...style.replyActions}}>
+                            <Icon 
+                                style={style.iconStyle}
+                                name='thumbs-up'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                            <Icon
+                                style={style.iconStyle}
+                                name='thumbs-down'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                            <Icon
+                                style={style.iconStyle}
+                                name='reply'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                        </View>
                     </View>
-                </View>
-
-
-                <View style={{...style.replyActions,width : '80%'}}>
-                    <Icon 
-                        style={style.iconStyle}
-                        name='thumbs-up'
-                        type='font-awesome'
-                        color={'#565757'}
-                        size={20}
-                    />
-                    <Icon
-                        style={style.iconStyle}
-                        name='thumbs-down'
-                        type='font-awesome'
-                        color={'#565757'}
-                        size={20}
-                    />
-                    <Icon
-                        style={style.iconStyle}
-                        name='reply'
-                        type='font-awesome'
-                        color={'#565757'}
-                        size={20}
-                    />
                 </View>
             </View>
             )
@@ -151,13 +159,12 @@ const style = StyleSheet.create({
         textAlign : 'left',
         justifyContent : 'center',
         backgroundColor : bodyColor,
-        minHeight : 80,
-        marginVertical : 5
+        minHeight : 70,
+        paddingVertical : 20
     },
     replyBody : {
         display : 'flex',
         flexDirection : 'row',
-        alignItems : 'center',
         textAlign : 'left'
     },
     messageView :{
@@ -165,7 +172,7 @@ const style = StyleSheet.create({
         paddingLeft : 5
     },
     message : {
-        fontSize : 16,
+        fontSize : 14,
         fontWeight : 'bold',
     },
     totalReplies : {
@@ -175,15 +182,16 @@ const style = StyleSheet.create({
     replyActions: {
         display :'flex',
         flexDirection : 'row',
-        justifyContent : 'center',
         flex :1,
         width : '70%',
     } , iconStyle : {
         display : 'flex',
         justifyContent:'center',
         alignItems : 'center',
-        height : 30,
-        width : 50,
+        marginTop : 6,
+        marginRight : 30,
+        paddingLeft : 5
+
     }
 })
 

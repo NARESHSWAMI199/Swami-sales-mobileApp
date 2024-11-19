@@ -47,13 +47,19 @@ const CommentView = (props:any) =>{
                 }}>
                 <View style={style.messageBody}>
                     <View>
-                        <Avatar size={40}  
+                        <Avatar size={20}  
                         rounded
                         source={{
                             uri : userImageUrl+comment.user.slug+"/"+comment.user.avtar
                         }} />
                     </View>
                     <View style={style.messageView}>
+                        <View>
+                        <Text style={{
+                                fontSize : 10,
+                            }}>
+                                {"@"+comment?.user?.username?.toLowerCase()}
+                        </Text>
                         <Text style={style.message}>
                             {comment.message}
                         </Text>
@@ -62,6 +68,35 @@ const CommentView = (props:any) =>{
                                 replies {comment.repliesCount}
                             </Text>
                         </TouchableOpacity>
+
+
+
+                        <View style={{...style.replyActions}}>
+                            <Icon 
+                                style={style.iconStyle}
+                                name='thumbs-up'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                            <Icon
+                                style={style.iconStyle}
+                                name='thumbs-down'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                            <Icon
+                                style={style.iconStyle}
+                                name='reply'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                        </View>
+
+                        </View>
+
                     </View>
                 </View>
                 <Modal
@@ -112,7 +147,8 @@ const style = StyleSheet.create({
         flexDirection : 'row',
         textAlign : 'center',
         minHeight : 80,
-        alignItems : 'center',
+        // alignItems : 'center',
+        paddingVertical : 20,
         shadowColor: "#000",
         paddingHorizontal : 10,
         width : '100%',
@@ -158,7 +194,21 @@ const style = StyleSheet.create({
         alignItems : 'center',
         paddingHorizontal : 10,
         paddingVertical : 10
-      }
+      },
+      replyActions: {
+        display :'flex',
+        flexDirection : 'row',
+        flex :1,
+        width : '70%',
+    } , iconStyle : {
+        display : 'flex',
+        justifyContent:'center',
+        alignItems : 'center',
+        marginTop : 6,
+        marginRight : 30,
+        paddingLeft : 5
+
+    }
 })
 
 

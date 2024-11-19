@@ -157,10 +157,12 @@ const ItemDetail = (props:any) => {
       </View>
         {/* Comments Section */}
         <View>
-        <Text style={{...styles.subtitle,paddingHorizontal : 15}}>Comments : </Text>
-        <Input 
-         inputContainerStyle={{ paddingHorizontal: 0 }}
-        />
+        <Text style={{...styles.subtitle,paddingHorizontal : 10}}>Comments : </Text>
+          <Input 
+            placeholder='Write comment here..'
+            style={styles.commentInput}
+            errorStyle= {{display : 'none'}}
+          />
           <CommentView  itemId = { item.id} />
         </View>
 
@@ -241,6 +243,9 @@ const styles = StyleSheet.create({
   description : {
     fontSize : 14 , 
     fontWeight : '500',
+  },
+  commentInput : {
+    fontSize:14
   }
 })
 
