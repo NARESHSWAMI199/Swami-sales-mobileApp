@@ -23,7 +23,7 @@ function ItemSubcategories(props:any) {
             let data = res.data;
             setSubcategories(data)
         }).catch(err => {
-            console.log("ItemSubcategories.tsx : " ,err)
+            console.log("ItemSubcategories.tsx : " ,err.message)
         })
     },[categoryId])
     

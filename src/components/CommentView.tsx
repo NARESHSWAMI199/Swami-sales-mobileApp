@@ -1,11 +1,11 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { Avatar, Button } from "react-native-elements"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import CommentRepliesView from "./CommentReplies"
 import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
-import { Icon, Input } from "@rneui/themed"
+import { Icon} from "@rneui/themed"
 
 
 
@@ -18,7 +18,7 @@ const CommentView = (props:any) =>{
     
     useEffect(()=>{
         // TODO : Currently itemId is static need to dynamic
-        axios.post(commentUrl+"all",{itemId : 74})
+        axios.post(commentUrl+"all",{itemId : 1})
         .then(res=>{
             setComments(res.data)
         })
@@ -71,23 +71,27 @@ const CommentView = (props:any) =>{
                     onRequestClose={() => {
                         setShowRepliesModal(false)
                     }}>
-                    
-                    <View
-                        style={{
+                    <View style={{
                             height: '50%',
                             marginTop: 'auto',
                         }}>
+         
                         <View style={style.footer}>                  
+                        <ScrollView>
                             <View>
                                 <Pressable style={style.goBack} onPress={closeModel}>
-                                    <Icon name="close" type="material" size={20} color="black" />
+                                    <Icon name="arrow-back" type="material" size={24} color="black" style={{fontWeight : 'bold'}} />
+                                    <Text style={{...style.subtitle,marginLeft : 10}}>
+                                        Replies 
+                                    </Text>
                                 </Pressable>   
                             </View>
                             <View>
-                                <CommentRepliesView parent={parent} itemId={74} />
+                                <CommentRepliesView parent={parent} itemId={comment.itemId} />
                             </View>
+                            </ScrollView>
                         </View>
-                    </View>
+                </View>
                 </Modal>
             </View>
             )
@@ -142,39 +146,16 @@ const style = StyleSheet.create({
         right: 0,
         zIndex: 10,
       },
-      textInput: {
-        alignSelf: 'stretch',
-        color: 'black',
-        backgroundColor: '#ddd',
-        borderTopWidth: 2,
-        borderTopColor: '#ddd',
-      },
-      addButton: {
-        position: 'absolute',
-        zIndex: 11,
-        right: 20,
-        bottom: 90,
-        backgroundColor: '#98B3B7',
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        alignItems: 'center',
-        justifyContent: 'center',
-        elevation: 8,
-      },
-      addButtonText: {
-        color: '#fff',
-        fontSize: 18,
-      },
-      headerText: {
-        color: 'black',
-        fontSize: 18,
-        padding: 26,
+      subtitle : {
+        marginVertical : 5,
+        fontSize : 16,
+        fontWeight : '700'
       },
       goBack : {
         display : 'flex',
-        justifyContent : 'flex-end',
-        alignItems : 'flex-end',
+        flexDirection : 'row',
+        justifyContent : 'flex-start',
+        alignItems : 'center',
         paddingHorizontal : 10,
         paddingVertical : 10
       }
