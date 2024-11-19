@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
 import { Avatar } from "react-native-elements"
-import { TouchableOpacity } from "react-native-gesture-handler"
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler"
 import { Icon } from "@rneui/themed"
 
 
@@ -42,9 +42,7 @@ const CommentRepliesView = (props:any) =>{
 
 
 
-    return (
-        <>
-        <View style={style.body}>
+    return (<View style={style.body}>
 
             {/* Parent Comment */}
             <View style={{...style.replyMain,backgroundColor : '#f5fafa'}}>
@@ -57,7 +55,7 @@ const CommentRepliesView = (props:any) =>{
                         }} />
                     </View>
                     <View style={style.messageView}>
-                        <View>
+                        {/* <View> */}
                             <Text style={{
                                 fontSize : 10,
                             }}>
@@ -87,12 +85,13 @@ const CommentRepliesView = (props:any) =>{
                                         size={20}
                                     />
                             </View>
-                        </View>
+                        {/* </View> */}
                     </View>
                 </View>
-                </View>
+            </View>
 
         {/* All Replies */}
+        <ScrollView>
         {replies.map((reply : any,index : number) => {
             return (
             <View key={index} style={style.replyMain}>
@@ -142,8 +141,8 @@ const CommentRepliesView = (props:any) =>{
             </View>
             )
         } )}        
+        </ScrollView>
         </View>
-        </>
     )
 }
 
@@ -151,7 +150,6 @@ const CommentRepliesView = (props:any) =>{
 const style = StyleSheet.create({
     body : {
         paddingHorizontal : 10
-
     },
     replyMain : {
         display : 'flex',
@@ -165,7 +163,7 @@ const style = StyleSheet.create({
     replyBody : {
         display : 'flex',
         flexDirection : 'row',
-        textAlign : 'left'
+        textAlign : 'left',
     },
     messageView :{
         alignSelf : 'center',
@@ -182,7 +180,6 @@ const style = StyleSheet.create({
     replyActions: {
         display :'flex',
         flexDirection : 'row',
-        flex :1,
         width : '70%',
     } , iconStyle : {
         display : 'flex',

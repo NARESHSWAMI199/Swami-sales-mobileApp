@@ -279,7 +279,6 @@ const style = StyleSheet.create({
         flex : 1,
         margin : 0,
         borderRadius : 10, 
-        marginBottom : 10,
         backgroundColor : themeColor,
         paddingHorizontal : 5
     },
