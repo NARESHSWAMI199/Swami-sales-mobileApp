@@ -92,7 +92,8 @@ const style = StyleSheet.create({
         flexDirection : 'row',
         flexWrap: 'wrap',
         width:'98%',
-        backgroundColor : 'white'
+        backgroundColor : bodyColor,
+        alignSelf : 'center'
     },
     innerView : {
         width : '32%',

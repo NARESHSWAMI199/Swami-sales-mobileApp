@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
-import { bodyColor, commentUrl, userImageUrl } from "../utils/utils"
+import { bodyColor, commentUrl, defaultAvtar, userImageUrl } from "../utils/utils"
 import { Avatar } from "react-native-elements"
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler"
 import { Icon } from "@rneui/themed"
@@ -27,7 +27,7 @@ const CommentRepliesView = (props:any) =>{
         .catch(err => {
             console.log("Comment detail view  : "+err.message)
         })
-    },[parent])
+    },[])
 
     
     useEffect(()=>{
@@ -38,7 +38,7 @@ const CommentRepliesView = (props:any) =>{
         .catch(err => {
             console.log("Comment view  : "+err.message)
         })
-    },[itemId,parent.id])
+    },[props.refresh])
 
 
 
@@ -51,7 +51,7 @@ const CommentRepliesView = (props:any) =>{
                         <Avatar size={25}  
                         rounded
                         source={{
-                            uri : userImageUrl+parentComment?.user?.slug+"/"+parentComment?.user?.avtar
+                            uri : !!parentComment?.user?.avtar ? userImageUrl+parentComment?.user?.slug+"/"+parentComment?.user?.avtar : defaultAvtar
                         }} />
                     </View>
                     <View style={style.messageView}>
@@ -91,7 +91,7 @@ const CommentRepliesView = (props:any) =>{
             </View>
 
         {/* All Replies */}
-        <ScrollView>
+        <ScrollView style={{marginBottom : 100}}>
         {replies.map((reply : any,index : number) => {
             return (
             <View key={index} style={style.replyMain}>
@@ -100,7 +100,7 @@ const CommentRepliesView = (props:any) =>{
                         <Avatar size={25}  
                         rounded
                         source={{
-                            uri : userImageUrl+reply.user.slug+"/"+reply.user.avtar
+                            uri : !!reply?.user?.avtar ?   userImageUrl+reply.user.slug+"/"+reply.user.avtar : defaultAvtar
                         }} />
                     </View>
                     <View style={style.messageView}>
@@ -114,13 +114,18 @@ const CommentRepliesView = (props:any) =>{
                         </Text>
 
                         <View style={{...style.replyActions}}>
-                            <Icon 
-                                style={style.iconStyle}
-                                name='thumbs-up'
-                                type='font-awesome'
-                                color={'#565757'}
-                                size={20}
-                            />
+                        <View style={style.likesBody}>
+                                <Icon 
+                                    style={{...style.iconStyle,marginRight : 5}}
+                                    name='thumbs-up'
+                                    type='font-awesome'
+                                    color={'#565757'}
+                                    size={20}
+                                />
+                                <Text style={{fontSize : 14 , fontWeight : 'bold',color : 'gray'}}>
+                                    {reply.likes}
+                                </Text>
+                            </View>
                             <Icon
                                 style={style.iconStyle}
                                 name='thumbs-down'
@@ -149,7 +154,8 @@ const CommentRepliesView = (props:any) =>{
 
 const style = StyleSheet.create({
     body : {
-        paddingHorizontal : 10
+        paddingHorizontal : 10,
+        bottomPadding : 100
     },
     replyMain : {
         display : 'flex',
@@ -158,7 +164,7 @@ const style = StyleSheet.create({
         justifyContent : 'center',
         backgroundColor : bodyColor,
         minHeight : 70,
-        paddingVertical : 20
+        paddingVertical : 10
     },
     replyBody : {
         display : 'flex',
@@ -181,15 +187,21 @@ const style = StyleSheet.create({
         display :'flex',
         flexDirection : 'row',
         width : '70%',
+        marginTop : 5
     } , iconStyle : {
         display : 'flex',
         justifyContent:'center',
         alignItems : 'center',
-        marginTop : 6,
         marginRight : 30,
         paddingLeft : 5
-
-    }
+    },
+    likesBody : {
+        display : 'flex',
+        flexDirection : 'row',
+        justifyContent : 'center',
+        alignItems : 'center',
+        marginRight : 25,
+      }
 })
 
 
