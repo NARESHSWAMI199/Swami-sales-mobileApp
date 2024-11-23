@@ -4,9 +4,6 @@ import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 
 import { connect, useDispatch } from 'react-redux'
 import { ApplicationState, onUpdateLocation } from '../redux'
-import { useFocusEffect } from '@react-navigation/native'
-import { userReducer } from '../redux/reducers/userReducers'
-import { add, set } from 'react-native-reanimated'
 
 
 const screenWidth = Dimensions.get('screen').width
@@ -17,30 +14,29 @@ const _LandingScreen = (props : any) => {
     const [address, setAddress] = useState<Location.LocationGeocodedAddress>()
 
     const [displayAddress, setDisplayAddress] = useState("Waiting for current location.")
-
+    const [showPermissionButton, setShowPermissionButton] = useState(false)
+    const [ask ,setAsk] = useState(true)
     const dispatch = useDispatch();
 
-
-    useFocusEffect (()=>{
+    useEffect (()=>{
         (async () =>{
             try {
-            let {status} = await Location.requestForegroundPermissionsAsync()
+            var {status} =  await Location.requestForegroundPermissionsAsync()
             console.log("the status : " + status)
             if( status !== 'granted'){
                 setErrorMsg('Permission to access location is not granted.')
                 Alert.alert(
                     "Insufficient permissions!",
-                    "Sorry, we need location permissions to make this work!",
+                    "Sorry, we need location permissions to make this work! Make sure location is enable",
                     [{ text: "Okay" }]
                 );
-                
-                props.navigation.navigate('tab')
+                var {status} =  await Location.requestForegroundPermissionsAsync()
             }
 
             let location: any = await Location.getLastKnownPositionAsync()
             //if(location == null) location = await Location.getCurrentPositionAsync()
-            const {coords} = location
-            if (coords){
+            if (location !=null){
+                const {coords} = location
                 const { latitude ,longitude} = coords;
                 console.log("coords : ",coords)    
                 let  addressResponse : any = await Location.reverseGeocodeAsync({latitude,longitude})
@@ -62,13 +58,14 @@ const _LandingScreen = (props : any) => {
             }
             else{
                 console.log("notify the use something went wrong with location.")    
-                // notify the use something went wrong with location.
+                props.navigation.navigate('tab')
+                setShowPermissionButton(true)
             }
         }catch(err) {
             console.log(err)
         }
         })();
-    })
+    },[ask])
 
     return (<>
             <View  style={style.container}>
@@ -77,10 +74,18 @@ const _LandingScreen = (props : any) => {
                     <View style={style.address_container}>
                         <Text> Your Current Address </Text>
                     </View>
-
                     <Text style={style.addressText}> Waiting for current location. </Text>
                 </View>
-
+                {/* {showPermissionButton ? 
+                    <Button buttonStyle={{
+                        backgroundColor : themeColor,
+                        height : 45,
+                        marginVertical : 20,
+                        marginHorizontal : 50,
+                        borderRadius : 20
+                    }}
+                     onPress={()=>setAsk(ask ? false : true)}><Text style={{color : 'white'}}>Allow Loctaion</Text></Button>
+                 : ''} */}
             </View>
 
         </>

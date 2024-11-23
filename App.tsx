@@ -17,6 +17,7 @@ import SubCategirzedItems from './src/screens/SubCategirzedItems';
 import Stores from './src/screens/Stores';
 import CategirzedItems from './src/screens/CategirzedItems';
 import SubCategirzedStores from './src/screens/SubCategirzedStores';
+import Login from './src/screens/Login';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -96,7 +97,7 @@ const BottomTabNavigator = () => {
 
       <Tab.Screen
           name="User"
-          component={HomeScreen}
+          component={Login}
           options={{
             header : ()=>null,
             tabBarLabel: 'User',

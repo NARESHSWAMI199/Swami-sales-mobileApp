@@ -4,9 +4,11 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { Avatar, Button, Input } from "react-native-elements"
 import { TouchableOpacity } from "react-native"
 import CommentRepliesView from "./CommentReplies"
-import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
+import { bodyColor, commentUrl, defaultAvtar, sessionToken, themeColor, userImageUrl } from "../utils/utils"
 import { Icon} from "@rneui/themed"
 import CommentInputBox from "./CommentInputBox"
+import { connect } from "react-redux"
+import { ApplicationState } from "../redux"
 
 
 
@@ -22,9 +24,25 @@ const CommentView = (props:any) =>{
     const [showRepliesModel,setShowRepliesModal] = useState(false)
     const [refresh,setRefresh] = useState(false)
     const commentRef = useRef(null);
+    const [messagePrefix,setMessagePrefix] = useState('')
+
+    const [token , setToken] = useState<string>()
+    const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
+  
+  
+    useEffect(()=>{
+      const getData =  async() =>{
+         setToken(await props.token)
+         setIsAuthenticated(!!(await props.token) ? true : false)
+      }
+      getData()
+    },[token])
+
+
 
 
     useEffect(()=>{
+        axios.defaults.headers['Authorization'] = sessionToken;
         axios.post(commentUrl+"all",{itemId : itemId})
         .then(res=>{
             setComments(res.data)
@@ -38,10 +56,12 @@ const CommentView = (props:any) =>{
     const showReplies = (parent:any) =>{
         setParent(parent)
         setShowRepliesModal(true)
+        setMessagePrefix('')
     }
 
     const closeModel = () =>{
         setShowRepliesModal(false)
+        setMessagePrefix('')
     }
 
 
@@ -52,16 +72,50 @@ const CommentView = (props:any) =>{
     const handleReply = (parent:any)=> {
         setParent(parent)
         setShowRepliesModal(true)
+        setMessagePrefix('')
         setTimeout (()=>{
-            // commentRef.current?.blur();
+            commentRef.current?.blur();
             commentRef.current?.focus();
         },100)
     };
 
 
-    const handleClick = () =>[
-        alert('hello')
-    ]
+    const handleLikes = (commentId:number) =>{
+        /** TODO : you can also redirect to login page */
+        if(!isAuthenticated) return false
+        axios.get(commentUrl+"like/"+commentId)
+        .then(res=>{
+            // setComments(res.data) 
+            setComments(previous => previous.filter((comment : any)=> {
+                if(commentId == comment.id){
+                    comment.likes +=1;
+                    comment.isLiked = true;
+                }
+                return comment;
+            }))
+        })
+        .catch(err => {
+            console.log("Comment view  : "+err.message)
+        })
+    }
+
+
+    const handleChildReply = (reply : any) =>{
+        if(!!reply){
+            commentRef.current?.blur();
+            setTimeout (()=>{
+                setMessagePrefix("@"+reply.user.username)
+                commentRef.current?.focus();
+            },100)
+        }
+    }
+
+
+    const discardText = () => {
+        setMessagePrefix('')
+    }
+
+
     return (<><View>
         {comments.map((comment : any,index : number) => {
             return (
@@ -89,17 +143,21 @@ const CommentView = (props:any) =>{
                         </Text>
                         <View style={{...style.replyActions}}>
                             <View style={style.likesBody}>
-                                <Pressable>
+                                <Pressable onPress={()=>{
+                                    if(!comment.isLiked)setTimeout(()=>handleLikes(comment.id),100)
+                                }}>
+                                   
                                     <Icon 
                                         style={{...style.iconStyle,marginRight : 5}}
                                         name='thumbs-up'
                                         type='font-awesome'
-                                        color={'#565757'}
+                                        color={!comment.isLiked ? '#565757' : themeColor}
                                         size={20}
-                                    />
+                                        
+                                    /> 
                                 </Pressable>
                                 <Text style={{fontSize : 14 , fontWeight : 'bold',color : 'gray'}}>
-                                    {comment.likes}
+                                    {!!comment.likes && comment.likes}
                                 </Text>
                             </View>
                             <Pressable>
@@ -120,7 +178,19 @@ const CommentView = (props:any) =>{
                                     size={20}
                                 />
                             </Pressable>
+
+                        <Pressable>
+                            <Icon
+                                style={{...style.iconStyle, marginLeft : 100}}
+                                name='ellipsis-v'
+                                type='font-awesome'
+                                color={'#565757'}
+                                size={20}
+                            />
+                         </Pressable>
                         </View>
+
+
 
                         <TouchableOpacity onPress={() =>showReplies(comment)}>
                             <Text style={style.totalReplies} >
@@ -149,21 +219,36 @@ const CommentView = (props:any) =>{
                         <View style={style.footer}>             
                             <View>
                                 <Pressable style={style.goBack} onPress={closeModel}>
-                                    <Icon name="arrow-back" type="material" size={24} color="black" style={{fontWeight : 'bold'}} />
+                                    <Icon 
+                                        name="arrow-back" 
+                                        type="material" 
+                                        size={24} 
+                                        color="black" 
+                                        style={{fontWeight : 'bold'}} 
+                                        />
                                     <Text style={{...style.subtitle,marginLeft : 10}}>
                                         Replies 
                                     </Text>
                                 </Pressable>   
                             </View>
                             <View style={{flex : 1}}>
-                                <CommentRepliesView refresh={refresh} parent={parent} itemId={parent.itemId} />
+                                <CommentRepliesView 
+                                    handleChildReply={handleChildReply} 
+                                    handleParentReply={handleReply}
+                                    refresh={refresh} 
+                                    parent={parent} 
+                                    itemId={parent.itemId} 
+                                />
                                 <CommentInputBox 
+                                    messagePrefix = {messagePrefix}
                                     parentId={parent.id}
                                     itemId={parent.itemId}
                                     commentRef={commentRef} 
                                     isCommentUpdated={refreshCommentReplies} 
                                     commentContainer={style.commentInputBody} 
                                     style={style.commentInput}
+                                    onDiscardText={discardText}
+                                    discardAlert={true}
                                 /> 
            
                             </View>
@@ -270,4 +355,11 @@ const style = StyleSheet.create({
 })
 
 
-export default CommentView
+const mapToStateProps = (state:ApplicationState) =>{
+    return {
+        token : state.userReducer.user.token,
+        isAuthenticated : !!state.userReducer.user.token ? true : false
+    }
+}
+
+export default connect(mapToStateProps) (CommentView)

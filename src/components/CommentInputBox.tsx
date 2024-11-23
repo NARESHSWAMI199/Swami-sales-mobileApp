@@ -1,8 +1,10 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, View } from 'react-native'
+import { Alert, Pressable, StyleSheet, View } from 'react-native'
 import { Avatar, Icon, Input } from 'react-native-elements'
-import { commentUrl, defaultAvtar } from '../utils/utils'
+import { commentUrl, defaultAvtar, sessionToken } from '../utils/utils'
+import { ApplicationState } from '../redux'
+import { connect } from 'react-redux'
 
 
 
@@ -11,24 +13,30 @@ function CommentInputBox(props:any) {
  const {
     itemId,
     parentId,
-    commentRef
+    commentRef,
+    discardAlert,
   } = props
 
-  const [message,setMessage] = useState(undefined)
+  const [message,setMessage] = useState<string>(undefined)
+  const [token , setToken] = useState<string>()
+  const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
 
-  // const [data,setData] = useState({
-  //   message : '',
-  //   itemId : itemId,
-  //   parentId : parentId
-  // })
 
+  useEffect(()=>{
+    const getData =  async() =>{
+       setToken(await props.token)
+       setIsAuthenticated(!!(await props.token) ? true : false)
+    }
+    getData()
+  },[props.token])
   
+  useEffect(()=>{
+    setMessage((!!props.messagePrefix ? props.messagePrefix + "\n" + (!!message ? message : '') : message))
+  },[props.messagePrefix])
 
 
   const handleComment = () => {
-    axios.defaults.headers = {
-      Authorization : 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMGY3OGI4ZC1jYmY0LTQzZmItYTRkYy02ZTYzZGMwOGFjMDkiLCJleHAiOjE3MzIzNjc3MzcsImlhdCI6MTczMjEwODUzN30.mPZnkymYH5zVJr1jZfxktD2C1bzofLasJdM39_XyPQvZxYfjDDQXzoxmZcIky0MeOH9kD3b2p8JXWAptsVsYVA'
-    }
+    axios.defaults.headers['Authorization'] = token;
     if(!!message){
     axios.post(commentUrl + "add",{
         message : message,
@@ -47,12 +55,38 @@ function CommentInputBox(props:any) {
   }
 
   const handleMessage = (text:string) =>{
-    // setData({...data,message : text})
     setMessage(text)
   }
 
 
-  return (
+  const handleBlur = () =>{
+    if (!!discardAlert && !!message && message?.trim() !== '') {
+      Alert.alert(
+        'Unsaved Changes',
+        'You have unsaved changes. Do you want to discard them?',
+        [
+          {
+            text: 'Keep Writing',
+            style: 'cancel',
+            onPress : () => {
+              commentRef.current?.focus();
+            }
+          },
+          {
+            text: 'Discard',
+            onPress: () => {
+              setMessage('')
+              props.onDiscardText()
+            },
+          },
+        ]
+      );
+    }
+  }
+
+
+  return (<>
+    {isAuthenticated && 
   <View style={props.commentContainer}>
     <Avatar size={20}  
       rounded
@@ -67,6 +101,7 @@ function CommentInputBox(props:any) {
           style={{...props.style}}
           errorStyle= {{display : 'none'}}
           value={message}
+          onBlur={handleBlur}
       />
 
     <Pressable onPress={handleComment}>
@@ -78,8 +113,15 @@ function CommentInputBox(props:any) {
       />
     </Pressable>
   </View>   
-  
+  }
+  </>
   )
 }
 
-export default CommentInputBox
+const mapToStateProps = (state:ApplicationState) =>{
+    return {
+      token : state.userReducer.user.token,
+  }
+}
+
+export default connect(mapToStateProps)(CommentInputBox)

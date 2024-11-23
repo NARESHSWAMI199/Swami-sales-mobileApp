@@ -41,16 +41,17 @@ import { Float } from "react-native/Libraries/Types/CodegenTypes"
 
 // User Model 
 export interface UserModel {
-    firstName : string,
-    lastName  : string,
-    contactNumber : string,
-    slug : string
+    // firstName : string,
+    // lastName  : string,
+    // contactNumber : string,
+    // slug : string,
+    token : any
 }
 
 
 export interface UserState {
     user : UserModel,
-    location : LocationGeocodedAddress 
+    location : LocationGeocodedAddress ,
     error : string | undefined
 }
 

@@ -1,10 +1,13 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
-import { bodyColor, commentUrl, defaultAvtar, userImageUrl } from "../utils/utils"
+import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
 import { Avatar } from "react-native-elements"
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler"
 import { Icon } from "@rneui/themed"
+import { Pressable } from "react-native"
+import { connect } from "react-redux"
+import { ApplicationState } from "../redux"
 
 
 
@@ -17,6 +20,18 @@ const CommentRepliesView = (props:any) =>{
 
     const [replies,setReplies] = useState<any>([])
     const [parentComment,setParentComment] = useState<any>({})
+
+    const [token , setToken] = useState<string>()
+    const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
+  
+  
+    useEffect(()=>{
+      const getData =  async() =>{
+         setToken(await props.token)
+         setIsAuthenticated(!!(await props.token) ? true : false)
+      }
+      getData()
+    },[token])
 
        
     useEffect(()=>{
@@ -42,6 +57,62 @@ const CommentRepliesView = (props:any) =>{
 
 
 
+
+    const handleRepliesLikes = (commentId:number,isReply:boolean) =>{
+        /**TODO : show login alert here. */
+        if(!isAuthenticated) {
+            return  false
+        }
+        axios.get(commentUrl+"like/"+commentId)
+        .then(res=>{
+            if(isReply){
+                setReplies(previous => previous.filter((comment : any)=> {
+                    if(commentId == comment.id){
+                        comment.likes +=1;
+                        comment.isLiked = true;
+                    }
+                    return comment;
+                }))
+            }else {
+                setParentComment(previous => ({...previous, isLiked : true, likes : previous.likes +=1 }))
+            }
+        })
+        .catch(err => {
+            console.log("Comment Replies view  : "+err.message)
+        })
+    }
+
+
+    const handleReply = (reply:any,isReply:boolean)=> {
+        if(isReply){
+            props.handleChildReply(reply)
+        }else {
+            props.handleParentReply(reply)
+        }
+    };
+
+    const highlightText = (text:string) => {
+        const regex = /@(\w+)/g;
+        const parts = text?.split(regex);
+      
+        return (
+          <Text style={style.message}>
+            {parts?.map((part, index) => {
+                if (index % 2 == 1)  {
+                    return  <Text key={index} style={{color: themeColor}}>
+                        {"@"+part}
+                    </Text>
+                }else {
+                    return  <Text key={index}>
+                    {part}
+                </Text>
+                }
+            })}
+          </Text>
+        );
+    }
+
+
     return (<View style={style.body}>
 
             {/* Parent Comment */}
@@ -61,29 +132,44 @@ const CommentRepliesView = (props:any) =>{
                             }}>
                                 {"@ "+parentComment?.user?.username?.toLowerCase()}
                             </Text>
-                            <Text style={style.message}>
-                                {parentComment.message}
-                            </Text>
+                            {/* <Text style={style.message}> */}
+                                {highlightText(parentComment.message)}
+                            {/* </Text> */}
                             
                             <View style={style.replyActions}>
+                            <View style={style.likesBody}>
+                            <Pressable onPress={()=>{
+                                    if(!parentComment.isLiked)setTimeout(()=>handleRepliesLikes(parentComment.id,false),100)
+                                }}>
+                                   
                                     <Icon 
-                                        style={style.iconStyle}
+                                        style={{...style.iconStyle,marginRight : 5}}
                                         name='thumbs-up'
                                         type='font-awesome'
+                                        color={!parentComment.isLiked ? '#565757' : themeColor}
                                         size={20}
-                                    />
+                                        
+                                    /> 
+                                </Pressable>
+                                <Text style={{fontSize : 14 , fontWeight : 'bold',color : 'gray'}}>
+                                    {!!parentComment.likes && parentComment.likes}
+                                </Text>
+                                </View>
+
                                     <Icon
                                         style={style.iconStyle}
                                         name='thumbs-down'
                                         type='font-awesome'
                                         size={20}
                                     />
-                                    <Icon
-                                        style={style.iconStyle}
-                                        name='reply'
-                                        type='font-awesome'
-                                        size={20}
-                                    />
+                                    <Pressable onPress={()=>handleReply(parentComment,false)}>
+                                        <Icon
+                                            style={style.iconStyle}
+                                            name='reply'
+                                            type='font-awesome'
+                                            size={20}
+                                        />
+                                    </Pressable>
                             </View>
                         {/* </View> */}
                     </View>
@@ -109,21 +195,27 @@ const CommentRepliesView = (props:any) =>{
                             }}>
                                 {"@"+reply?.user?.username?.toLowerCase()}
                         </Text>
-                        <Text style={style.message}>
-                            {reply.message}
-                        </Text>
+                        {/* <Text style={style.message}> */}
+                            {highlightText(reply.message)}
+                        {/* </Text> */}
 
                         <View style={{...style.replyActions}}>
                         <View style={style.likesBody}>
-                                <Icon 
-                                    style={{...style.iconStyle,marginRight : 5}}
-                                    name='thumbs-up'
-                                    type='font-awesome'
-                                    color={'#565757'}
-                                    size={20}
-                                />
+                            <Pressable onPress={()=>{
+                                    if(!reply.isLiked)setTimeout(()=>handleRepliesLikes(reply.id,true),100)
+                                }}>
+                                   
+                                    <Icon 
+                                        style={{...style.iconStyle,marginRight : 5}}
+                                        name='thumbs-up'
+                                        type='font-awesome'
+                                        color={!reply.isLiked ? '#565757' : themeColor}
+                                        size={20}
+                                        
+                                    /> 
+                                </Pressable>
                                 <Text style={{fontSize : 14 , fontWeight : 'bold',color : 'gray'}}>
-                                    {reply.likes}
+                                    {!!reply.likes && reply.likes}
                                 </Text>
                             </View>
                             <Icon
@@ -133,6 +225,7 @@ const CommentRepliesView = (props:any) =>{
                                 color={'#565757'}
                                 size={20}
                             />
+                        <Pressable onPress={()=>handleReply(reply,true)}>
                             <Icon
                                 style={style.iconStyle}
                                 name='reply'
@@ -140,6 +233,7 @@ const CommentRepliesView = (props:any) =>{
                                 color={'#565757'}
                                 size={20}
                             />
+                        </Pressable>
                         </View>
                     </View>
                 </View>
@@ -204,5 +298,11 @@ const style = StyleSheet.create({
       }
 })
 
+const mapToStateProps = (state:ApplicationState) =>{
+    return {
+        token : state.userReducer.user.token,
+        isAuthenticated : !!state.userReducer.user.token ? true : false
+    }
+}
 
-export default CommentRepliesView
+export default connect(mapToStateProps)(CommentRepliesView)
