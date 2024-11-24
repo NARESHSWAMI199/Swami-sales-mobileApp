@@ -4,7 +4,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-nati
 import { Avatar, Button, Input } from "react-native-elements"
 import { TouchableOpacity } from "react-native"
 import CommentRepliesView from "./CommentReplies"
-import { bodyColor, commentUrl, defaultAvtar, sessionToken, themeColor, userImageUrl } from "../utils/utils"
+import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
 import { Icon} from "@rneui/themed"
 import CommentInputBox from "./CommentInputBox"
 import { connect } from "react-redux"
@@ -36,13 +36,13 @@ const CommentView = (props:any) =>{
          setIsAuthenticated(!!(await props.token) ? true : false)
       }
       getData()
-    },[token])
+    },[props.token])
 
 
 
 
     useEffect(()=>{
-        axios.defaults.headers['Authorization'] = sessionToken;
+        axios.defaults.headers['Authorization'] = token;
         axios.post(commentUrl+"all",{itemId : itemId})
         .then(res=>{
             setComments(res.data)
@@ -50,7 +50,7 @@ const CommentView = (props:any) =>{
         .catch(err => {
             console.log("Comment view  : "+err.message)
         })
-    },[props.isCommentUpdate])
+    },[props.isCommentUpdate,token])
 
 
     const showReplies = (parent:any) =>{
@@ -80,23 +80,49 @@ const CommentView = (props:any) =>{
     };
 
 
-    const handleLikes = (commentId:number) =>{
+    const handleLikes = async(commentId:number) =>{
         /** TODO : you can also redirect to login page */
         if(!isAuthenticated) return false
-        axios.get(commentUrl+"like/"+commentId)
+        axios.defaults.headers['Authorization'] = token;
+        await axios.get(commentUrl+"like/"+commentId)
         .then(res=>{
-            // setComments(res.data) 
-            setComments(previous => previous.filter((comment : any)=> {
-                if(commentId == comment.id){
-                    comment.likes +=1;
-                    comment.isLiked = true;
+            let response = res.data;
+            setComments(previous => previous.filter((_comment : any)=> {
+                if(_comment.id == commentId){
+                    _comment.likes +=response.likes;
+                    _comment.dislikes +=response.dislikes;
+
+                    _comment.isLiked = response.isLiked;
+                    _comment.isDisliked = response.isDisliked;
                 }
-                return comment;
+                return _comment;
             }))
         })
         .catch(err => {
-            console.log("Comment view  : "+err.message)
+            console.log("Comment like view  : "+err.message)
         })
+    }
+
+
+    const handleDislike = async (commentId:number) =>{
+             if(!isAuthenticated) return false
+             axios.defaults.headers['Authorization'] = token;
+             await axios.get(commentUrl+"dislike/"+commentId)
+             .then(res=>{
+                 let response = res.data;
+                 setComments(previous => previous.filter((comment : any)=> {
+                     if(comment.id == commentId){
+                        comment.likes +=response.likes;
+                        comment.dislikes +=response.dislikes;
+                        comment.isLiked = response.isLiked;
+                        comment.isDisliked = response.isDisliked;
+                     }
+                     return comment;
+                 }))
+             })
+             .catch(err => {
+                 console.log("Comment dislike view  : "+err.message)
+             })
     }
 
 
@@ -114,6 +140,20 @@ const CommentView = (props:any) =>{
     const discardText = () => {
         setMessagePrefix('')
     }
+
+
+    const updateMainComment = (comment : any) =>{
+        setComments(previous => previous.filter((_comment : any)=> {
+            if(comment.id == _comment.id){
+              _comment.likes = comment.likes,
+              _comment.dislikes = comment.dislikes
+              _comment.isLiked = comment.isLiked,
+              _comment.isDisliked = comment.isDisliked
+            }
+            return _comment
+        }))
+    }
+
 
 
     return (<><View>
@@ -142,9 +182,9 @@ const CommentView = (props:any) =>{
                             {comment.message}
                         </Text>
                         <View style={{...style.replyActions}}>
-                            <View style={style.likesBody}>
+                            <View style={style.likesOrDislikeBody}>
                                 <Pressable onPress={()=>{
-                                    if(!comment.isLiked)setTimeout(()=>handleLikes(comment.id),100)
+                                    handleLikes(comment.id)
                                 }}>
                                    
                                     <Icon 
@@ -160,15 +200,20 @@ const CommentView = (props:any) =>{
                                     {!!comment.likes && comment.likes}
                                 </Text>
                             </View>
-                            <Pressable>
-                                <Icon
-                                    style={style.iconStyle}
-                                    name='thumbs-down'
-                                    type='font-awesome'
-                                    color={'#565757'}
-                                    size={20}
-                                />
-                            </Pressable>
+                            <View style={style.likesOrDislikeBody}>
+                                <Pressable onPress={()=>handleDislike(comment.id)}>
+                                    <Icon
+                                        style={{...style.iconStyle,marginRight : 5}}
+                                        name='thumbs-down'
+                                        type='font-awesome'
+                                        color={!comment.isDisliked ? '#565757' : themeColor}
+                                        size={20}
+                                    />
+                                </Pressable>
+                                <Text style={{fontSize : 14 , fontWeight : 'bold',color : 'gray'}}>
+                                        {!!comment.dislikes && comment.dislikes}
+                                </Text>
+                           </View>
                             <Pressable onPress={()=>handleReply(comment)}>
                                 <Icon
                                     style={style.iconStyle}
@@ -233,6 +278,7 @@ const CommentView = (props:any) =>{
                             </View>
                             <View style={{flex : 1}}>
                                 <CommentRepliesView 
+                                    updateMainComment = {updateMainComment}
                                     handleChildReply={handleChildReply} 
                                     handleParentReply={handleReply}
                                     refresh={refresh} 
@@ -345,12 +391,12 @@ const style = StyleSheet.create({
         left : 0,
         right : 0
       },
-      likesBody : {
+      likesOrDislikeBody : {
         display : 'flex',
         flexDirection : 'row',
         justifyContent : 'center',
         alignItems : 'center',
-        marginRight : 25,
+        marginRight : 25
       }
 })
 

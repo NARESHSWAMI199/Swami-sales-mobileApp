@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
  
 
 
-const host = "http://192.168.1.6:8082/"
+const host = "http://192.168.1.7:8082/"
 
 // const host = "http://10.11.13.49:8082/"
 // const host = "http://202.157.82.29:8081/"
@@ -23,9 +23,6 @@ export const getPercentage = (discount,total) =>{
 // export const themeColor = "#4E003A";
 export const themeColor = "#0088cc";
 export const bodyColor = "#fff";
-
-export const sessionToken = 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIwMGY3OGI4ZC1jYmY0LTQzZmItYTRkYy02ZTYzZGMwOGFjMDkiLCJleHAiOjE3MzI2Mjg3MjgsImlhdCI6MTczMjM2OTUyOH0.fl37zgd9qlIVPMss8qrruzu8zZB9s3asQCA5A2VkfWAEjT_3Mqdh9fvlBIT-JRAG_H_zrTNVTf6UQ2NyspkLKg'
-
 export const getToken  = async () =>{
    return await AsyncStorage.getItem('token')
 }

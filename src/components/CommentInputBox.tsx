@@ -1,10 +1,10 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Alert, Pressable, StyleSheet, View } from 'react-native'
+import { Alert, Pressable, View } from 'react-native'
 import { Avatar, Icon, Input } from 'react-native-elements'
-import { commentUrl, defaultAvtar, sessionToken } from '../utils/utils'
-import { ApplicationState } from '../redux'
 import { connect } from 'react-redux'
+import { ApplicationState } from '../redux'
+import { commentUrl, defaultAvtar } from '../utils/utils'
 
 
 
@@ -36,8 +36,8 @@ function CommentInputBox(props:any) {
 
 
   const handleComment = () => {
-    axios.defaults.headers['Authorization'] = token;
     if(!!message){
+    axios.defaults.headers['Authorization'] = token
     axios.post(commentUrl + "add",{
         message : message,
         itemId : itemId,

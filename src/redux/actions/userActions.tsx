@@ -1,9 +1,8 @@
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useDispatch } from "react-redux";
 
 export interface UpdataLocationAction {
     readonly type : 'ON_UPDATE_LOCATION',
@@ -85,9 +84,8 @@ export const onSignIn :any = (email : string, password : string) => {
         }
         await axios.post(userUrl+"login",data)
         .then(async(res)=>{
-            console.log(JSON.stringify(res.data.token))
             let authToken = res.data.token;
-            await AsyncStorage.setItem('token',JSON.stringify(authToken))
+            await AsyncStorage.setItem('token',authToken)
             dispatch(onSinginAction(authToken));
         })
         .catch(err => {

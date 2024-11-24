@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Pressable } from 'react-native';
-import { white } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
-import { bodyColor, themeColor } from '../utils/utils';
-import { ApplicationState, onLogout, onSignIn } from '../redux';
-import { connect, useDispatch } from 'react-redux';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { connect, useDispatch } from 'react-redux';
+import { ApplicationState, onSignIn } from '../redux';
+import { bodyColor, themeColor } from '../utils/utils';
 
 const Login = (props : any) => {
 
     const {
-        token
+        navigation
     } = props
 
   const [email, setEmail] = useState('');
@@ -29,7 +27,12 @@ const Login = (props : any) => {
     console.log('Logging in with email:', email, 'and password:', password); 
     try {
         // onLogout()
-        dispatch(onSignIn(email,password))
+        if(!!email && !!password){
+          dispatch(onSignIn(email,password))
+          navigation.navigate('tab');
+        }else{
+          alert(("Email and password both are required."))
+        }
     }catch(err){
         setError(err)
     }
@@ -38,7 +41,7 @@ const Login = (props : any) => {
   return (
     <View style={style.body}>
         <Text style={style.header}>
-            Login
+            Sign In
         </Text>
       <TextInput
         placeholder="Email"
@@ -63,9 +66,9 @@ const Login = (props : any) => {
                 fontWeight : 'bold',
                 color : 'white'
                 }} >
-            LOGIN
+                Login
             </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> 
       {error && <Text>{error}</Text>}
     </View>
   );
@@ -74,8 +77,13 @@ const Login = (props : any) => {
 
 const style = StyleSheet.create({
     textInput : {
-        height : 60,
+        height : 50,
         width : '100%',
+        borderWidth : 0.2,
+        borderColor : 'gray',
+        paddingHorizontal : 15,
+        borderRadius : 5,
+        marginVertical : 5
     },
     body : {
       marginHorizontal : 10,  
@@ -89,7 +97,7 @@ const style = StyleSheet.create({
     button : {
         borderRadius : 5,
         height : 45,
-        width : '100%',
+        width : 340,
         backgroundColor : themeColor,
         alignItems  : 'center',
         justifyContent : 'center',
@@ -98,7 +106,9 @@ const style = StyleSheet.create({
     },
     header : {
         fontWeight : 'bold',
-        fontSize : 18
+        fontSize : 18,
+        marginVertical : 10,
+        alignSelf : 'flex-start'
     }
 
 })
