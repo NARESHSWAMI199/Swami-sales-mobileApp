@@ -87,15 +87,14 @@ const CommentView = (props:any) =>{
         await axios.get(commentUrl+"like/"+commentId)
         .then(res=>{
             let response = res.data;
-            setComments(previous => previous.filter((_comment : any)=> {
-                if(_comment.id == commentId){
-                    _comment.likes +=response.likes;
-                    _comment.dislikes +=response.dislikes;
-
-                    _comment.isLiked = response.isLiked;
-                    _comment.isDisliked = response.isDisliked;
+            setComments(previous => previous.filter((comment : any)=> {
+                if(comment.id == commentId){
+                    comment.likes += (!!response.likes) ? response.likes : 0;
+                    comment.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                    comment.isLiked = response.isLiked;
+                    comment.isDisliked = response.isDisliked;
                 }
-                return _comment;
+                return comment;
             }))
         })
         .catch(err => {
@@ -112,8 +111,8 @@ const CommentView = (props:any) =>{
                  let response = res.data;
                  setComments(previous => previous.filter((comment : any)=> {
                      if(comment.id == commentId){
-                        comment.likes +=response.likes;
-                        comment.dislikes +=response.dislikes;
+                        comment.likes += (!!response.likes) ? response.likes : 0;
+                        comment.dislikes += (!!response.dislikes) ? response.dislikes : 0;
                         comment.isLiked = response.isLiked;
                         comment.isDisliked = response.isDisliked;
                      }
