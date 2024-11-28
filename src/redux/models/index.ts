@@ -45,6 +45,7 @@ export interface UserModel {
     // lastName  : string,
     // contactNumber : string,
     // slug : string,
+    error : string
     token : any
 }
 

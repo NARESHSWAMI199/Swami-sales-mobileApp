@@ -9,6 +9,7 @@ import { TabItem } from '@rneui/base/dist/Tab/Tab.Item';
 import TabItems from './TabItems';
 import ViewMoreText from 'react-native-view-more-text';
 import { Icon } from '@rneui/themed';
+import PagiantedItems from '../components/PaginatedItems';
 
 
 
@@ -115,7 +116,8 @@ const StoreDetail = (props:any) => {
             <Text style={styles.titleHeadings}>
               Our Latest Products
             </Text>
-            <TabItems {...props} storeId={store.id} />
+            {/* <TabItems {...props} storeId={store.id} /> */}
+          <PagiantedItems {...props} storeId={store.id} />
             {/* Need to add pagination here. */ }
 
             <Text style={styles.subtitle}>About us : </Text>

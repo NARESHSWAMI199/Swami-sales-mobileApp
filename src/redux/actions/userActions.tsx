@@ -15,8 +15,8 @@ export interface UserErrorAction  {
     payload: any
 } 
 
-export interface UserErrorAction  {
-    readonly type: 'ON_USER_ERROR',
+export interface UserAuthErorrAction  {
+    readonly type: 'ON_AUTH_ERROR',
     payload: any
 } 
 
@@ -32,7 +32,7 @@ export interface UserLoginAction  {
 } 
 
 
-export type UserAction = UpdataLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction
+export type UserAction = UpdataLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
 
 export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
     return (dispatch : any) => {
@@ -53,26 +53,34 @@ export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
 
 const  onLogoutAction = async () => {
     await AsyncStorage.removeItem('token')
-    return (dispatch : any) => {
-        dispatch({
+          return {  
             type : "ON_AUTH_LOGOUT",
             payload : {
                 token : null
             }
-        })
+        }
+}
+
+
+const onAuthFailed = (error:string) =>{
+    return {
+        type: 'ON_AUTH_ERROR',
+        payload : {
+            error: error
+        }
     }
 }
 
+
+
 const  onSinginAction = (token:string) => {
-    return (dispatch : any) => {
-        dispatch({
-            type : "ON_AUTH_LOGIN",
-            payload : {
-                token : token
-            }
-        })
+    return {
+        type : "ON_AUTH_LOGIN",
+        payload : {
+            token : token
+        }
     }
-}
+}   
 
 
 
@@ -90,7 +98,7 @@ export const onSignIn :any = (email : string, password : string) => {
         })
         .catch(err => {
             console.log("Auth login : ",err.message)
-            throw new Error(err.message)
+            dispatch(onAuthFailed(err.message))
         })
     }
 }

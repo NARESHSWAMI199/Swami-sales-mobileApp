@@ -17,25 +17,17 @@ const Login = (props : any) => {
   const dispatch = useDispatch()
 
   useEffect(()=>{
-    const getData = async()=>{
-        alert(await props.token)
-    }
-    getData()
-  },[])
+    setError(props.error)
+  },[props.error])
 
   const handleLogin = () => {
-    console.log('Logging in with email:', email, 'and password:', password); 
-    try {
-        // onLogout()
-        if(!!email && !!password){
-          dispatch(onSignIn(email,password))
-          navigation.navigate('tab');
-        }else{
-          alert(("Email and password both are required."))
-        }
-    }catch(err){
-        setError(err)
-    }
+      console.log('Logging in with email:', email, 'and password:', password); 
+      if(!!email && !!password){
+        dispatch(onSignIn(email,password))
+        navigation.navigate('tab');
+      }else{
+        alert(("Email and password both are required."))
+      }
   };
 
   return (
@@ -69,7 +61,7 @@ const Login = (props : any) => {
                 Login
             </Text>
         </TouchableOpacity> 
-      {error && <Text>{error}</Text>}
+      {!!error && <Text style={style.error}>{error}</Text>}
     </View>
   );
 };
@@ -109,13 +101,17 @@ const style = StyleSheet.create({
         fontSize : 18,
         marginVertical : 10,
         alignSelf : 'flex-start'
+    },
+    error : {
+      color : 'red'
     }
 
 })
 
 const mapToStateProps = (state:ApplicationState) =>{
     return {
-        token : state.userReducer.user.token
+        token : state.userReducer.user?.token,
+        error : state.userReducer.user?.error
     }
 }
 

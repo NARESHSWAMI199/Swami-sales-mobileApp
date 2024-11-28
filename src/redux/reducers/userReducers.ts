@@ -7,6 +7,7 @@ import { getToken } from "../../utils/utils"
 const initialState : UserState = {
     user : {
         token : getToken(),
+        error : null
     } as UserModel,
     location : {} as LocationGeocodedAddress,
     error : undefined
@@ -25,6 +26,11 @@ const userReducer = (state: UserState = initialState, action  : UserAction) => {
                 user : action.payload
         }
         case  'ON_AUTH_LOGOUT': 
+            return {
+                ...state,
+                user : action.payload
+            }
+        case  'ON_AUTH_ERROR':
             return {
                 ...state,
                 user : action.payload
