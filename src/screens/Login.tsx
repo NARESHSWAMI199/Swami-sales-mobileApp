@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect, useDispatch } from 'react-redux';
-import { ApplicationState, onSignIn } from '../redux';
+import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
 
 const Login = (props : any) => {
-
     const {
         navigation
     } = props
@@ -15,23 +14,45 @@ const Login = (props : any) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useDispatch()
-
+  const [token,setToken] = useState(null)
   useEffect(()=>{
+
+    const getData =  async() =>{
+        setToken(await props.token)
+    }
+    getData();
     setError(props.error)
-  },[props.error])
+  },[props.error,props.token])
 
   const handleLogin = () => {
       console.log('Logging in with email:', email, 'and password:', password); 
       if(!!email && !!password){
-        dispatch(onSignIn(email,password))
-        navigation.navigate('tab');
+          dispatch(onSignIn(email,password))
       }else{
         alert(("Email and password both are required."))
       }
   };
 
-  return (
-    <View style={style.body}>
+  const handleLogout = () => {
+    dispatch(onLogout())
+  }
+
+  return ( <>
+  {token ?
+    <View style={style.logout}>
+      <TouchableOpacity style={style.button} onPress={handleLogout} >
+      <Text 
+        style={{
+          fontSize : 14, 
+          fontWeight : 'bold',
+          color : 'white'
+          }}> 
+        Logout
+        </Text>
+      </TouchableOpacity>
+    </View>
+     : 
+     <View style={style.body}>
         <Text style={style.header}>
             Sign In
         </Text>
@@ -63,6 +84,10 @@ const Login = (props : any) => {
         </TouchableOpacity> 
       {!!error && <Text style={style.error}>{error}</Text>}
     </View>
+    }
+    
+  
+  </>
   );
 };
 
@@ -104,6 +129,13 @@ const style = StyleSheet.create({
     },
     error : {
       color : 'red'
+    },
+    logout : {
+      display : 'flex',
+      flexDirection : 'column',
+      justifyContent : 'center',
+      alignItems : 'center',
+      height : '100%'
     }
 
 })

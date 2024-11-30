@@ -52,14 +52,17 @@ export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
   
 }
 
-const  onLogoutAction = async () => {
-    await AsyncStorage.removeItem('token')
-          return {  
-            type : "ON_AUTH_LOGOUT",
-            payload : {
-                token : null
-            }
+const  onLogoutAction = () => {
+    const removeToken = async() =>{
+        await AsyncStorage.removeItem('token')
+    }
+    removeToken()
+    return {  
+        type : "ON_AUTH_LOGOUT",
+        payload : {
+            token : null
         }
+    }
 }
 
 
@@ -106,8 +109,10 @@ export const onSignIn :any = (email : string, password : string) => {
 }
 
 
-export const onLogout = () => {
-    onLogoutAction()
+export const onLogout : any = () => {
+    return async(dispatch:any) => {
+        dispatch(onLogoutAction())
+    }
 }
 
 
