@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import { store } from './src/redux';
-import { HomeScreen } from './src/screens/HomeScreen';
+import HomeScreen from './src/screens/HomeScreen';
 import ItemDetail from './src/screens/ItemDetail';
 import Items from './src/screens/Items';
 import { themeColor } from './src/utils/utils';

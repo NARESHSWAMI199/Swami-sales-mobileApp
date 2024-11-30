@@ -53,7 +53,6 @@ function PopularStores(props:any) {
 const style = StyleSheet.create({
 
     body : {
-        paddingHorizontal : 10,
         backgroundColor : bodyColor,
         height : '100%',
         flex : 1

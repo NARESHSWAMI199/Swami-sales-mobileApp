@@ -4,17 +4,16 @@ import React, { useEffect, useState } from 'react'
 import { BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Avatar, Icon } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
+import { connect } from 'react-redux'
 import { ItemSubCategories, StoreSubCategories } from '../components/Subcategories'
-import { Category } from '../redux'
-import { itemsUrl, themeColor } from '../utils/utils'
+import { authCheckState, Category } from '../redux'
+import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import ItemCategories from './ItemCategories'
-import Items from './Items'
-import RecentItems from './RecentItems'
-import Stores from './Stores'
-import TabItems from './TabItems'
 import PopularStores from './PopularStores'
+import RecentItems from './RecentItems'
+import TabItems from './TabItems'
 
-export const  HomeScreen = (props : any) => {
+const  HomeScreen = (props : any) => {
     const { navigation } = props;
 
     const hideTabBar = () => {
@@ -60,6 +59,8 @@ useEffect(() => {
             .catch(err => {
                 console.log(err.message)
             })
+            // authcheck
+            authCheckState();
     }, [])
 
 
@@ -174,22 +175,20 @@ useEffect(() => {
                     </View>   
 
 
-                    <View style={{backgroundColor : 'white'}}>
+                    <View style={style.parentView}>
                         <Text style={{...style.titleHeadings,marginVertical : 12}}>
                             Item Categories
                         </Text>
                         <ItemSubCategories {...props} />
                     </View>
             
-                   <View style={{backgroundColor : 'white'}}>
+                   <View style={style.parentView}>
                          <ItemCategories  {...props} />
                     </View>                     
 
             
 
-                    <View style={{
-                        backgroundColor : 'white'
-                        }}>
+                    <View style={style.parentView}>
                         <Text style={style.titleHeadings}>
                             Popular Stores
                         </Text>
@@ -201,15 +200,18 @@ useEffect(() => {
                              />
                         </ScrollView>
                     </View>
-                    <View style={{backgroundColor : 'white'}}>
+                    <View style={style.parentView}>
                         <Text style={{...style.titleHeadings,marginVertical : 12}}>
-                                Store Categories
+                            Store Categories
                         </Text>
                         <StoreSubCategories {...props} />
                     </View>
                
                 
-                    <View style={style.mostPopularItems}>
+                    <View style={{
+                        ...style.mostPopularItems,
+                        ...style.parentView
+                    }}>
                         <Text style={style.titleHeadings}>
                             Most Populer Items
                         </Text>
@@ -225,7 +227,10 @@ useEffect(() => {
                         </TouchableOpacity>
                     </View>
                     
-                    <View style={style.mostPopularStores}>
+                    <View style={{
+                            ...style.mostPopularStores,
+                            ...style.parentView
+                            }}>
                         <Text style={style.titleHeadings} >
                             Most Populer Stores
                         </Text>
@@ -252,7 +257,7 @@ useEffect(() => {
                 return <TabView.Item key= {i} style={{width: '100%' }}>
                     <ScrollView 
                             onScroll={onScroll}
-                            style={{...style.scrollView , backgroundColor : 'white'}}>
+                            style={{...style.scrollView , ...style.parentView}}>
                         <View>
                             <Text style={style.titleHeadings}>
                                 Related Categoires
@@ -280,7 +285,6 @@ const style = StyleSheet.create({
         margin : 0,
         borderRadius : 10, 
         backgroundColor : themeColor,
-        paddingHorizontal : 5
     },
     body : {
         flex : 1,
@@ -300,13 +304,9 @@ const style = StyleSheet.create({
         marginVertical : 20,
     },
     mostPopularItems : {
-        flex : 1,
-        padding : 'auto',
-        backgroundColor : 'white'
+        flex : 1
     },
     mostPopularStores : {
-        padding : 'auto',
-        backgroundColor : 'white',
         flex : 1
     },
     paginate : {
@@ -332,8 +332,20 @@ const style = StyleSheet.create({
         fontWeight : '500',
         color : '#001475',
         fontSize : 16
+    },
+    parentView : {
+        backgroundColor  : bodyColor,
+        width : '100%',
+        paddingHorizontal : 5
     }
    
  
 })
 
+const mapToStateProps = (state : any) =>{
+    return {
+        token : state.userReducer.user?.token
+    }
+}
+
+export default connect(mapToStateProps)(HomeScreen)

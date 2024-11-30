@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
+import { tokens } from 'react-native-paper/lib/typescript/styles/themes/v3/tokens';
 
 export interface UpdataLocationAction {
     readonly type : 'ON_UPDATE_LOCATION',
@@ -73,7 +74,7 @@ const onAuthFailed = (error:string) =>{
 
 
 
-const  onSinginAction = (token:string) => {
+const  onSingInAction = (token:string) => {
     return {
         type : "ON_AUTH_LOGIN",
         payload : {
@@ -94,7 +95,8 @@ export const onSignIn :any = (email : string, password : string) => {
         .then(async(res)=>{
             let authToken = res.data.token;
             await AsyncStorage.setItem('token',authToken)
-            dispatch(onSinginAction(authToken));
+            dispatch(onSingInAction(authToken));
+            dispatch(checkAuthTimeout(72 * 60 * 60));
         })
         .catch(err => {
             console.log("Auth login : ",err.message)
@@ -106,4 +108,25 @@ export const onSignIn :any = (email : string, password : string) => {
 
 export const onLogout = () => {
     onLogoutAction()
+}
+
+
+export const checkAuthTimeout = expirationTime => {
+    return dispatch => {
+        setTimeout(() => {
+            dispatch(onLogoutAction());
+        }, expirationTime)
+    }
+}
+
+export const authCheckState = () => {
+    return async (dispatch : any) => {
+        const token = await AsyncStorage.getItem('token');
+        console.log(token)
+        if (token === undefined) {
+            dispatch(onLogoutAction());
+        } else {
+            dispatch(onSingInAction(token));
+        }
+    }
 }

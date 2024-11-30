@@ -1,47 +1,62 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
-import { bodyColor, itemsUrl } from '../utils/utils';
+import { bodyColor, itemsUrl, themeColor } from '../utils/utils';
+import { Icon } from 'react-native-elements';
 
 
 
-
+let maxButtons = 5
+const itemsPerPage = 99
 function PagiantedItems(props: any) {
     const { categoryId, storeId } = props;
     const [showSpinner, setShowSpinner] = useState(false)
     const [items, setItems] = useState([])
-
-
+    const [startButton,setStartButton] = useState(0)
     const[totalItems,setTotalItems] = useState<number>(1)
-    const [itemsPerPage,setItemPerPage] = useState<number>(5);
-
+    const [endButton,setEndButton] = useState(startButton+maxButtons)
     const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages,setTotalPages] = useState<number>(10);
 
-    const [totalPages,setTotalPages] = useState<number>(5);
 
     useEffect(()=>{
-        setTotalPages(Math.ceil(totalItems / itemsPerPage))
+        let totalPage =  (totalItems > itemsPerPage) ? 
+            Math.floor((totalItems / itemsPerPage) + (totalItems % itemsPerPage)) : 
+            Math.floor(totalItems/itemsPerPage);
+        setTotalPages(totalPage)
+        if(totalPage < itemsPerPage){
+            setEndButton(totalPage)
+         }else{
+            setEndButton(startButton+maxButtons)
+         }
     },[totalItems])
      
 
+    useEffect(()=>{
+       setEndButton(startButton+5)
+    },[startButton])
+
     const handlePageChange = (page: number) => {
-        setCurrentPage(page-1);
+        setCurrentPage(page);
     };
 
     const renderPageNumbers = () => {
         const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = startButton; i < endButton; i++) {
             pageNumbers.push(
                 <TouchableOpacity
                     key={i}
                     onPress={() => handlePageChange(i)}
-                    style={{ padding: 10, margin: 5, backgroundColor: i === currentPage ? 'blue' : 'gray', borderRadius: 5 }}
+                    style={{
+                       ...style.paginationButtons,
+                        backgroundColor: i === currentPage ? themeColor : 'gray'
+                    }}
                 >
-                    <Text style={{ color: 'white' }}>{i}</Text>
+                    <Text style={{ color: 'white' }}>{i+1}</Text>
                 </TouchableOpacity>
             );
         }
@@ -49,6 +64,22 @@ function PagiantedItems(props: any) {
     };
 
 
+    const handleNextPages = (current:number) => {
+        if(current >= endButton){
+            console.log(current)
+            setStartButton(current)
+        }
+        setCurrentPage(current)
+
+    }
+
+    const handlePreviousPages = (current:number) =>{
+        if(current < startButton){
+            console.log(current)
+            setStartButton(current-4)
+        }
+        setCurrentPage(current)
+    }
 
 
 
@@ -95,16 +126,34 @@ function PagiantedItems(props: any) {
             })}
         </View>
     </ScrollView>
-
-    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-        <TouchableOpacity disabled={currentPage === 1} onPress={() => handlePageChange(currentPage - 1)}>
-            <Text>Previous</Text>
+{totalPages > 0 &&
+    <View style={style.pagination}>
+        <TouchableOpacity 
+            disabled={currentPage ===0} 
+            onPress={() => handlePreviousPages(currentPage - 1)}>
+        <Icon
+            style={style.paginationIcon}
+            name='chevron-left'
+            type='font-awesome'
+            color={'#565757'}
+            size={20}
+        />
         </TouchableOpacity>
         {renderPageNumbers()}
-        <TouchableOpacity disabled={currentPage === totalPages} onPress={() => handlePageChange(currentPage + 1)}>
-            <Text>Next</Text>
+        <TouchableOpacity 
+            disabled={currentPage === totalPages-1}
+            onPress={() => handleNextPages(currentPage + 1)}
+        >
+        <Icon
+            style={style.paginationIcon}
+            name='chevron-right'
+            type='font-awesome'
+            color={'#565757'}
+            size={20}
+        />
         </TouchableOpacity>
     </View>
+    }
     </>
     )
 }
@@ -126,7 +175,26 @@ const style = StyleSheet.create({
     innerView: {
         width: '32%',
         margin: 2
+    },
+    pagination : {
+        display:'flex',
+        flexDirection : 'row',
+        justifyContent : 'center',
+        alignItems : 'center',
+        flex : 1
+    },
+    paginationIcon : {
+        marginHorizontal : 2
+    },
+    paginationButtons : {
+        height : 40,
+        width : 40,
+        margin: 5, 
+        borderRadius: 50,
+        alignItems : 'center',
+        justifyContent : 'center',
     }
+    
 
 })
 
