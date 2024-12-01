@@ -9,10 +9,12 @@ import { Icon} from "@rneui/themed"
 import CommentInputBox from "./CommentInputBox"
 import { connect } from "react-redux"
 import { ApplicationState } from "../redux"
+import Pagination from "./Pagination"
 
 
 
-
+let maxButtons = 5
+const itemsPerPage = 10
 const CommentView = (props:any) =>{
 
 
@@ -28,6 +30,9 @@ const CommentView = (props:any) =>{
 
     const [token , setToken] = useState<string>()
     const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
+    const[totalElements,setTotalElements] = useState<number>(1)
+    const [currentPage, setCurrentPage] = useState(0);
+   
   
   
     useEffect(()=>{
@@ -43,14 +48,20 @@ const CommentView = (props:any) =>{
 
     useEffect(()=>{
         axios.defaults.headers['Authorization'] = token;
-        axios.post(commentUrl+"all",{itemId : itemId})
+        axios.post(commentUrl+"all",{
+            itemId : itemId,
+            pageNumber : currentPage,
+            pageSize: itemsPerPage
+        })
         .then(res=>{
-            setComments(res.data)
+            let response = res.data;
+            setComments(response.content)
+            setTotalElements(response.totalElements)
         })
         .catch(err => {
             console.log("Comment view  : "+err.message)
         })
-    },[props.isCommentUpdate,token])
+    },[props.isCommentUpdate,token,currentPage])
 
 
     const showReplies = (parent:any) =>{
@@ -138,6 +149,10 @@ const CommentView = (props:any) =>{
 
     const discardText = () => {
         setMessagePrefix('')
+    }
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page)
     }
 
 
@@ -301,6 +316,15 @@ const CommentView = (props:any) =>{
                 </View>
                 </Modal>
             </View>
+
+        <View style={style.pagination}>
+            <Pagination
+                handlePageChange = {handlePageChange} 
+                itemsPerPage={itemsPerPage}
+                totalElements={totalElements}
+                maxButtons = {maxButtons}
+            />
+        </View>
     </>
     )
 }
@@ -390,13 +414,16 @@ const style = StyleSheet.create({
         left : 0,
         right : 0
       },
-      likesOrDislikeBody : {
+    likesOrDislikeBody : {
         display : 'flex',
         flexDirection : 'row',
         justifyContent : 'center',
         alignItems : 'center',
         marginRight : 25
-      }
+      },
+    pagination : {
+        marginVertical : 10
+    }
 })
 
 

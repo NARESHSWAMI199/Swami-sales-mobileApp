@@ -54,7 +54,8 @@ const CommentRepliesView = (props:any) =>{
         axios.defaults.headers['Authorization'] = token;
         axios.post(commentUrl+"all",{itemId : itemId, parentId : parent.id})
         .then(res=>{
-            setReplies(res.data)
+            let response = res.data;
+            setReplies(response.content)
         })
         .catch(err => {
             console.log("Comment view  : "+err.message)
