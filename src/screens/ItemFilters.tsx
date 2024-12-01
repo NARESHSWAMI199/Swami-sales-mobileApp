@@ -4,7 +4,7 @@ import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 
 import { Searchbar } from 'react-native-paper'
 import ItemCard from '../components/ItemCard'
 import { Item } from '../redux'
-import { itemsUrl, themeColor } from '../utils/utils'
+import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import RecentItems from './RecentItems'
 import Spinner from 'react-native-loading-spinner-overlay'
 
@@ -96,7 +96,7 @@ const ItemFilters = (props : any) => {
             </View>
         
 
-            <ScrollView style={{backgroundColor : 'white'}}>
+            <ScrollView style={style.main}>
             {showPopular &&
                 <View>
                     <Text style={style.titleHeadings}>
@@ -140,8 +140,11 @@ const style = StyleSheet.create({
     body : {
         display : 'flex',
         flex : 1,
-        paddingHorizontal :10,
         backgroundColor : '#d4defc',
+    },
+    main : {
+        backgroundColor : bodyColor,
+        paddingHorizontal : 10
     },
     outerView : {
         display : 'flex',
