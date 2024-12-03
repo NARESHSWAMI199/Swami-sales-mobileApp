@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
  
 
 
-const host = "http://192.168.1.6:8082/"
+const host = "http://192.168.1.12:8082/"
 
 // const host = "http://10.11.13.49:8082/"
 // const host = "http://202.157.82.29:8081/"

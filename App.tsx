@@ -18,6 +18,7 @@ import Stores from './src/screens/Stores';
 import CategirzedItems from './src/screens/CategirzedItems';
 import SubCategirzedStores from './src/screens/SubCategirzedStores';
 import Login from './src/screens/Login';
+import EditProfile from './src/screens/EditProfile';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -177,6 +178,19 @@ export default function App() {
               },
               header : () => null
               }}
+          />
+
+          <Screen
+            name='editProfile'
+            component={EditProfile}
+            options={{
+              title : "Edit Profile",
+              headerTitleAlign: 'center',
+              headerStyle: {
+              },
+              header: () => null
+            }}
+          
           />
       </Navigator>
       

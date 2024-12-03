@@ -15,13 +15,18 @@ const Login = (props : any) => {
   const [error, setError] = useState('');
   const dispatch = useDispatch()
   const [token,setToken] = useState(null)
-  useEffect(()=>{
 
+  useEffect(()=>{
     const getData =  async() =>{
-        setToken(await props.token)
+      let authToken = await props.token
+      if(!!authToken){
+        navigation.navigate('editProfile');
+      }
+      setToken(authToken)
     }
     getData();
-    setError(props.error)
+    setError(props.error);
+
   },[props.error,props.token])
 
   const handleLogin = () => {
