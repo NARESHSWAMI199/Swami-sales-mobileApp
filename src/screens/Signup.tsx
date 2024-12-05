@@ -4,7 +4,7 @@ import { bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 
 
 
-const EditProfile = () => {
+const SignUp = () => {
     const [userData, setUserData] = useState({
         name: '',
         email: '',
@@ -29,7 +29,6 @@ const EditProfile = () => {
         <ImageBackground
             source={require('../images/bg1.png')}
             style={styles.image}
-            resizeMode = 'cover'
         >
         <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
 
@@ -137,7 +136,8 @@ const styles = StyleSheet.create({
     },
     image : {
         height : '100%',
-        width : '100%'
+        width : '100%',
+        resizeMode: 'center'
     },
     avatar : {
         height : 90,
@@ -151,4 +151,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default EditProfile
+export default SignUp

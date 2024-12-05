@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { ImageBackground, StyleSheet, Text, TextInput, View, StatusBar } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect, useDispatch } from 'react-redux';
 import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
+
 
 const Login = (props : any) => {
     const {
@@ -43,6 +44,12 @@ const Login = (props : any) => {
   }
 
   return ( <>
+    <ImageBackground
+      source={require('../images/bg1.png')}
+      style={style.image}
+    >
+      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+
   {token ?
     <View style={style.logout}>
       <TouchableOpacity style={style.button} onPress={handleLogout} >
@@ -66,6 +73,7 @@ const Login = (props : any) => {
         value={email}
         onChangeText={setEmail}
         style={style.textInput}
+        placeholderTextColor={bodyColor}
       />
       <TextInput
         placeholder="Password"
@@ -73,10 +81,12 @@ const Login = (props : any) => {
         value={password}
         onChangeText={setPassword}
         style={style.textInput}
+        placeholderTextColor={bodyColor}
+
       />
+      <View style={style.button}>
         <TouchableOpacity
         onPress={handleLogin}
-        style={style.button}
         accessibilityLabel="Learn more about this purple button"
         >
             <Text style={{
@@ -87,11 +97,12 @@ const Login = (props : any) => {
                 Login
             </Text>
         </TouchableOpacity> 
+      </View>
       {!!error && <Text style={style.error}>{error}</Text>}
     </View>
     }
     
-  
+  </ImageBackground>
   </>
   );
 };
@@ -101,25 +112,25 @@ const style = StyleSheet.create({
     textInput : {
         height : 50,
         width : '100%',
-        borderWidth : 0.2,
-        borderColor : 'gray',
-        paddingHorizontal : 15,
-        borderRadius : 5,
+        borderWidth : 1,
+        borderColor : bodyColor,
+        paddingHorizontal : 10,
+        borderRadius : 10,
         marginVertical : 5
     },
     body : {
-      marginHorizontal : 10,  
+      paddingHorizontal : 40,  
       display : 'flex',
       flexDirection : 'column',
       justifyContent : 'center',
       alignItems : 'center',
-      backgroundColor : bodyColor,
+      // backgroundColor : bodyColor,
       height : '100%'
     },
     button : {
-        borderRadius : 5,
+        borderRadius : 10,
         height : 45,
-        width : 340,
+        width : '100%',
         backgroundColor : themeColor,
         alignItems  : 'center',
         justifyContent : 'center',
@@ -128,9 +139,10 @@ const style = StyleSheet.create({
     },
     header : {
         fontWeight : 'bold',
-        fontSize : 18,
+        fontSize : 20,
         marginVertical : 10,
-        alignSelf : 'flex-start'
+        alignSelf : 'flex-start',
+        color : bodyColor
     },
     error : {
       color : 'red'
@@ -141,6 +153,10 @@ const style = StyleSheet.create({
       justifyContent : 'center',
       alignItems : 'center',
       height : '100%'
+    },
+    image: {
+      height: '100%',
+      width: '100%'
     }
 
 })
