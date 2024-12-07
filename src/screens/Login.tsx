@@ -20,9 +20,7 @@ const Login = (props : any) => {
   useEffect(()=>{
     const getData =  async() =>{
       let authToken = await props.token
-      if(!!authToken){
-        navigation.navigate('editProfile');
-      }
+      if (!!authToken) navigation.navigate('tab')
       setToken(authToken)
     }
     getData();
@@ -45,11 +43,10 @@ const Login = (props : any) => {
 
   return ( <>
     <ImageBackground
-      source={require('../images/bg1.png')}
+      source={require('../images/bg.png')}
       style={style.image}
     >
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-
   {token ?
     <View style={style.logout}>
       <TouchableOpacity style={style.button} onPress={handleLogout} >
@@ -65,6 +62,8 @@ const Login = (props : any) => {
     </View>
      : 
      <View style={style.body}>
+            <View style={style.backSupport}></View>
+      <View style={style.container}>
         <Text style={style.header}>
             Sign In
         </Text>
@@ -84,10 +83,11 @@ const Login = (props : any) => {
         placeholderTextColor={bodyColor}
 
       />
-      <View style={style.button}>
-        <TouchableOpacity
+      <View>
+      <TouchableOpacity
         onPress={handleLogin}
         accessibilityLabel="Learn more about this purple button"
+        style={style.button}
         >
             <Text style={{
                 fontSize : 14, 
@@ -99,7 +99,9 @@ const Login = (props : any) => {
         </TouchableOpacity> 
       </View>
       {!!error && <Text style={style.error}>{error}</Text>}
+      </View>
     </View>
+
     }
     
   </ImageBackground>
@@ -116,16 +118,22 @@ const style = StyleSheet.create({
         borderColor : bodyColor,
         paddingHorizontal : 10,
         borderRadius : 10,
-        marginVertical : 5
+        marginVertical : 5,
+        color : 'white'
     },
     body : {
-      paddingHorizontal : 40,  
       display : 'flex',
       flexDirection : 'column',
       justifyContent : 'center',
-      alignItems : 'center',
-      // backgroundColor : bodyColor,
-      height : '100%'
+      height : '100%',
+    },
+    container : {
+      display : 'flex',
+      flexDirection : 'column',
+      justifyContent : 'center',
+      position : 'absolute',
+      left : 35,
+      right : 35
     },
     button : {
         borderRadius : 10,
@@ -135,7 +143,7 @@ const style = StyleSheet.create({
         alignItems  : 'center',
         justifyContent : 'center',
         color : 'white',
-        marginVertical : 20
+        marginVertical : 20,
     },
     header : {
         fontWeight : 'bold',
@@ -152,19 +160,29 @@ const style = StyleSheet.create({
       flexDirection : 'column',
       justifyContent : 'center',
       alignItems : 'center',
-      height : '100%'
+      height : '100%',
+      position : 'absolute'
     },
     image: {
       height: '100%',
       width: '100%'
-    }
+    },
+    backSupport : {
+      backgroundColor : bodyColor,
+      opacity : 0.4,
+      height: 400,
+      position : 'relative',
+      width : '94%',
+      alignSelf : 'center',
+      borderRadius : 10
+  }
 
 })
 
 const mapToStateProps = (state:ApplicationState) =>{
     return {
-        token : state.userReducer.user?.token,
-        error : state.userReducer.user?.error
+        token : state.userReducer?.token,
+        error : state.userReducer?.error
     }
 }
 

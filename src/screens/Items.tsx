@@ -1,13 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import Spinner from 'react-native-loading-spinner-overlay'
 import { Searchbar, Text } from 'react-native-paper'
 import ItemCard from '../components/ItemCard'
 import { Category, Item } from '../redux'
 import { toTitleCase } from '../utils'
-import { bodyColor, itemsUrl } from '../utils/utils'
+import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 
 const Items = (props : any) => {
 
@@ -46,6 +46,10 @@ const Items = (props : any) => {
             justifyContent : 'center',
             alignItems : 'center',
             backgroundColor : 'white'
+        },
+        mainHeader : {
+            height : 35,
+            backgroundColor : bodyColor,
         }
     
     }),[])
@@ -124,13 +128,13 @@ const Items = (props : any) => {
         props.navigation.navigate('itemDetail',item);
       };
 
-
-    
-
-  return (<ScrollView style={style.body}>
+  return (<>  
+<ScrollView style={style.body}>
     
     {!!showCategory && 
+    
     <>
+        <View  style={style.mainHeader}></View>
         <View 
             style={{
                 display : 'flex',
@@ -194,7 +198,8 @@ const Items = (props : any) => {
             })}
             </View>
    </ScrollView>
-  )
+   </>)
+   
 }
 
 

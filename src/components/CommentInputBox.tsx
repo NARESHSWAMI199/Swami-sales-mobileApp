@@ -120,7 +120,7 @@ function CommentInputBox(props:any) {
 
 const mapToStateProps = (state:ApplicationState) =>{
     return {
-      token : state.userReducer.user.token,
+      token : state.userReducer.token
   }
 }
 

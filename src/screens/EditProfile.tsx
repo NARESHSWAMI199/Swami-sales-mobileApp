@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ImageBackground, StatusBar, Image } from 'react-native';
-import { bodyColor, defaultAvtar, themeColor } from '../utils/utils';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Image, ImageBackground, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { connect } from 'react-redux';
+import { ApplicationState, UserModel } from '../redux';
+import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
+import { toTitleCase } from '../utils';
 
 
 
-const EditProfile = () => {
+const EditProfile = (props:any) => {
     const [userData, setUserData] = useState({
-        name: '',
+        username : '',
         email: '',
-        bio: '',
+        contact: '',
     });
 
     const [errors, setErrors] = useState({
-        name: '',
+        username: '',
         email: '',
-        bio: '',
+        contact: '',
     });
 
     const handleChange = (key:string, value:string) => {
         setUserData({ ...userData, [key]: value });
     };
 
+    const [user,setUser] = useState<UserModel>()
+    const [token,setToken] = useState()
+    const [message,setMessage] = useState()
+
+
+    useEffect(()=>{
+        const getData = async () =>{
+            let user = await props.user
+            let token = await props.token
+            setUser(JSON.parse(user))
+            setToken(token)
+        }
+        getData()
+    },[props.user,props.token])
+
+    useEffect(()=>{
+        if(!!user && !!token)
+        axios.defaults.headers['Authorization'] = token
+        axios.get(authUrl+user?.slug)
+        .then(res=>{
+            setUserData(res.data)
+        }).catch(err=>console.log("Edit Profile get : "+err.message))
+    },[user,token])
+
+
+
     const handleSubmit = () => {
-        
+        axios.defaults.headers['Authorization'] = token
+        axios.post(authUrl + "update",userData)
+        .then(res=>{
+            alert(toTitleCase(res.data.message))
+        }).
+        catch(err=>console.log("Edit Profile get : "+err.message))
     };
 
-    return (
+    return (<>
         <ImageBackground
             source={require('../images/bg.png')}
             style={styles.image}
@@ -37,7 +72,7 @@ const EditProfile = () => {
         <View style={styles.backSupport}>
 
         </View>
-        <View style={{position : 'absolute', left : 40 , right : 40}}>
+        <View style={{position : 'absolute', left : 35 , right : 35}}>
             <View style={styles.heading}>
                 <Text style={styles.textHeading} >
                     Edit Profile
@@ -47,12 +82,12 @@ const EditProfile = () => {
             <Text style={styles.label}>Name:</Text>
             <TextInput
                 placeholder='Name'
-                style={[styles.input, errors.name ? styles.errorInput : null]}
-                value={userData.name}
-                onChangeText={(text) => handleChange('name', text)}
+                style={[styles.input, errors.username ? styles.errorInput : null]}
+                value={userData.username}
+                onChangeText={(username) => handleChange('username', username)}
                 placeholderTextColor ={bodyColor}
             />
-            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
 
             <Text style={styles.label}>Email:</Text>
             <TextInput
@@ -67,14 +102,14 @@ const EditProfile = () => {
             <Text style={styles.label}>Mobile:</Text>
             <TextInput
                 placeholder='Mobile'
-                style={[styles.input, errors.bio ? styles.errorInput : null]}
+                style={[styles.input, errors.contact ? styles.errorInput : null]}
                 multiline
                 numberOfLines={4}
-                value={userData.bio}
-                onChangeText={(text) => handleChange('bio', text)}
+                value={userData.contact}
+                onChangeText={(text) => handleChange('contact', text)}
                 placeholderTextColor={bodyColor}
             />
-            {errors.bio && <Text style={styles.errorText}>{errors.bio}</Text>}
+            {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Save</Text>
@@ -84,6 +119,7 @@ const EditProfile = () => {
 
 
      </ImageBackground>
+     </>
     );
 };
 
@@ -155,13 +191,20 @@ const styles = StyleSheet.create({
         backgroundColor : bodyColor,
         opacity : 0.4,
         top : 20,
-        height: 450,
+        height: 500,
         position : 'relative',
-        width : '90%',
+        width : '92%',
         alignSelf : 'center',
-        borderRadius : 20
+        borderRadius : 10
     }
 });
 
 
-export default EditProfile
+const mapToStateProps = (state : ApplicationState) => {
+    return {
+        token : state.userReducer.token,
+        user : state.userReducer.user
+    }
+}
+
+export default connect(mapToStateProps)(EditProfile)

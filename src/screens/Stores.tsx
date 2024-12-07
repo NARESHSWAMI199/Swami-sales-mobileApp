@@ -55,7 +55,11 @@ function Stores(props : any) {
       justifyContent : 'center',
       alignItems : 'center',
       backgroundColor : 'white'
-    }
+    },
+    mainHeader : {
+      height : 35,
+      backgroundColor : bodyColor,
+  }
   
   }),[width]) 
   
@@ -126,7 +130,9 @@ function Stores(props : any) {
     props.navigation.navigate('storeDetail',store);
   };
 
-  return (<ScrollView style={style.body}>
+  return (<>
+  <View style={style.mainHeader}></View>
+ <ScrollView style={style.body}>
     {!!showCategory && 
     <>
         <View 
@@ -188,6 +194,7 @@ function Stores(props : any) {
             })}
           </View>
    </ScrollView>
+   </>
   )
 
 }

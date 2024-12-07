@@ -55,12 +55,14 @@ export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
 const  onLogoutAction = () => {
     const removeToken = async() =>{
         await AsyncStorage.removeItem('token')
+        await AsyncStorage.removeItem('user')
     }
     removeToken()
     return {  
         type : "ON_AUTH_LOGOUT",
         payload : {
-            token : null
+            token : null,
+            user : null
         }
     }
 }
@@ -77,11 +79,11 @@ const onAuthFailed = (error:string) =>{
 
 
 
-const  onSingInAction = (token:string) => {
+const  onSingInAction = (payload:any) => {
     return {
         type : "ON_AUTH_LOGIN",
         payload : {
-            token : token
+            ...payload
         }
     }
 }   
@@ -97,8 +99,14 @@ export const onSignIn :any = (email : string, password : string) => {
         await axios.post(userUrl+"login",data)
         .then(async(res)=>{
             let authToken = res.data.token;
+            let user = res.data.user;
             await AsyncStorage.setItem('token',authToken)
-            dispatch(onSingInAction(authToken));
+            await AsyncStorage.setItem('user', JSON.stringify(user))
+            let payload = {
+                token : authToken,
+                user : JSON.stringify(user)
+            }
+            dispatch(onSingInAction(payload));
             dispatch(checkAuthTimeout(72 * 60 * 60));
         })
         .catch(err => {

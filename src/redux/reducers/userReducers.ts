@@ -2,15 +2,13 @@
 import { LocationGeocodedAddress } from "expo-location"
 import { UserAction } from "../actions/userActions"
 import { UserState,UserModel } from "../models"
-import { getToken } from "../../utils/utils"
+import { getToken, getUser } from "../../utils/utils"
 
 const initialState : UserState = {
-    user : {
-        token : getToken(),
-        error : null
-    } as UserModel,
+    user : getUser(),
     location : {} as LocationGeocodedAddress,
-    error : undefined
+    error : undefined,
+    token : getToken()
 }
 
 const userReducer = (state: UserState = initialState, action  : UserAction) => {
@@ -23,17 +21,19 @@ const userReducer = (state: UserState = initialState, action  : UserAction) => {
         case  'ON_AUTH_LOGIN': 
             return {
                 ...state,
-                user : action.payload
+                user : action.payload.user,
+                token : action.payload.token
         }
         case  'ON_AUTH_LOGOUT': 
             return {
                 ...state,
-                user : action.payload
+                user : action.payload.user,
+                token : action.payload.token
             }
         case  'ON_AUTH_ERROR':
             return {
                 ...state,
-                user : action.payload
+                error : action.payload.error
             }
         default :
             return state

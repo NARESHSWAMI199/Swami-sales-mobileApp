@@ -19,6 +19,8 @@ import CategirzedItems from './src/screens/CategirzedItems';
 import SubCategirzedStores from './src/screens/SubCategirzedStores';
 import Login from './src/screens/Login';
 import EditProfile from './src/screens/EditProfile';
+import Settings from './src/screens/Settings';
+import SignUp from './src/screens/Signup';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -28,8 +30,6 @@ const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
   return (<>
-  <StatusBar translucent backgroundColor={"transparent"} barStyle="dark-content" />
-
       <Tab.Navigator
         initialRouteName="Home"
         screenOptions={{
@@ -40,7 +40,16 @@ const BottomTabNavigator = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            header : ()=>null,
+            title : 'Swami Sales',
+            headerTintColor: 'white',
+            headerTitleAlign : 'left',
+            headerStyle: {
+              backgroundColor: themeColor,
+              elevation: 0,
+              shadowOpacity: 0,
+              borderWidth: 0,   
+            },
+            header:  ()=> null,
             tabBarLabel: 'Home',
             tabBarIcon: ({ focused, color }) => {
               let icon = focused == true ? require("./src/images/home_red.png") :
@@ -97,11 +106,11 @@ const BottomTabNavigator = () => {
 
 
       <Tab.Screen
-          name="User"
-          component={Login}
+          name="Settings"
+          component={Settings}
           options={{
-            header : ()=>null,
-            tabBarLabel: 'User',
+            header : ()=> null,
+            tabBarLabel: 'Settings',
             tabBarIcon:   ({ focused, color }) => {
               let icon = focused == true ? require("./src/images/user_red.png") :
                 require("./src/images/profile.png")
@@ -122,18 +131,8 @@ export default function App() {
       <NavigationContainer >
         <Navigator>
         <Screen name="landing" component={LandingScreen}  options={{header : ()=>null}}/>
-        <Screen name="tab" component={BottomTabNavigator} options={
-          { 
-            title : 'Swami Sales',
-            headerTintColor: 'white',
-            headerTitleAlign : 'left',
-            headerStyle: {
-              backgroundColor: themeColor,
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0,
-            },
-            headerLeft:  () => null 
+        <Screen name="tab" component={BottomTabNavigator} options={{ 
+            header : ()=> null,
         }}
         
         
@@ -192,6 +191,32 @@ export default function App() {
             }}
           
           />
+
+          <Screen
+            name='login'
+            component={Login}
+            options={{
+              title : "Edit Profile",
+              headerTitleAlign: 'center',
+              headerStyle: {
+              },
+              header: () => null
+            }}
+          />
+
+        <Screen
+            name='signUp'
+            component={SignUp}
+            options={{
+              title : "Edit Profile",
+              headerTitleAlign: 'center',
+              headerStyle: {
+              },
+              header: () => null
+            }}
+          
+          />    
+
       </Navigator>
       
     </NavigationContainer>

@@ -378,8 +378,8 @@ const style = StyleSheet.create({
 
 const mapToStateProps = (state:ApplicationState) =>{
     return {
-        token : state.userReducer.user.token,
-        isAuthenticated : !!state.userReducer.user.token ? true : false
+        token : state.userReducer.token,
+        isAuthenticated : !!state.userReducer.token ? true : false
     }
 }
 

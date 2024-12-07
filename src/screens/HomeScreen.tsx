@@ -1,7 +1,7 @@
 import { Tab, TabView } from '@rneui/themed'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { BackHandler, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Avatar, Icon } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
 import { connect } from 'react-redux'
@@ -46,7 +46,6 @@ useEffect(() => {
     })
 }, []);
 
-
 const [index, setIndex] = useState(0);
 const [categories, setCategories] = useState([])
 
@@ -79,7 +78,14 @@ useEffect(() => {
       };
 
 
- return (<View
+ return (<>
+  <StatusBar translucent backgroundColor='transparent' barStyle="dark-content" />
+    <View  style={style.mainHeader}>
+        <Text style={style.headerText} >
+            Swami Sales
+        </Text>
+    </View>
+    <View
         style={style.container}
     >
         <View style={{backgroundColor : themeColor}}>
@@ -275,7 +281,8 @@ useEffect(() => {
             })}
 
     </TabView>
-    </View>)
+    </View>
+    </>)
 }
 
 
@@ -285,6 +292,8 @@ const style = StyleSheet.create({
         margin : 0,
         borderRadius : 10, 
         backgroundColor : themeColor,
+        position : 'relative',
+        top : 0
     },
     body : {
         flex : 1,
@@ -337,6 +346,18 @@ const style = StyleSheet.create({
         backgroundColor  : bodyColor,
         width : '100%',
         paddingHorizontal : 5
+    },
+    mainHeader : {
+        paddingBottom:10,
+        height : 90,
+        justifyContent : 'flex-end',
+        backgroundColor : themeColor,
+        paddingHorizontal : 10
+    },
+    headerText : {
+        fontSize : 22,
+        fontWeight : '500',
+        color : bodyColor
     }
    
  
@@ -344,7 +365,7 @@ const style = StyleSheet.create({
 
 const mapToStateProps = (state : any) =>{
     return {
-        token : state.userReducer.user?.token
+        token : state.userReducer?.token
     }
 }
 
