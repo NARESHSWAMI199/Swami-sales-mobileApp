@@ -27,18 +27,21 @@ const EditProfile = () => {
 
     return (
         <ImageBackground
-            source={require('../images/bg1.png')}
+            source={require('../images/bg.png')}
             style={styles.image}
             resizeMode = 'cover'
         >
         <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-
         <View style={styles.container}>
-                <View style={{position : 'relative'}}>
+
+        <View style={styles.backSupport}>
+
+        </View>
+        <View style={{position : 'absolute', left : 40 , right : 40}}>
             <View style={styles.heading}>
-                {/* <Text style={styles.textHeading} >
+                <Text style={styles.textHeading} >
                     Edit Profile
-                </Text> */}
+                </Text>
                 <Image source={{uri : defaultAvtar}} style={styles.avatar} />
             </View>
             <Text style={styles.label}>Name:</Text>
@@ -87,7 +90,7 @@ const EditProfile = () => {
 
 const styles = StyleSheet.create({
     container : {
-        paddingHorizontal : 40,
+        // paddingHorizontal : 40,
         height : '100%',
         justifyContent : 'center'
     },
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
     textHeading : {
         fontWeight :'bold',
         color : bodyColor,
-        fontSize : 22,
+        fontSize : 18,
         marginVertical : 20
     },
     image : {
@@ -147,6 +150,16 @@ const styles = StyleSheet.create({
         marginVertical : 10,
         borderWidth : 1,
         borderColor : 'white'
+    },
+    backSupport : {
+        backgroundColor : bodyColor,
+        opacity : 0.4,
+        top : 20,
+        height: 450,
+        position : 'relative',
+        width : '90%',
+        alignSelf : 'center',
+        borderRadius : 20
     }
 });
 
