@@ -1,15 +1,13 @@
+import { Icon } from '@rneui/themed';
 import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
-import {Badge, Rating } from 'react-native-elements';
+import { Image, ScrollView, StatusBar, StyleSheet, View } from 'react-native';
+import { Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
+import ViewMoreText from 'react-native-view-more-text';
+import PagiantedItems from '../components/PaginatedItems';
 import { Store } from '../redux';
 import { toTitleCase } from '../utils';
 import { storeImageUrl } from '../utils/utils';
-import { TabItem } from '@rneui/base/dist/Tab/Tab.Item';
-import TabItems from './TabItems';
-import ViewMoreText from 'react-native-view-more-text';
-import { Icon } from '@rneui/themed';
-import PagiantedItems from '../components/PaginatedItems';
 
 
 

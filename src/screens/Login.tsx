@@ -41,9 +41,14 @@ const Login = (props : any) => {
     dispatch(onLogout())
   }
 
+
+  const handleSingup = () =>{
+    navigation.navigate("signUp")
+  }
+
   return ( <>
     <ImageBackground
-      source={require('../images/bg.png')}
+      source={require('../images/bg1.png')}
       style={style.image}
     >
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
@@ -63,45 +68,67 @@ const Login = (props : any) => {
      : 
      <View style={style.body}>
             <View style={style.backSupport}></View>
-      <View style={style.container}>
-        <Text style={style.header}>
-            Sign In
-        </Text>
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={style.textInput}
-        placeholderTextColor={bodyColor}
-      />
-      <TextInput
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        style={style.textInput}
-        placeholderTextColor={bodyColor}
+        <View style={style.container}>
 
-      />
-      <View>
-      <TouchableOpacity
-        onPress={handleLogin}
-        accessibilityLabel="Learn more about this purple button"
-        style={style.button}
-        >
-            <Text style={{
-                fontSize : 14, 
-                fontWeight : 'bold',
-                color : 'white'
-                }} >
-                Login
+          <Text style={style.headerText}>
+              Already have an account ?
+          </Text>
+          <View>
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              style={style.textInput}
+              placeholderTextColor={bodyColor}
+            />
+            <TextInput
+              placeholder="Password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+              style={style.textInput}
+              placeholderTextColor={bodyColor}
+            />
+
+          <View>
+            <Text style={style.forgotPassword}>
+              Forgot Password ?
             </Text>
-        </TouchableOpacity> 
-      </View>
-      {!!error && <Text style={style.error}>{error}</Text>}
-      </View>
-    </View>
+          </View>
 
+          <TouchableOpacity
+            onPress={handleLogin}
+            accessibilityLabel="Learn more about this purple button"
+            style={style.button}
+            >
+                <Text style={{
+                    fontSize : 14, 
+                    fontWeight : 'bold',
+                    color : 'white'
+                    }} >
+                    Login
+                </Text>
+            </TouchableOpacity> 
+
+            <TouchableOpacity
+              onPress={handleSingup}
+              accessibilityLabel="Learn more about this purple button"
+              style={style.button}
+              >
+                  <Text style={{
+                      fontSize : 14, 
+                      fontWeight : 'bold',
+                      color : 'white'
+                      }} >
+                    Don't have any account ?
+                  </Text>
+              </TouchableOpacity> 
+
+
+        {!!error && <Text style={style.error}>{error}</Text>}
+        </View>
+    </View>
+    </View>
     }
     
   </ImageBackground>
@@ -123,17 +150,14 @@ const style = StyleSheet.create({
     },
     body : {
       display : 'flex',
-      flexDirection : 'column',
       justifyContent : 'center',
       height : '100%',
     },
     container : {
       display : 'flex',
-      flexDirection : 'column',
-      justifyContent : 'center',
       position : 'absolute',
       left : 35,
-      right : 35
+      right : 35,
     },
     button : {
         borderRadius : 10,
@@ -143,14 +167,14 @@ const style = StyleSheet.create({
         alignItems  : 'center',
         justifyContent : 'center',
         color : 'white',
-        marginVertical : 20,
+        marginTop: 10,
     },
-    header : {
+    headerText : {
         fontWeight : 'bold',
-        fontSize : 20,
-        marginVertical : 10,
-        alignSelf : 'flex-start',
-        color : bodyColor
+        fontSize : 28,
+        color : bodyColor,
+        width : 180,
+        marginBottom : 40
     },
     error : {
       color : 'red'
@@ -168,13 +192,20 @@ const style = StyleSheet.create({
       width: '100%'
     },
     backSupport : {
-      backgroundColor : bodyColor,
-      opacity : 0.4,
-      height: 400,
+      backgroundColor : 'gray',
+      opacity : 0.2,
+      height: 260,
       position : 'relative',
       width : '94%',
       alignSelf : 'center',
-      borderRadius : 10
+      borderRadius : 10,
+      top : 40
+  },
+  forgotPassword : {
+    color : 'gray',
+    alignSelf : 'flex-end',
+    marginVertical : 5,
+    fontWeight : 'bold'
   }
 
 })

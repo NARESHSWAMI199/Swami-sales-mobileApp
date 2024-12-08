@@ -107,7 +107,7 @@ export const onSignIn :any = (email : string, password : string) => {
                 user : JSON.stringify(user)
             }
             dispatch(onSingInAction(payload));
-            dispatch(checkAuthTimeout(72 * 60 * 60));
+            dispatch(checkAuthTimeout(72 * 60 * 60 * 60));
         })
         .catch(err => {
             console.log("Auth login : ",err.message)

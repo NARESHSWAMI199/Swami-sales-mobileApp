@@ -21,6 +21,7 @@ import Login from './src/screens/Login';
 import EditProfile from './src/screens/EditProfile';
 import Settings from './src/screens/Settings';
 import SignUp from './src/screens/Signup';
+import Slips from './src/screens/Slips';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -87,24 +88,6 @@ const BottomTabNavigator = () => {
           }}
         />
 
-
-
-  {/* <Tab.Screen 
-          name="Slip"
-          component={Items}
-          options={{
-            header : ()=>null,
-            tabBarLabel: 'Slip',
-            tabBarIcon:   ({ focused, color }) => {
-              let icon = focused == true ? require("./src/images/red_cart.jpeg") :
-                require("./src/images/cart.png")
-              return <Image source={icon} style={styles.tabIcon} />
-            },
-          }}
-        /> */}
-
-
-
       <Tab.Screen
           name="Settings"
           component={Settings}
@@ -141,13 +124,15 @@ export default function App() {
         <Screen name="home" component={HomeScreen}  />
         <Screen name="items" component={Items} 
           options={{
-            headerTitle : 'All Items'
+            headerTitle : 'All Items',
+            header : ()=>null
           }}
         />
 
         <Screen name="stores" component={Stores} 
             options={{
-              headerTitle : 'All Stores'
+              headerTitle : 'All Stores',
+              header : ()=>null
             }}
           />
 
@@ -209,6 +194,19 @@ export default function App() {
             component={SignUp}
             options={{
               title : "Edit Profile",
+              headerTitleAlign: 'center',
+              headerStyle: {
+              },
+              header: () => null
+            }}
+          
+          />    
+
+        <Screen
+            name='slips'
+            component={Slips}
+            options={{
+              title : "Slips",
               headerTitleAlign: 'center',
               headerStyle: {
               },

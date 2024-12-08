@@ -13,12 +13,14 @@ const EditProfile = (props:any) => {
         username : '',
         email: '',
         contact: '',
+        userType : 'Retailer'
     });
 
     const [errors, setErrors] = useState({
         username: '',
         email: '',
         contact: '',
+        userType : ''
     });
 
     const handleChange = (key:string, value:string) => {
@@ -45,7 +47,7 @@ const EditProfile = (props:any) => {
         axios.defaults.headers['Authorization'] = token
         axios.get(authUrl+user?.slug)
         .then(res=>{
-            setUserData(res.data)
+            setUserData({...res.data,userType : 'Retailer'})
         }).catch(err=>console.log("Edit Profile get : "+err.message))
     },[user,token])
 
@@ -62,23 +64,21 @@ const EditProfile = (props:any) => {
 
     return (<>
         <ImageBackground
-            source={require('../images/bg.png')}
+            source={require('../images/bg1.png')}
             style={styles.image}
             resizeMode = 'cover'
         >
         <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
         <View style={styles.container}>
 
-        <View style={styles.backSupport}>
+        <View style={styles.backSupport}></View>
+    
+        <View style={styles.main}>
+            <Text style={styles.textHeading} >
+                Want update your profile ?
+            </Text>
 
-        </View>
-        <View style={{position : 'absolute', left : 35 , right : 35}}>
-            <View style={styles.heading}>
-                <Text style={styles.textHeading} >
-                    Edit Profile
-                </Text>
-                <Image source={{uri : defaultAvtar}} style={styles.avatar} />
-            </View>
+            <Image source={{uri : defaultAvtar}} style={styles.avatar} />
             <Text style={styles.label}>Name:</Text>
             <TextInput
                 placeholder='Name'
@@ -110,6 +110,19 @@ const EditProfile = (props:any) => {
                 placeholderTextColor={bodyColor}
             />
             {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+
+
+            <Text style={styles.label}>User Type:</Text>
+            <TextInput
+                placeholder='User Type'
+                style={[styles.input, errors.userType ? styles.errorInput : null]}
+                multiline
+                numberOfLines={4}
+                value={userData.userType}
+                placeholderTextColor={bodyColor}
+            />
+            {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Save</Text>
@@ -165,14 +178,17 @@ const styles = StyleSheet.create({
     buttonText : {
         color : bodyColor
     },
-    heading : {
-
+    main : {
+        position : 'absolute',
+        left : 35 , 
+        right : 35
     },
     textHeading : {
         fontWeight :'bold',
         color : bodyColor,
-        fontSize : 18,
-        marginVertical : 20
+        fontSize : 28,
+        width : 180,
+        marginBottom : 20
     },
     image : {
         height : '100%',
@@ -188,10 +204,10 @@ const styles = StyleSheet.create({
         borderColor : 'white'
     },
     backSupport : {
-        backgroundColor : bodyColor,
-        opacity : 0.4,
-        top : 20,
-        height: 500,
+        backgroundColor : 'gray',
+        opacity : 0.3,
+        top : 60,
+        height: 340,
         position : 'relative',
         width : '92%',
         alignSelf : 'center',

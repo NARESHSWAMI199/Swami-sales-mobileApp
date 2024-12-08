@@ -11,7 +11,7 @@ import Pagination from './Pagination';
 
 
 let maxButtons = 5
-const itemsPerPage = 5
+const itemsPerPage = 99
 function PagiantedItems(props: any) {
     const { categoryId, storeId } = props;
     const [showSpinner, setShowSpinner] = useState(false)

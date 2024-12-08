@@ -1,13 +1,12 @@
-import axios from "axios"
-import { useEffect, useRef, useState } from "react"
-import { StyleSheet, Text, View } from "react-native"
-import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
-import { Avatar } from "react-native-elements"
-import { ScrollView, TouchableOpacity } from "react-native-gesture-handler"
 import { Icon } from "@rneui/themed"
-import { Pressable } from "react-native"
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Avatar } from "react-native-elements"
+import { ScrollView } from "react-native-gesture-handler"
 import { connect } from "react-redux"
 import { ApplicationState } from "../redux"
+import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
 
 
 

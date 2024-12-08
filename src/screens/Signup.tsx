@@ -1,24 +1,36 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Image, ImageBackground, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { connect } from 'react-redux';
-import { ApplicationState, UserModel } from '../redux';
+import { connect, useDispatch } from 'react-redux';
+import { ApplicationState, onSignIn, UserModel } from '../redux';
 import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
 
 
 
 const SingUp = (props:any) => {
+
+    const {
+        navigation
+    } = props
+
+    const dispatch = useDispatch()
+
     const [userData, setUserData] = useState({
         username : '',
         email: '',
         contact: '',
+        password: '',
+        confirm : ''
+
     });
 
     const [errors, setErrors] = useState({
         username: '',
         email: '',
         contact: '',
+        password: '',
+        confirm : ''
     });
 
     const handleChange = (key:string, value:string) => {
@@ -27,8 +39,6 @@ const SingUp = (props:any) => {
 
     const [user,setUser] = useState<UserModel>()
     const [token,setToken] = useState()
-    const [message,setMessage] = useState()
-
 
     useEffect(()=>{
         const getData = async () =>{
@@ -51,18 +61,33 @@ const SingUp = (props:any) => {
 
 
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
+
+        if(userData.confirm != userData.password){
+            setErrors({
+                ...errors,
+                confirm : "Password and confrim password doesn't match."
+            })
+            return false;
+        }
+
         axios.defaults.headers['Authorization'] = token
-        axios.post(authUrl + "update",userData)
+        axios.post(authUrl + "register",userData)
         .then(res=>{
             alert(toTitleCase(res.data.message))
+            dispatch(onSignIn(userData.email,userData.password))
+            navigation.navigate("Settings")           
         }).
         catch(err=>console.log("Edit Profile get : "+err.message))
     };
 
+    const handleLogin = () => {
+        navigation.navigate('login')
+    }
+
     return (<>
         <ImageBackground
-            source={require('../images/bg.png')}
+            source={require('../images/bg1.png')}
             style={styles.image}
             resizeMode = 'cover'
         >
@@ -75,7 +100,7 @@ const SingUp = (props:any) => {
         <View style={{position : 'absolute', left : 35 , right :35}}>
             <View style={styles.heading}>
                 <Text style={styles.textHeading} >
-                    Sing Up
+                    Create a new account ?
                 </Text>
                 <Image source={{uri : defaultAvtar}} style={styles.avatar} />
             </View>
@@ -114,31 +139,34 @@ const SingUp = (props:any) => {
         <Text style={styles.label}>Password :</Text>
             <TextInput
                 placeholder='Password'
-                style={[styles.input, errors.contact ? styles.errorInput : null]}
+                style={[styles.input, errors.password ? styles.errorInput : null]}
                 multiline
                 numberOfLines={4}
-                value={userData.contact}
-                onChangeText={(text) => handleChange('contact', text)}
+                value={userData.password}
+                onChangeText={(text) => handleChange('password', text)}
                 placeholderTextColor={bodyColor}
             />
-            {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
 
 
             <Text style={styles.label}>Confrim:</Text>
             <TextInput
                 placeholder='Confrim'
-                style={[styles.input, errors.contact ? styles.errorInput : null]}
+                style={[styles.input, errors.confirm ? styles.errorInput : null]}
                 multiline
                 numberOfLines={4}
-                value={userData.contact}
-                onChangeText={(text) => handleChange('contact', text)}
+                value={userData.confirm}
+                onChangeText={(text) => handleChange('confirm', text)}
                 placeholderTextColor={bodyColor}
             />
-            {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+            {errors.confirm && <Text style={styles.errorText}>{errors.confirm}</Text>}
 
-
-            {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
+            <TouchableOpacity onPress={handleLogin}>
+                <Text style={styles.loginText}>
+                    Already have an account ?
+                </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Save</Text>
@@ -189,7 +217,7 @@ const styles = StyleSheet.create({
         alignItems : 'center',
         width : '100%',
         marginVertical : 10,
-        borderRadius :10
+        borderRadius : 10
     },
     buttonText : {
         color : bodyColor
@@ -200,8 +228,9 @@ const styles = StyleSheet.create({
     textHeading : {
         fontWeight :'bold',
         color : bodyColor,
-        fontSize : 18,
-        marginVertical : 20
+        fontSize : 28,
+        marginVertical : 20,
+        width : 180
     },
     image : {
         height : '100%',
@@ -217,14 +246,20 @@ const styles = StyleSheet.create({
         borderColor : 'white'
     },
     backSupport : {
-        backgroundColor : bodyColor,
-        opacity : 0.4,
-        top : 20,
-        height: 600,
+        backgroundColor : 'gray',
+        opacity : 0.3,
+        top : 70,
+        height: 420,
         position : 'relative',
         width : '92%',
         alignSelf : 'center',
-        borderRadius : 20
+        borderRadius : 10
+    },
+    loginText : {
+        color : 'gray',
+        alignSelf : 'flex-end',
+        marginVertical : 3,
+        fontWeight :'bold'
     }
 });
 

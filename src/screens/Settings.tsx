@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { Icon } from 'react-native-elements'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect, useDispatch } from 'react-redux'
@@ -28,7 +28,7 @@ function Settings(props:any) {
             dispatch(onLogout())
         }
         else if (pageName === 'slips'){
-
+            navigation.navigate("slips")
         }
         else if (pageName === 'edit-profile'){
             navigation.navigate('editProfile')
@@ -42,14 +42,29 @@ function Settings(props:any) {
     }
 
 
+    const handleBack = () =>{
+        navigation.goBack();
+    }
+
+
   return (
     <>
     <View style={style.body}>
-    <View style={style.mainHeader}>
-        <Text style={style.headerText}>
-            Settings
-        </Text>
-      </View>
+    <View>
+        <Pressable style={style.mainHeader} onPress={handleBack}>
+            <Icon 
+                name="arrow-back" 
+                type="material" 
+                size={24} 
+                color="black" 
+                style={{fontWeight : 'bold',marginHorizontal : 5}} 
+                />
+            <Text style={style.headerText}>
+                Settings
+            </Text>
+        </Pressable>   
+    </View>
+
         <View>
             {isAuthenticated  ? 
             <TouchableOpacity onPress={()=> handleRedirect('logout')}>
@@ -206,11 +221,14 @@ const style = StyleSheet.create({
         marginHorizontal : 5
     },
     mainHeader : {
+        display : 'flex',
+        flexDirection : 'row',
         height : 80,
         marginBottom : 10,
         backgroundColor : bodyColor,
         paddingHorizontal : 10,
-        justifyContent : 'flex-end',
+        justifyContent : 'flex-start',
+        paddingTop : 50
     },
     headerText : {
         fontSize : 18,
