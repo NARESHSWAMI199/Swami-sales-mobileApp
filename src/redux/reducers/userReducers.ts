@@ -21,8 +21,7 @@ const userReducer = (state: UserState = initialState, action  : UserAction) => {
         case  'ON_AUTH_LOGIN': 
             return {
                 ...state,
-                user : action.payload.user,
-                token : action.payload.token
+                ...action.payload
         }
         case  'ON_AUTH_LOGOUT': 
             return {

@@ -104,14 +104,15 @@ export const onSignIn :any = (email : string, password : string) => {
             await AsyncStorage.setItem('user', JSON.stringify(user))
             let payload = {
                 token : authToken,
-                user : JSON.stringify(user)
+                user : JSON.stringify(user),
+                error : null
             }
             dispatch(onSingInAction(payload));
             dispatch(checkAuthTimeout(72 * 60 * 60 * 60));
         })
         .catch(err => {
-            console.log("Auth login : ",err.message)
-            dispatch(onAuthFailed(err.message))
+            console.log("Auth login : ",err.response.data.message)
+            dispatch(onAuthFailed(!!err.response ? err.response.data.message : err.message))
         })
     }
 }

@@ -62,7 +62,7 @@ const StoreSubCategoryCard = (props : any) =>  {
 
 
     const [subcategory,setSubcategory] = useState({
-        id : 0,
+        id : null,
         subcategory : ''
     });
     const [stores, setStores] = useState([]);
@@ -75,7 +75,10 @@ const StoreSubCategoryCard = (props : any) =>  {
 
 
     useEffect(()=>{
-        axios.post(storeUrl +"all",{pageSize : 4,subcategoryId : subcategory.id})
+        axios.post(storeUrl +"all",{
+            pageSize : 4
+            ,subcategoryId : subcategory.id
+        })
         .then(res=>{
             let data = res.data.content;
             setStores(data)

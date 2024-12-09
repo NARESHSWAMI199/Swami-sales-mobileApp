@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Items from './Items'
 import { Store, Subcategory } from '../redux';
-import { bodyColor, storeUrl } from '../utils/utils';
+import { bodyColor, notFoundImage, storeUrl } from '../utils/utils';
 import { toTitleCase } from '../utils';
 import Stores from './Stores';
 import Spinner from 'react-native-loading-spinner-overlay';
 import StoreCard from '../components/StoreCard';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
+import { Avatar } from 'react-native-elements';
 
 function SubCategirzedStores(props:any) {
     const {route, navigation} = props;
@@ -46,11 +47,14 @@ function SubCategirzedStores(props:any) {
     },[])
 
     const handleNavigation = (store : Store) => {
-        props.navigation.navigate('storeDetail',store);
+        navigation.navigate('storeDetail',store);
     };
 
-  return (
+  return (<>
+   { stores.length < 0 ? 
+
     <ScrollView style={style.body}>
+     
         <View style={style.storeParent}>
           <Spinner
             visible={showSpinner}
@@ -62,9 +66,17 @@ function SubCategirzedStores(props:any) {
                     <StoreCard store={store}/>
               </TouchableOpacity>
             })}
-          </View>
+        </View>
     </ScrollView>
-  )
+      :    
+      <View style={style.notFound}> 
+        <Avatar source={{uri : notFoundImage}} size={150}  />
+        <Text style={style.notFoundText}>
+          No stores found.
+        </Text>
+      </View>
+    }
+    </>)
 }
 
 const style = StyleSheet.create({
@@ -93,6 +105,16 @@ const style = StyleSheet.create({
         borderRadius : 10,
         marginHorizontal : 2
     },
+    notFound : {
+      justifyContent : 'center',
+      alignItems : 'center',
+      height : '100%',
+      backgroundColor : bodyColor
+    },
+    notFoundText : {
+      fontWeight : 'bold',
+      fontSize : 14
+    }
 
 })
 

@@ -1,12 +1,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
-import { bodyColor, itemsUrl } from '../utils/utils';
+import { bodyColor, itemsUrl, notFoundImage } from '../utils/utils';
+import { Avatar } from 'react-native-elements';
 
 function SubCategirzedItems(props:any) {
     const {route, navigation} = props;
@@ -53,7 +54,8 @@ function SubCategirzedItems(props:any) {
 
 
 
-  return (
+  return (<>
+    { items.length > 0 ? 
     <ScrollView style={style.body}>
        <View style={style.outerView}>
         <Spinner
@@ -68,6 +70,15 @@ function SubCategirzedItems(props:any) {
             })}
             </View>
     </ScrollView>
+       :    
+       <View style={style.notFound}> 
+         <Avatar source={{uri : notFoundImage}} size={150}  />
+         <Text style={style.notFoundText}>
+           No items found.
+         </Text>
+       </View>
+    }
+    </>
   )
 }
 
@@ -98,8 +109,17 @@ const style = StyleSheet.create({
     innerView : {
         width : '32%',
         margin : 2
+    },
+    notFound : {
+        justifyContent : 'center',
+        alignItems : 'center',
+        height : '100%',
+        backgroundColor : bodyColor
+    },
+    notFoundText : {
+        fontWeight : 'bold',
+        fontSize : 14
     }
-
 })
 
 export default SubCategirzedItems

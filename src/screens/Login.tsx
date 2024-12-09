@@ -124,8 +124,9 @@ const Login = (props : any) => {
                   </Text>
               </TouchableOpacity> 
 
-
-        {!!error && <Text style={style.error}>{error}</Text>}
+        <View style={{marginVertical : 10}}>
+           {!!error && <Text style={style.error}>{error}</Text>}
+        </View>
         </View>
     </View>
     </View>
@@ -177,7 +178,7 @@ const style = StyleSheet.create({
         marginBottom : 40
     },
     error : {
-      color : 'red'
+      color : 'red',
     },
     logout : {
       display : 'flex',
@@ -199,7 +200,7 @@ const style = StyleSheet.create({
       width : '94%',
       alignSelf : 'center',
       borderRadius : 10,
-      top : 40
+      top : 25
   },
   forgotPassword : {
     color : 'gray',
