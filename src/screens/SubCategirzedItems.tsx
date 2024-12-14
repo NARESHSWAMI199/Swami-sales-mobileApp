@@ -55,7 +55,7 @@ function SubCategirzedItems(props:any) {
 
 
   return (<>
-    { items.length > 0 ? 
+    {items.length > 0 ? 
     <ScrollView style={style.body}>
        <View style={style.outerView}>
         <Spinner

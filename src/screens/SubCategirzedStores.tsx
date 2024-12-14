@@ -26,10 +26,11 @@ function SubCategirzedStores(props:any) {
             subcategoryId : id,
             pageSize : 99
         }
-        console.log("SubCategirzedStores")
+        console.log("SubCategirzedStores : "+JSON.stringify(data))
         axios.post(storeUrl+"all",data)
           .then(res => {
               let response = res.data.content;
+              // console.log("SubCategirzedStores response : "+JSON.stringify(response))
               setStores(response)
               setShowSpinner(false)
           })
@@ -51,7 +52,7 @@ function SubCategirzedStores(props:any) {
     };
 
   return (<>
-   { stores.length < 0 ? 
+   {stores.length > 0 ? 
 
     <ScrollView style={style.body}>
      

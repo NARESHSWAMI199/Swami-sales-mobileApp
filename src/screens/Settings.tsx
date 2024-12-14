@@ -65,25 +65,10 @@ function Settings(props:any) {
         </Pressable>   
     </View>
 
-        <View>
-            {isAuthenticated  ? 
-            <TouchableOpacity onPress={()=> handleRedirect('logout')}>
-                  <View style={style.listItem}>
-                    <View style={style.iconTab}>
-                        <Icon 
-                            type='font-awesome' 
-                            name='sign-out' color='gray'
-                            size={20}
-                            style={style.iconTab}
-                        />
-                    </View>
-                    <Text style={style.label}>
-                        Sign Out
-                    </Text>
-                </View>
-            </TouchableOpacity> : 
-            <TouchableOpacity onPress={()=> handleRedirect('login')} >
-                <View style={style.listItem}>
+    <View>
+    {!isAuthenticated && 
+        <TouchableOpacity onPress={()=> handleRedirect('login')} >
+            <View style={style.listItem}>
                 <View style={style.iconTab}>
                     <Icon 
                         type='font-awesome' 
@@ -95,10 +80,11 @@ function Settings(props:any) {
                 <Text style={style.label}>
                     Sign In
                 </Text>
-            </View>
-            </TouchableOpacity>
-        }
-        </View>
+             </View>
+        </TouchableOpacity> 
+    }
+    </View>
+
 
         {!isAuthenticated &&
         <View>
@@ -178,9 +164,27 @@ function Settings(props:any) {
         </View>
 
 
+        
         <View>
-            {/* Logout */}
+            {isAuthenticated  &&
+            <TouchableOpacity onPress={()=> handleRedirect('logout')}>
+                  <View style={style.listItem}>
+                    <View style={style.iconTab}>
+                        <Icon 
+                            type='font-awesome' 
+                            name='sign-out' color='gray'
+                            size={20}
+                            style={style.iconTab}
+                        />
+                    </View>
+                    <Text style={style.label}>
+                        Sign Out
+                    </Text>
+                </View>
+            </TouchableOpacity> 
+        }
         </View>
+
 
     </View></>
   )

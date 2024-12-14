@@ -20,7 +20,8 @@ const EditProfile = (props:any) => {
         username: '',
         email: '',
         contact: '',
-        userType : ''
+        userType : '',
+        other : ''
     });
 
     const handleChange = (key:string, value:string) => {
@@ -59,7 +60,11 @@ const EditProfile = (props:any) => {
         .then(res=>{
             alert(toTitleCase(res.data.message))
         }).
-        catch(err=>console.log("Edit Profile get : "+err.message))
+        catch(err=>{
+            let error = !!err.response ? err.response.data.message : err.message
+            setErrors({...errors, other : error})
+            console.log("Edit Profile get : "+err.message)
+        })
     };
 
     return (<>
@@ -127,7 +132,11 @@ const EditProfile = (props:any) => {
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
+        <View style={styles.errorBlock}>
+            {errors.other && <Text style={styles.errorText}>{errors.other}</Text>}
         </View>
+        </View>
+  
     </View>
 
 
@@ -206,12 +215,16 @@ const styles = StyleSheet.create({
     backSupport : {
         backgroundColor : 'gray',
         opacity : 0.3,
-        top : 60,
+        top : 30,
         height: 340,
         position : 'relative',
         width : '92%',
         alignSelf : 'center',
         borderRadius : 10
+    },
+    errorBlock : {
+        marginVertical : 10,
+        height : 40
     }
 });
 

@@ -124,7 +124,7 @@ const Login = (props : any) => {
                   </Text>
               </TouchableOpacity> 
 
-        <View style={{marginVertical : 10}}>
+        <View style={style.errorBlock}>
            {!!error && <Text style={style.error}>{error}</Text>}
         </View>
         </View>
@@ -207,6 +207,10 @@ const style = StyleSheet.create({
     alignSelf : 'flex-end',
     marginVertical : 5,
     fontWeight : 'bold'
+  },
+  errorBlock : {
+    marginVertical : 10,
+    height : 20
   }
 
 })
