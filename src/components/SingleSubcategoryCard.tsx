@@ -1,17 +1,14 @@
 
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
-import { Subcategory } from '../redux';
-import { useEffect, useState } from 'react';
+import { dummyImageUrl } from '../utils/utils';
 
 const SingleSubcategoryCard = (props:any) => {
 
 
-const [subcategory,setSubcategory] = useState({
-  subcategory : '',
-  icon : 'sdf'
-})
+const [subcategory,setSubcategory] = useState<any>({})
 
 useEffect(()=>{
   setSubcategory(props.subcategory)
@@ -25,7 +22,7 @@ return(
       <Image
         style={style.cardCover}
         resizeMode = 'contain'
-        source = {{uri : subcategory.icon}} />
+        source = {{uri : !!subcategory.icon ? subcategory.icon : dummyImageUrl}} />
     </View>
           <Text style={style.itemTitle} >
             {toTitleCase(subcategory.subcategory)}

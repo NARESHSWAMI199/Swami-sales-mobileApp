@@ -170,7 +170,7 @@ const CommentView = (props:any) =>{
 
 
 
-    return (<><View>
+    return (<View><View>
         {comments.map((comment : any,index : number) => {
             return (
                 <View key={index}  style={{
@@ -325,7 +325,7 @@ const CommentView = (props:any) =>{
                 maxButtons = {maxButtons}
             />
         </View>
-    </>
+    </View>
     )
 }
 

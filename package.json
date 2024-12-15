@@ -23,6 +23,7 @@
     "expo-location": "~15.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
+    "moment": "^2.30.1",
     "react": "18.2.0",
     "react-native": "0.71.14",
     "react-native-animated-dots-carousel": "^2.0.0",

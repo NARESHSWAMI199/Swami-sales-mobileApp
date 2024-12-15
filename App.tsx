@@ -22,6 +22,7 @@ import EditProfile from './src/screens/EditProfile';
 import Settings from './src/screens/Settings';
 import SignUp from './src/screens/Signup';
 import Slips from './src/screens/Slips';
+import SlipItems from './src/screens/SlipItems';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -30,8 +31,7 @@ const {Navigator, Screen} = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const BottomTabNavigator = () => {
-  return (<>
-      <Tab.Navigator
+  return (<Tab.Navigator
         initialRouteName="Home"
         screenOptions={{
           tabBarStyle: {height : 60 }
@@ -102,15 +102,12 @@ const BottomTabNavigator = () => {
           }}
         />
       </Tab.Navigator>
-    </>
   );
 };
 
 export default function App() {
 
-  return (<>
-  
-  <Provider store={store}>
+  return (<Provider store={store}>
       <NavigationContainer >
         <Navigator>
         <Screen name="landing" component={LandingScreen}  options={{header : ()=>null}}/>
@@ -212,19 +209,27 @@ export default function App() {
               },
               header: () => null
             }}
-          
           />    
+
+
+
+        <Screen
+            name='slipItems'
+            component={SlipItems}
+            options={{
+              title : "Slip Items",
+              headerTitleAlign: 'center',
+              headerStyle: {
+              },
+              header: () => null
+            }}
+          />    
+
 
       </Navigator>
       
     </NavigationContainer>
-  </Provider>
-  </>
-
-    
-
-  
-  );
+  </Provider>);
 }
 
 const styles = StyleSheet.create({

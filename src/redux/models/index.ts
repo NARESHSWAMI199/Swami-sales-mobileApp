@@ -72,7 +72,8 @@ export interface Item {
     description: string,
     avatars: string,
     rating: Float,
-    slug : string
+    slug : string,
+    quantity : number
 }
 
 export interface Store {
