@@ -245,9 +245,8 @@ useEffect(() => {
                         <Text style={style.titleHeadings} >
                             Most Populer Stores
                         </Text>
-                        <TabItems 
+                        <PopularStores 
                             {...props} 
-                            size = {100} 
                             showCategory={false}
                             selfPadding={false}
                             />
