@@ -214,6 +214,9 @@ useEffect(() => {
                     </View>
                
                 
+
+
+                {/* Most populer items block started  */}
                     <View style={{
                         ...style.mostPopularItems,
                         ...style.parentView
@@ -232,6 +235,8 @@ useEffect(() => {
                             <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
                         </TouchableOpacity>
                     </View>
+
+                {/* ! Most populer items block ended  */}
                     
                     <View style={{
                             ...style.mostPopularStores,
@@ -287,80 +292,71 @@ useEffect(() => {
 
 
 const style = StyleSheet.create({
-    container : {
-        flex : 1,
-        margin : 0,
-        borderRadius : 10, 
-        backgroundColor : themeColor,
-        position : 'relative',
-        top : 0
+    container: {
+        flex: 1,
+        margin: 0,
+        borderRadius: 10,
+        backgroundColor: themeColor,
+        position: 'relative',
+        top: 0
     },
-    body : {
-        flex : 1,
-        justifyContent:'center',
-        alignItems : 'center',
+    body: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     scrollView: {
-        flexGrow : 1,
-        width:'100%',
-        height : '100%',
-        position : 'absolute'
+        flexGrow: 1,
+        width: '100%',
+        height: '100%',
+        position: 'absolute'
     },
-    titleHeadings : {
-        paddingHorizontal : 10,
-        fontWeight : 'bold',
-        fontSize : 16,
-        marginVertical : 20,
+    titleHeadings: {
+        paddingHorizontal: 10,
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginVertical: 20,
     },
-    mostPopularItems : {
-        flex : 1
+    mostPopularItems: {
+        flex: 1
     },
-    mostPopularStores : {
-        flex : 1
+    mostPopularStores: {
+        flex: 1
     },
-    paginate : {
-        display : 'flex',
-        flexDirection : 'row',
-        backgroundColor : 'white',
-        width : '100%',
-        height : 40,
-        justifyContent : 'center',
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 1,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4.84,
-        borderRadius : 20,
-        elevation: 1,
-        paddingVertical : 10,
-        marginVertical : 10,
-    },paginateText : {
-        textAlign : 'center',
-        fontWeight : '500',
-        color : '#001475',
-        fontSize : 16
+    paginate: {
+        display: 'flex',
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        width: '100%',
+        height: 40,
+        justifyContent: 'center',
+        borderRadius: 20,
+        paddingVertical: 10,
+        marginVertical: 10,
     },
-    parentView : {
-        backgroundColor  : bodyColor,
-        width : '100%',
-        paddingHorizontal : 5
+    paginateText: {
+        textAlign: 'center',
+        fontWeight: '500',
+        color: '#001475',
+        fontSize: 16
     },
-    mainHeader : {
-        paddingBottom:10,
-        height : 90,
-        justifyContent : 'flex-end',
-        backgroundColor : themeColor,
-        paddingHorizontal : 10
+    parentView: {
+        backgroundColor: bodyColor,
+        width: '100%',
+        paddingHorizontal: 5
     },
-    headerText : {
-        fontSize : 18,
-        fontWeight : '800',
-        color : bodyColor
+    mainHeader: {
+        paddingBottom: 10,
+        height: 90,
+        justifyContent: 'flex-end',
+        backgroundColor: themeColor,
+        paddingHorizontal: 10
+    },
+    headerText: {
+        fontSize: 18,
+        fontWeight: '800',
+        color: bodyColor
     }
-   
- 
 })
 
 const mapToStateProps = (state : any) =>{
