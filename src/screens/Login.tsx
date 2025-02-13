@@ -50,9 +50,7 @@ const Login = (props: any) => {
         style={style.image}
       >
         <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-        <TouchableOpacity onPress={handleBack} style={style.backButton}>
-          <Icon name='arrow-back' color='white' />
-        </TouchableOpacity>
+
         {token ?
           <View style={style.logout}>
             <TouchableOpacity style={style.button} onPress={handleLogout} >
@@ -63,6 +61,10 @@ const Login = (props: any) => {
           <View style={style.body}>
             <View style={style.backSupport}></View>
             <View style={style.container}>
+            <TouchableOpacity onPress={handleBack} style={style.backButton}>
+              <Icon name='arrow-back' color='white' />
+              <Text style={style.goBackText}>Back</Text>
+            </TouchableOpacity>
               <Text style={style.headerText}>
                 Already have an account?
               </Text>
@@ -193,13 +195,15 @@ const style = StyleSheet.create({
     height: 20
   },
   backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
     position: 'absolute',
-    top: 40,
-    left: 10,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    top: -40,
     borderRadius: 20,
-    padding: 5,
-    zIndex: 1,
+  },
+  goBackText: {
+    color: 'white',
+    marginLeft: 5,
   }
 })
 

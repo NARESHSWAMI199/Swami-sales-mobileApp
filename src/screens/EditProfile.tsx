@@ -5,8 +5,7 @@ import { connect } from 'react-redux';
 import { ApplicationState, UserModel } from '../redux';
 import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
-
-
+import { Icon } from 'react-native-elements'
 
 const EditProfile = (props:any) => {
     const [userData, setUserData] = useState({
@@ -32,6 +31,9 @@ const EditProfile = (props:any) => {
     const [token,setToken] = useState()
     const [message,setMessage] = useState()
 
+    const handleGoBack = () => {
+        props.navigation.goBack();
+    };
 
     useEffect(()=>{
         const getData = async () =>{
@@ -79,8 +81,12 @@ const EditProfile = (props:any) => {
         <View style={styles.backSupport}></View>
     
         <View style={styles.main}>
+            <TouchableOpacity style={styles.goBack} onPress={handleGoBack}>
+                <Icon name="arrow-back" type="material" size={24} color="white" />
+                <Text style={styles.goBackText}>Back</Text>
+            </TouchableOpacity>
             <Text style={styles.textHeading} >
-                Want update your profile ?
+                Want to update your profile?
             </Text>
 
             <Image source={{uri : defaultAvtar}} style={styles.avatar} />
@@ -225,7 +231,16 @@ const styles = StyleSheet.create({
     errorBlock : {
         marginVertical : 10,
         height : 40
-    }
+    },
+    goBack: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    goBackText: {
+        color: 'white',
+        marginLeft: 5,
+    },
 });
 
 

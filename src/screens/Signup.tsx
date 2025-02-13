@@ -5,8 +5,7 @@ import { connect, useDispatch } from 'react-redux';
 import { ApplicationState, onSignIn, UserModel } from '../redux';
 import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
-
-
+import { Icon } from 'react-native-elements'
 
 const SingUp = (props:any) => {
 
@@ -59,7 +58,9 @@ const SingUp = (props:any) => {
         }).catch(err=>console.log("Edit Profile get : "+err.message))
     },[user,token])
 
-
+    const handleGoBack = () => {
+        props.navigation.goBack();
+    };
 
     const handleSubmit = async() => {
 
@@ -93,93 +94,91 @@ const SingUp = (props:any) => {
         >
         <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
         <View style={styles.container}>
+            <View style={styles.backSupport}></View>
+            <View style={{position : 'absolute', left : 35 , right :35}}>
+                <View style={styles.heading}>
+                <TouchableOpacity style={styles.goBack} onPress={handleGoBack}>
+                    <Icon name="arrow-back" type="material" size={24} color="white" />
+                    <Text style={styles.goBackText}>Back</Text>
+                </TouchableOpacity>
+                    <Text style={styles.textHeading} >
+                        Create a new account?
+                    </Text>
+                    <Image source={{uri : defaultAvtar}} style={styles.avatar} />
+                </View>
+                <Text style={styles.label}>Name:</Text>
+                <TextInput
+                    placeholder='Name'
+                    style={[styles.input, errors.username ? styles.errorInput : null]}
+                    value={userData.username}
+                    onChangeText={(username) => handleChange('username', username)}
+                    placeholderTextColor ={bodyColor}
+                />
+                {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
 
-        <View style={styles.backSupport}>
+                <Text style={styles.label}>Email:</Text>
+                <TextInput
+                    placeholder='Email'
+                    style={[styles.input, errors.email ? styles.errorInput : null]}
+                    value={userData.email}
+                    onChangeText={(text) => handleChange('email', text)}
+                    placeholderTextColor={bodyColor}
+                />
+                {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
-        </View>
-        <View style={{position : 'absolute', left : 35 , right :35}}>
-            <View style={styles.heading}>
-                <Text style={styles.textHeading} >
-                    Create a new account ?
-                </Text>
-                <Image source={{uri : defaultAvtar}} style={styles.avatar} />
+                <Text style={styles.label}>Mobile:</Text>
+                <TextInput
+                    placeholder='Mobile'
+                    style={[styles.input, errors.contact ? styles.errorInput : null]}
+                    multiline
+                    numberOfLines={4}
+                    value={userData.contact}
+                    onChangeText={(text) => handleChange('contact', text)}
+                    placeholderTextColor={bodyColor}
+                />
+
+
+            <Text style={styles.label}>Password :</Text>
+                <TextInput
+                    placeholder='Password'
+                    style={[styles.input, errors.password ? styles.errorInput : null]}
+                    multiline
+                    numberOfLines={4}
+                    value={userData.password}
+                    onChangeText={(text) => handleChange('password', text)}
+                    placeholderTextColor={bodyColor}
+                />
+                {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+
+
+
+                <Text style={styles.label}>Confirm:</Text>
+                <TextInput
+                    placeholder='Confirm'
+                    style={[styles.input, errors.confirm ? styles.errorInput : null]}
+                    multiline
+                    numberOfLines={4}
+                    value={userData.confirm}
+                    onChangeText={(text) => handleChange('confirm', text)}
+                    placeholderTextColor={bodyColor}
+                />
+                {errors.confirm && <Text style={styles.errorText}>{errors.confirm}</Text>}
+
+                <TouchableOpacity onPress={handleLogin}>
+                    <Text style={styles.loginText}>
+                        Already have an account?
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
             </View>
-            <Text style={styles.label}>Name:</Text>
-            <TextInput
-                placeholder='Name'
-                style={[styles.input, errors.username ? styles.errorInput : null]}
-                value={userData.username}
-                onChangeText={(username) => handleChange('username', username)}
-                placeholderTextColor ={bodyColor}
-            />
-            {errors.username && <Text style={styles.errorText}>{errors.username}</Text>}
-
-            <Text style={styles.label}>Email:</Text>
-            <TextInput
-                placeholder='Email'
-                style={[styles.input, errors.email ? styles.errorInput : null]}
-                value={userData.email}
-                onChangeText={(text) => handleChange('email', text)}
-                placeholderTextColor={bodyColor}
-            />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-
-            <Text style={styles.label}>Mobile:</Text>
-            <TextInput
-                placeholder='Mobile'
-                style={[styles.input, errors.contact ? styles.errorInput : null]}
-                multiline
-                numberOfLines={4}
-                value={userData.contact}
-                onChangeText={(text) => handleChange('contact', text)}
-                placeholderTextColor={bodyColor}
-            />
-
-
-        <Text style={styles.label}>Password :</Text>
-            <TextInput
-                placeholder='Password'
-                style={[styles.input, errors.password ? styles.errorInput : null]}
-                multiline
-                numberOfLines={4}
-                value={userData.password}
-                onChangeText={(text) => handleChange('password', text)}
-                placeholderTextColor={bodyColor}
-            />
-            {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-
-
-
-            <Text style={styles.label}>Confrim:</Text>
-            <TextInput
-                placeholder='Confrim'
-                style={[styles.input, errors.confirm ? styles.errorInput : null]}
-                multiline
-                numberOfLines={4}
-                value={userData.confirm}
-                onChangeText={(text) => handleChange('confirm', text)}
-                placeholderTextColor={bodyColor}
-            />
-            {errors.confirm && <Text style={styles.errorText}>{errors.confirm}</Text>}
-
-            <TouchableOpacity onPress={handleLogin}>
-                <Text style={styles.loginText}>
-                    Already have an account ?
-                </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>Save</Text>
-            </TouchableOpacity>
         </View>
-    </View>
-
-
      </ImageBackground>
      </>
     );
-};
-
+}
 
 const styles = StyleSheet.create({
     container : {
@@ -260,7 +259,18 @@ const styles = StyleSheet.create({
         alignSelf : 'flex-end',
         marginVertical : 3,
         fontWeight :'bold'
-    }
+    },
+    goBack: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+        marginTop: 40,
+        marginLeft: 10,
+    },
+    goBackText: {
+        color: 'white',
+        marginLeft: 5,
+    },
 });
 
 
