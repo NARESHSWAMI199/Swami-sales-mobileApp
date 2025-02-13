@@ -265,7 +265,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
         marginTop: 40,
-        marginLeft: 10,
     },
     goBackText: {
         color: 'white',
