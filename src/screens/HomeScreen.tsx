@@ -1,7 +1,7 @@
 import { Tab, TabView } from '@rneui/themed'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { BackHandler, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { BackHandler, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import { Avatar, Icon } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
 import { connect } from 'react-redux'
@@ -12,45 +12,45 @@ import ItemCategories from './ItemCategories'
 import PopularStores from './PopularStores'
 import RecentItems from './RecentItems'
 import TabItems from './TabItems'
+import Stores from './Stores'
 
-const  HomeScreen = (props : any) => {
+const HomeScreen = (props: any) => {
     const { navigation } = props;
 
     const hideTabBar = () => {
         navigation.setOptions({
-          tabBarStyle: { display: 'none' },
+            tabBarStyle: { display: 'none' },
         });
-      };
-        const showTabBar = () => {
+    };
+    const showTabBar = () => {
         navigation.setOptions({
-          tabBarStyle: { height : 60, display: 'flex' },
+            tabBarStyle: { height: 60, display: 'flex' },
         });
-      };
-    
+    };
 
-const onScroll = (event: any) => {
-    const currentOffset = event.nativeEvent.contentOffset.y;
-    const dif = currentOffset - (props.offset || 0);  
-    if (dif < 100) {
-         showTabBar()
-    } else {
-        hideTabBar()
+    const onScroll = (event: any) => {
+        const currentOffset = event.nativeEvent.contentOffset.y;
+        const dif = currentOffset - (props.offset || 0);
+        if (dif < 100) {
+            showTabBar()
+        } else {
+            hideTabBar()
+        }
+        props.offset = currentOffset;
     }
-    props.offset = currentOffset;   
-}
 
-useEffect(() => {
-    navigation.addListener("beforeRemove", (e:any) => {
-        e.preventDefault();
-        BackHandler.exitApp();
-    })
-}, []);
+    useEffect(() => {
+        navigation.addListener("beforeRemove", (e: any) => {
+            e.preventDefault();
+            BackHandler.exitApp();
+        })
+    }, []);
 
-const [index, setIndex] = useState(0);
-const [categories, setCategories] = useState([])
+    const [index, setIndex] = useState(0);
+    const [categories, setCategories] = useState([])
 
-useEffect(() => {
-      axios.post(itemsUrl+"categories", {orderBy : 'id'})
+    useEffect(() => {
+        axios.post(itemsUrl + "categories", { orderBy: 'id' })
             .then(res => {
                 let categories = res.data;
                 setCategories(categories)
@@ -58,234 +58,227 @@ useEffect(() => {
             .catch(err => {
                 console.log(err.message)
             })
-            // authcheck
-            authCheckState();
+        // authcheck
+        authCheckState();
     }, [])
 
-
     const handleFilter = () => {
-        navigation.navigate('itemFilter',{});
+        navigation.navigate('itemFilter', {});
     }
-
-
 
     const handleNavigationItems = () => {
         props.navigation.navigate('items');
-      };
+    };
 
-    const handleNavigationStore =() => {
+    const handleNavigationStore = () => {
         props.navigation.navigate('stores');
-      };
+    };
 
-
- return (<>
-  <StatusBar translucent backgroundColor='transparent' barStyle="dark-content" />
-    <View  style={style.mainHeader}>
-        <Text style={style.headerText} >
-            Swami Sales
-        </Text>
-    </View>
-    <View
-        style={style.container}
-    >
-        <View style={{backgroundColor : themeColor}}>
-        <View style={{
-            paddingHorizontal : 10
-        }}>
-            <Searchbar
-                placeholder="Search"
-                value={''}
-                onPressOut={handleFilter}
-                autoFocus={false}
-                style={{
-                    width : '100%',
-                    alignSelf : 'center',
-                    marginVertical : 10,
-                }}
-                />
-        </View>    
-       
-    
-            <ScrollView 
-                horizontal 
-                showsHorizontalScrollIndicator={false}> 
-                <Tab  value={index} onChange={setIndex} dense>
-                    <Tab.Item 
-                        titleStyle={{ fontSize: 14, color : 'white', minWidth : 40}}
-                        >
-                        <Avatar 
-                            rounded
-                            size={20}
-                            source={{
-                                uri:'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
-                            }} 
-                     
-                                />
-                        {"All"}
-                    </Tab.Item>
-                    {categories.map((category:Category,i)=> {
-                        return <Tab.Item 
-                        key={i}
-                        titleStyle={{ 
-                            fontSize: 14, 
-                            color : 'white', 
-                            minWidth : 40
-                        }}
-                        >
-                        <Avatar  
-                        rounded
-                        size={20}
-                        source={{
-                            uri:category.icon
-                        }} 
-                        />
-                        {category.category}
-                        </Tab.Item>
-                    })}
-                
-                </Tab>
-            </ScrollView>
+    return (<>
+        <StatusBar translucent backgroundColor='transparent' barStyle="dark-content" />
+        <View style={style.mainHeader}>
+            <Image
+                source={require('../images/logow.png')}
+                style={style.logo}
+            />
+            <Text style={style.headerText}>
+                Swami Sales
+            </Text>
         </View>
+        <View style={style.container}>
+            <View style={{ backgroundColor: themeColor }}>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Searchbar
+                        placeholder="Search"
+                        value={''}
+                        onPressOut={handleFilter}
+                        autoFocus={false}
+                        style={{
+                            width: '100%',
+                            alignSelf: 'center',
+                            marginVertical: 10,
+                        }}
+                    />
+                </View>
 
-        <TabView disableSwipe value={index} onChange={(e) => setIndex(e)} animationType="spring">
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}>
+                    <Tab value={index} onChange={setIndex} dense>
+                        <Tab.Item
+                            titleStyle={{ fontSize: 14, color: 'white', minWidth: 40 }}
+                        >
+                            <Avatar
+                                rounded
+                                size={20}
+                                source={{
+                                    uri: 'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
+                                }}
+                            />
+                            {"All"}
+                        </Tab.Item>
+                        {categories.map((category: Category, i) => {
+                            return <Tab.Item
+                                key={i}
+                                titleStyle={{
+                                    fontSize: 14,
+                                    color: 'white',
+                                    minWidth: 40
+                                }}
+                            >
+                                <Avatar
+                                    rounded
+                                    size={20}
+                                    source={{
+                                        uri: category.icon
+                                    }}
+                                />
+                                {category.category}
+                            </Tab.Item>
+                        })}
 
-            <TabView.Item
-             style={{
-                width: '100%',
-            }}
-            >
-            <ScrollView 
-                onScroll={onScroll}
-                style={style.scrollView}>
-          
-                    <View 
-                        style={{backgroundColor : themeColor}}
-                    >
+                    </Tab>
+                </ScrollView>
+            </View>
+
+            <TabView disableSwipe value={index} onChange={(e) => setIndex(e)} animationType="spring">
+
+                <TabView.Item
+                    style={{
+                        width: '100%',
+                    }}
+                >
+                    <ScrollView
+                        onScroll={onScroll}
+                        style={style.scrollView}>
+
+                        <View
+                            style={{ backgroundColor: themeColor }}
+                        >
                             <View>
-                                <Text style={{...style.titleHeadings, color : 'white',marginVertical : 12}}>
+                                <Text style={{ ...style.titleHeadings, color: 'white', marginVertical: 12 }}>
                                     Popular Items
                                 </Text>
-                                
-                                <ScrollView 
+
+                                <ScrollView
                                     style={{
-                                        paddingBottom : 20
-                                    }} 
-                                    horizontal 
+                                        paddingBottom: 20
+                                    }}
+                                    horizontal
                                     showsHorizontalScrollIndicator={false}
                                 >
-                                    <RecentItems {...props} marginHorizontal = {5}/>
+                                    <RecentItems {...props} marginHorizontal={5} />
                                 </ScrollView>
                             </View>
 
-                     
-                    </View>   
+
+                        </View>
 
 
-                    <View style={style.parentView}>
-                        <Text style={{...style.titleHeadings,marginVertical : 12}}>
-                            Item Categories
-                        </Text>
-                        <ItemSubCategories {...props} />
-                    </View>
-            
-                   <View style={style.parentView}>
-                         <ItemCategories  {...props} />
-                    </View>                     
+                        <View style={style.parentView}>
+                            <Text style={{ ...style.titleHeadings, marginVertical: 12 }}>
+                                Item Categories
+                            </Text>
+                            <ItemSubCategories {...props} />
+                        </View>
 
-            
-
-                    <View style={style.parentView}>
-                        <Text style={style.titleHeadings}>
-                            Popular Stores
-                        </Text>
-                        <ScrollView horizontal>
-                            <PopularStores
-                             width = {120} 
-                            {...props} 
-                            showCategory={false}
-                             />
-                        </ScrollView>
-                    </View>
-                    <View style={style.parentView}>
-                        <Text style={{...style.titleHeadings,marginVertical : 12}}>
-                            Store Categories
-                        </Text>
-                        <StoreSubCategories {...props} />
-                    </View>
-               
-                
+                        <View style={style.parentView}>
+                            <ItemCategories  {...props} />
+                        </View>
 
 
-                {/* Most populer items block started  */}
-                    <View style={{
-                        ...style.mostPopularItems,
-                        ...style.parentView
-                    }}>
-                        <Text style={style.titleHeadings}>
-                            Most Populer Items
-                        </Text>
-                        <TabItems showCategory={false}  
-                            {...props} 
-                            size = {51}
-                            selfPadding ={false}
-                        />
+                        <View style={style.parentView}>
+                            <Text style={style.titleHeadings}>
+                                Popular Stores
+                            </Text>
+                            <ScrollView horizontal>
+                                <PopularStores
+                                    width={"32%"}
+                                    {...props}
+                                    showCategory={false}
+                                />
+                            </ScrollView>
+                        </View>
+                        <View style={style.parentView}>
+                            <Text style={{ ...style.titleHeadings, marginVertical: 12 }}>
+                                Store Categories
+                            </Text>
+                            <StoreSubCategories {...props} />
+                        </View>
 
-                        <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationItems()} > 
-                            <Text style={style.paginateText}>See all items</Text>
-                            <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
-                        </TouchableOpacity>
-                    </View>
 
-                {/* ! Most populer items block ended  */}
-                    
-                    <View style={{
+
+                        {/* Most populer items block started  */}
+                        <View style={{
+                            ...style.mostPopularItems,
+                            ...style.parentView
+                        }}>
+                            <Text style={style.titleHeadings}>
+                                Most Populer Items
+                            </Text>
+                            <TabItems showCategory={false}
+                                {...props}
+                                size={51}
+                                selfPadding={false}
+                            />
+
+                            <TouchableOpacity style={style.paginate} onPress={() => handleNavigationItems()} >
+                                <Text style={style.paginateText}>See all items</Text>
+                                <Icon name='chevron-small-right' color={'#001475'} type="entypo" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* ! Most populer items block ended  */}
+
+                        <View style={{
                             ...style.mostPopularStores,
                             ...style.parentView
-                            }}>
-                        <Text style={style.titleHeadings} >
-                            Most Populer Stores
-                        </Text>
-                        <PopularStores 
-                            {...props} 
-                            showCategory={false}
-                            selfPadding={false}
+                        }}>
+                            <Text style={style.titleHeadings} >
+                                Most Populer Stores
+                            </Text>
+                            <Stores
+                                {...props}
+                                size={100}
+                                showCategory={false}
+                                selfPadding={false}
                             />
-                        <TouchableOpacity style={style.paginate} onPress={()=>handleNavigationStore()} > 
-                            <Text style={style.paginateText}>See all stores</Text>
-                            <Icon name='chevron-small-right' color={'#001475'}  type="entypo" />
-                        </TouchableOpacity>
-                    </View>
-
-
-
-
-              </ScrollView>  
-            
-            
-            </TabView.Item>  
-            {categories.map((category:Category,i)=> {
-                return <TabView.Item key= {i} style={{width: '100%' }}>
-                    <ScrollView 
-                            onScroll={onScroll}
-                            style={{...style.scrollView , ...style.parentView}}>
-                        <View>
-                            <Text style={style.titleHeadings}>
-                                Related Categoires
-                            </Text>
-                            <ItemSubCategories {...props} categoryId={category.id} size={6} />
+                            <TouchableOpacity style={style.paginate} onPress={() => handleNavigationStore()} >
+                                <Text style={style.paginateText}>See all stores</Text>
+                                <Icon name='chevron-small-right' color={'#001475'} type="entypo" />
+                            </TouchableOpacity>
                         </View>
-                        <View style={{flex : 1}}>
-                            <Text style={style.titleHeadings}>
-                                Related Items
-                            </Text>
-                            <TabItems {...props} showCategory={false} categoryId = {category.id} />
-                        </View>
+
+
+
+
                     </ScrollView>
-                </TabView.Item>  
-            })}
 
-    </TabView>
-    </View>
+
+                </TabView.Item>
+                {categories.map((category: Category, i) => {
+                    return <TabView.Item key={i} style={{ width: '100%' }}>
+                        <ScrollView
+                            onScroll={onScroll}
+                            style={{ ...style.scrollView, ...style.parentView }}>
+                            <View>
+                                <Text style={style.titleHeadings}>
+                                    Related Categoires
+                                </Text>
+                                <ItemSubCategories {...props} categoryId={category.id} size={6} />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={style.titleHeadings}>
+                                    Related Items
+                                </Text>
+                                <TabItems {...props} showCategory={false} categoryId={category.id} />
+                            </View>
+                        </ScrollView>
+                    </TabView.Item>
+                })}
+
+            </TabView>
+        </View>
     </>)
 }
 
@@ -347,20 +340,28 @@ const style = StyleSheet.create({
     mainHeader: {
         paddingBottom: 10,
         height: 90,
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         backgroundColor: themeColor,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        paddingVertical: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     headerText: {
         fontSize: 18,
         fontWeight: '800',
-        color: bodyColor
+        color: bodyColor,
+        marginLeft: 10,
+    },
+    logo: {
+        width: 30,
+        height: 30,
     }
 })
 
-const mapToStateProps = (state : any) =>{
+const mapToStateProps = (state: any) => {
     return {
-        token : state.userReducer?.token
+        token: state.userReducer?.token
     }
 }
 

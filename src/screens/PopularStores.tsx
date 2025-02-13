@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   storeView: {
-    width: '32%',
+    width: 120,
     backgroundColor: 'white',
     borderRadius: 10,
     marginHorizontal: 2,
