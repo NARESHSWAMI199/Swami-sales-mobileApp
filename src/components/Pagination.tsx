@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { themeColor } from '../utils/utils';
+import { logError, logInfo } from '../utils/logger'; // Import loggers
 
-const Pagination = (props:any) => {
+const Pagination = (props: any) => {
     const { itemsPerPage, maxButtons } = props;
     const [startButton, setStartButton] = useState(0);
     const [endButton, setEndButton] = useState(startButton + maxButtons);
@@ -20,6 +21,7 @@ const Pagination = (props:any) => {
         } else {
             setEndButton(startButton + maxButtons);
         }
+        logInfo(`Total pages calculated: ${totalPage}`);
     }, [totalElements]);
 
     useEffect(() => {
@@ -45,6 +47,7 @@ const Pagination = (props:any) => {
     }, [startButton]);
 
     const handlePageChange = (page: number) => {
+        logInfo(`Changing to page ${page}`);
         props.handlePageChange(page);
         setCurrentPage(page);
     };

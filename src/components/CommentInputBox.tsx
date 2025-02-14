@@ -5,8 +5,7 @@ import { Avatar, Icon, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
 import { commentUrl, defaultAvtar } from '../utils/utils'
-
-
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 function CommentInputBox(props:any) {
 
@@ -17,24 +16,30 @@ function CommentInputBox(props:any) {
     discardAlert,
   } = props
 
+  // State variables
   const [message,setMessage] = useState<string>(undefined)
   const [token , setToken] = useState<string>()
   const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
 
 
+  // Effect to get token from props
   useEffect(()=>{
     const getData =  async() =>{
        setToken(await props.token)
        setIsAuthenticated(!!(await props.token) ? true : false)
+       logInfo(`Token and authentication state set`)
     }
     getData()
   },[props.token])
   
+  // Effect to update message with prefix
   useEffect(()=>{
     setMessage((!!props.messagePrefix ? props.messagePrefix + "\n" + (!!message ? message : '') : message))
+    logInfo(`Message prefix set`)
   },[props.messagePrefix])
 
 
+  // Function to handle comment submission
   const handleComment = () => {
     if(!!message){
     axios.defaults.headers['Authorization'] = token
@@ -44,21 +49,24 @@ function CommentInputBox(props:any) {
         parentId : parentId
       })
       .then(res => {
-        console.log(res)
+        logInfo(`Comment added successfully`)
         props.isCommentUpdated(true)
         setMessage('')
       })
       .catch(err => {
-        console.log("Comment : "+ err.message)
+        logError(`Error adding comment: ${err.message}`)
       })
     }
   }
 
+  // Function to handle message change
   const handleMessage = (text:string) =>{
     setMessage(text)
+    logInfo(`Message updated: ${text}`)
   }
 
 
+  // Function to handle blur event
   const handleBlur = () =>{
     if (!!discardAlert && !!message && message?.trim() !== '') {
       Alert.alert(
@@ -77,6 +85,7 @@ function CommentInputBox(props:any) {
             onPress: () => {
               setMessage('')
               props.onDiscardText()
+              logInfo(`Message discarded`)
             },
           },
         ]
@@ -85,6 +94,7 @@ function CommentInputBox(props:any) {
   }
 
 
+  // Render component
   return (<>
     {isAuthenticated && 
   <View style={props.commentContainer}>
@@ -114,8 +124,7 @@ function CommentInputBox(props:any) {
     </Pressable>
   </View>   
   }
-  </>
-  )
+  </>)
 }
 
 const mapToStateProps = (state:ApplicationState) =>{

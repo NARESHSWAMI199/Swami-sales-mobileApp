@@ -4,6 +4,7 @@ import { Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
 import { itemImageUrl } from '../utils/utils';
+import { logError, logInfo } from '../utils/logger'; // Import loggers
 
 const ItemCard = (props: any) => {
     const {
@@ -17,6 +18,10 @@ const ItemCard = (props: any) => {
         itemCategory,
         capacity,
     } = props.item;
+
+    // Log item details
+    logInfo(`Rendering ItemCard for ${name}`);
+
     const avatar = itemImageUrl + slug + "/" + avatars?.split(',')[0];
 
     return (

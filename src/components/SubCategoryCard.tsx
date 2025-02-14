@@ -5,7 +5,7 @@ import { Avatar } from 'react-native-elements';
 import { Item, Store } from '../redux';
 import { itemImageUrl,itemsUrl, storeImageUrl, storeUrl } from '../utils/utils';
 import { toTitleCase } from '../utils';
-
+import { logError, logInfo } from '../utils/logger'; // Import loggers
 
 const ItemSubCategoryCard = (props : any) =>  {
 
@@ -24,9 +24,10 @@ const ItemSubCategoryCard = (props : any) =>  {
         })
         .then(res=>{
             let data = res.data.content;
-            setItems(data)
+            setItems(data);
+            logInfo(`Fetched ${data.length} items for subcategory ${subcategory}`);
         }).catch(err => {
-            console.log(err)
+            logError(`Error fetching items for subcategory ${subcategory}: ${err.message}`);
         })
     },[props.subcategory])
 
@@ -54,10 +55,6 @@ const ItemSubCategoryCard = (props : any) =>  {
 
 }
 
-
-
-
-
 const StoreSubCategoryCard = (props : any) =>  {
 
 
@@ -81,9 +78,10 @@ const StoreSubCategoryCard = (props : any) =>  {
         })
         .then(res=>{
             let data = res.data.content;
-            setStores(data)
+            setStores(data);
+            logInfo(`Fetched ${data.length} stores for subcategory ${subcategory.subcategory}`);
         }).catch(err => {
-            console.log(err)
+            logError(`Error fetching stores for subcategory ${subcategory.subcategory}: ${err.message}`);
         })
     },[subcategory])
 

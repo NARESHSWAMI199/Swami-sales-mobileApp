@@ -10,8 +10,7 @@ import CommentInputBox from "./CommentInputBox"
 import { connect } from "react-redux"
 import { ApplicationState } from "../redux"
 import Pagination from "./Pagination"
-
-
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 let maxButtons = 5
 const itemsPerPage = 10
@@ -33,21 +32,20 @@ const CommentView = (props:any) =>{
     const[totalElements,setTotalElements] = useState<number>(1)
     const [currentPage, setCurrentPage] = useState(0);
    
-  
-  
+    // Effect to get token from props
     useEffect(()=>{
       const getData =  async() =>{
          setToken(await props.token)
          setIsAuthenticated(!!(await props.token) ? true : false)
+         logInfo(`Token and authentication state set`)
       }
       getData()
     },[props.token])
 
-
-
-
+    // Effect to fetch comments
     useEffect(()=>{
         axios.defaults.headers['Authorization'] = token;
+        logInfo(`Fetching comments for itemId: ${itemId}`)
         axios.post(commentUrl+"all",{
             itemId : itemId,
             pageNumber : currentPage,
@@ -57,29 +55,35 @@ const CommentView = (props:any) =>{
             let response = res.data;
             setComments(response.content)
             setTotalElements(response.totalElements)
+            logInfo(`Comments fetched successfully`)
         })
         .catch(err => {
-            console.log("Comment view  : "+err.message)
+            logError(`Error fetching comments: ${err.message}`)
         })
     },[props.isCommentUpdate,token,currentPage])
 
-
+    // Function to show replies
     const showReplies = (parent:any) =>{
         setParent(parent)
         setShowRepliesModal(true)
         setMessagePrefix('')
+        logInfo(`Showing replies for parent comment id: ${parent.id}`)
     }
 
+    // Function to close modal
     const closeModel = () =>{
         setShowRepliesModal(false)
         setMessagePrefix('')
+        logInfo(`Closing replies modal`)
     }
 
-
+    // Function to refresh comment replies
     const refreshCommentReplies = ()=>{
         setRefresh(refresh ? false  : true)
+        logInfo(`Refreshing comment replies`)
     }
 
+    // Function to handle reply action
     const handleReply = (parent:any)=> {
         setParent(parent)
         setShowRepliesModal(true)
@@ -88,9 +92,10 @@ const CommentView = (props:any) =>{
             commentRef.current?.blur();
             commentRef.current?.focus();
         },100)
+        logInfo(`Handling reply for parent comment id: ${parent.id}`)
     };
 
-
+    // Function to handle likes
     const handleLikes = async(commentId:number) =>{
         /** TODO : you can also redirect to login page */
         if(!isAuthenticated) return false
@@ -107,35 +112,37 @@ const CommentView = (props:any) =>{
                 }
                 return comment;
             }))
+            logInfo(`Likes updated for comment id: ${commentId}`)
         })
         .catch(err => {
-            console.log("Comment like view  : "+err.message)
+            logError(`Error updating likes: ${err.message}`)
         })
     }
 
-
+    // Function to handle dislikes
     const handleDislike = async (commentId:number) =>{
-             if(!isAuthenticated) return false
-             axios.defaults.headers['Authorization'] = token;
-             await axios.get(commentUrl+"dislike/"+commentId)
-             .then(res=>{
-                 let response = res.data;
-                 setComments(previous => previous.filter((comment : any)=> {
-                     if(comment.id == commentId){
-                        comment.likes += (!!response.likes) ? response.likes : 0;
-                        comment.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                        comment.isLiked = response.isLiked;
-                        comment.isDisliked = response.isDisliked;
-                     }
-                     return comment;
-                 }))
-             })
-             .catch(err => {
-                 console.log("Comment dislike view  : "+err.message)
-             })
+        if(!isAuthenticated) return false
+        axios.defaults.headers['Authorization'] = token;
+        await axios.get(commentUrl+"dislike/"+commentId)
+        .then(res=>{
+            let response = res.data;
+            setComments(previous => previous.filter((comment : any)=> {
+                if(comment.id == commentId){
+                    comment.likes += (!!response.likes) ? response.likes : 0;
+                    comment.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                    comment.isLiked = response.isLiked;
+                    comment.isDisliked = response.isDisliked;
+                }
+                return comment;
+            }))
+            logInfo(`Dislikes updated for comment id: ${commentId}`)
+        })
+        .catch(err => {
+            logError(`Error updating dislikes: ${err.message}`)
+        })
     }
 
-
+    // Function to handle child reply
     const handleChildReply = (reply : any) =>{
         if(!!reply){
             commentRef.current?.blur();
@@ -143,19 +150,23 @@ const CommentView = (props:any) =>{
                 setMessagePrefix("@"+reply.user.username)
                 commentRef.current?.focus();
             },100)
+            logInfo(`Handling child reply for comment id: ${reply.id}`)
         }
     }
 
-
+    // Function to discard text
     const discardText = () => {
         setMessagePrefix('')
+        logInfo(`Discarding text`)
     }
 
+    // Function to handle page change
     const handlePageChange = (page) => {
         setCurrentPage(page)
+        logInfo(`Page changed to ${page}`)
     }
 
-
+    // Function to update main comment
     const updateMainComment = (comment : any) =>{
         setComments(previous => previous.filter((_comment : any)=> {
             if(comment.id == _comment.id){
@@ -166,10 +177,10 @@ const CommentView = (props:any) =>{
             }
             return _comment
         }))
+        logInfo(`Main comment updated for comment id: ${comment.id}`)
     }
 
-
-
+    // Render component
     return (<View><View>
         {comments.map((comment : any,index : number) => {
             return (

@@ -7,6 +7,7 @@ import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { bodyColor, itemsUrl } from '../utils/utils';
 import Pagination from './Pagination';
+import { logError, logInfo } from '../utils/logger'; // Import loggers
 
 const itemsPerPage = 10;
 const maxButtons = 5;
@@ -32,18 +33,21 @@ function PaginatedItems(props: any) {
                 setItems(response.content);
                 setTotalElements(response.totalElements);
                 setShowSpinner(false);
+                logInfo(`Fetched ${response.content.length} items for page ${currentPage}`);
             })
             .catch(err => {
                 setShowSpinner(false);
-                console.log("PaginatedItems.tsx  : ", err.message);
+                logError(`Error fetching items: ${err.message}`);
             });
     }, [currentPage]);
 
     const handleNavigation = (item: Item) => {
+        logInfo(`Navigating to item detail for ${item.name}`);
         props.navigation.navigate('itemDetail', item);
     };
 
     const handlePageChange = (page: number) => {
+        logInfo(`Changing to page ${page}`);
         setCurrentPage(page);
     };
 
