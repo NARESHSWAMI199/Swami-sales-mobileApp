@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     backSupport : {
         backgroundColor : 'gray',
         opacity : 0.3,
-        top : 30,
+        top : 65,
         height: 340,
         position : 'relative',
         width : '92%',

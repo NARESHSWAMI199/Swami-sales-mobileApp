@@ -66,7 +66,7 @@ const ItemDetail = (props: any) => {
                 <Image
                   style={styles.image}
                   source={{ uri: itemImageUrl + item.slug + "/" + avtar }}
-                  resizeMode='contain' />
+                  resizeMode='cover' />
               )
             })}
           />

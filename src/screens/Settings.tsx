@@ -126,6 +126,9 @@ function Settings(props: any) {
                     </View>
                 }
 
+                {/* showing slips */}
+
+                {isAuthenticated &&
                 <View>
                     <TouchableOpacity onPress={() => handleRedirect('slips')}>
                         <View style={style.listItem}>
@@ -144,7 +147,7 @@ function Settings(props: any) {
                         </View>
                     </TouchableOpacity>
                 </View>
-
+            }
                 <View>
                     <TouchableOpacity>
                         <View style={style.listItem}>

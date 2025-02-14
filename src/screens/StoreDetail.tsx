@@ -57,7 +57,7 @@ const StoreDetail = (props: any) => {
         <View style={styles.imageParent}>
           <Image style={styles.image}
             source={{ uri: storeImageUrl + store.slug + "/" + store.avatar }}
-            resizeMode={'contain'} />
+            resizeMode={'cover'} />
         </View>
 
         <View style={styles.body}>
