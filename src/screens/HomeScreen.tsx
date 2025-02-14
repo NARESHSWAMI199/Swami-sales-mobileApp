@@ -14,20 +14,25 @@ import RecentItems from './RecentItems'
 import TabItems from './TabItems'
 import Stores from './Stores'
 
+// Main component
 const HomeScreen = (props: any) => {
     const { navigation } = props;
 
+    // Function to hide the tab bar
     const hideTabBar = () => {
         navigation.setOptions({
             tabBarStyle: { display: 'none' },
         });
     };
+
+    // Function to show the tab bar
     const showTabBar = () => {
         navigation.setOptions({
             tabBarStyle: { height: 60, display: 'flex' },
         });
     };
 
+    // Handle scroll event to show/hide tab bar
     const onScroll = (event: any) => {
         const currentOffset = event.nativeEvent.contentOffset.y;
         const dif = currentOffset - (props.offset || 0);
@@ -39,6 +44,7 @@ const HomeScreen = (props: any) => {
         props.offset = currentOffset;
     }
 
+    // Effect to handle back button press
     useEffect(() => {
         navigation.addListener("beforeRemove", (e: any) => {
             e.preventDefault();
@@ -49,6 +55,7 @@ const HomeScreen = (props: any) => {
     const [index, setIndex] = useState(0);
     const [categories, setCategories] = useState([])
 
+    // Effect to fetch categories and perform auth check
     useEffect(() => {
         axios.post(itemsUrl + "categories", { orderBy: 'id' })
             .then(res => {
@@ -62,20 +69,25 @@ const HomeScreen = (props: any) => {
         authCheckState();
     }, [])
 
+    // Handle filter navigation
     const handleFilter = () => {
         navigation.navigate('itemFilter', {});
     }
 
+    // Handle navigation to items screen
     const handleNavigationItems = () => {
         props.navigation.navigate('items');
     };
 
+    // Handle navigation to stores screen
     const handleNavigationStore = () => {
         props.navigation.navigate('stores');
     };
 
     return (<>
         <StatusBar translucent backgroundColor='transparent' barStyle="dark-content" />
+        
+        {/* Header section */}
         <View style={style.mainHeader}>
             <Image
                 source={require('../images/logow.png')}
@@ -85,6 +97,8 @@ const HomeScreen = (props: any) => {
                 Swami Sales
             </Text>
         </View>
+        
+        {/* Main container */}
         <View style={style.container}>
             <View style={{ backgroundColor: themeColor }}>
                 <View style={{ paddingHorizontal: 10 }}>
@@ -101,6 +115,7 @@ const HomeScreen = (props: any) => {
                     />
                 </View>
 
+                {/* Categories tab */}
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}>
@@ -141,6 +156,7 @@ const HomeScreen = (props: any) => {
                 </ScrollView>
             </View>
 
+            {/* Tab view for categories */}
             <TabView disableSwipe value={index} onChange={(e) => setIndex(e)} animationType="spring">
 
                 <TabView.Item
@@ -170,11 +186,9 @@ const HomeScreen = (props: any) => {
                                     <RecentItems {...props} marginHorizontal={5} />
                                 </ScrollView>
                             </View>
-
-
                         </View>
 
-
+                        {/* Item categories section */}
                         <View style={style.parentView}>
                             <Text style={{ ...style.titleHeadings, marginVertical: 12 }}>
                                 Item Categories
@@ -186,7 +200,7 @@ const HomeScreen = (props: any) => {
                             <ItemCategories  {...props} />
                         </View>
 
-
+                        {/* Popular stores section */}
                         <View style={style.parentView}>
                             <Text style={style.titleHeadings}>
                                 Popular Stores
@@ -206,9 +220,7 @@ const HomeScreen = (props: any) => {
                             <StoreSubCategories {...props} />
                         </View>
 
-
-
-                        {/* Most populer items block started  */}
+                        {/* Most popular items section */}
                         <View style={{
                             ...style.mostPopularItems,
                             ...style.parentView
@@ -228,8 +240,7 @@ const HomeScreen = (props: any) => {
                             </TouchableOpacity>
                         </View>
 
-                        {/* ! Most populer items block ended  */}
-
+                        {/* Most popular stores section */}
                         <View style={{
                             ...style.mostPopularStores,
                             ...style.parentView
@@ -248,14 +259,10 @@ const HomeScreen = (props: any) => {
                                 <Icon name='chevron-small-right' color={'#001475'} type="entypo" />
                             </TouchableOpacity>
                         </View>
-
-
-
-
                     </ScrollView>
-
-
                 </TabView.Item>
+
+                {/* Tab view items for each category */}
                 {categories.map((category: Category, i) => {
                     return <TabView.Item key={i} style={{ width: '100%' }}>
                         <ScrollView
@@ -276,13 +283,12 @@ const HomeScreen = (props: any) => {
                         </ScrollView>
                     </TabView.Item>
                 })}
-
             </TabView>
         </View>
     </>)
 }
 
-
+// Styles
 const style = StyleSheet.create({
     container: {
         flex: 1,
@@ -359,6 +365,7 @@ const style = StyleSheet.create({
     }
 })
 
+// Map state to props
 const mapToStateProps = (state: any) => {
     return {
         token: state.userReducer?.token

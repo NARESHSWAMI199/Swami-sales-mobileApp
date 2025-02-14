@@ -10,6 +10,7 @@ import StoreCard from '../components/StoreCard';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Avatar } from 'react-native-elements';
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 function SubCategirzedStores(props:any) {
     const {route, navigation} = props;
@@ -18,70 +19,74 @@ function SubCategirzedStores(props:any) {
         id
     }= route.params
 
+    // State variables
     const [stores,setStores] = useState([])
     const [showSpinner,setShowSpinner] = useState(false)
 
+    // Effect to set navigation options
+    useEffect(()=>{
+        navigation.setOptions({
+            title: toTitleCase(subcategory),
+        })
+        logInfo(`Navigation options set for subcategory: ${subcategory}`)
+    },[])
+
+    // Effect to fetch stores based on subcategory id
     useEffect(() => {
         let data = {
             subcategoryId : id,
             pageSize : 99
         }
-        console.log("SubCategirzedStores : "+JSON.stringify(data))
+        logInfo(`Fetching stores for subcategory id: ${id}`)
         axios.post(storeUrl+"all",data)
           .then(res => {
               let response = res.data.content;
-              // console.log("SubCategirzedStores response : "+JSON.stringify(response))
               setStores(response)
               setShowSpinner(false)
+              logInfo(`Stores fetched successfully`)
           })
           .catch(err => {
-              console.log("SubCategirzedStores : ",err.message)
               setShowSpinner(false)
+              logError(`Error fetching stores: ${err.message}`)
           })
-  }, [])
+    }, [])
 
-
-    useEffect(()=>{
-        navigation.setOptions({
-            title: toTitleCase(subcategory),
-        })
-    },[])
-
+    // Function to handle navigation to store detail
     const handleNavigation = (store : Store) => {
+        logInfo(`Navigating to store detail: ${store.id}`)
         navigation.navigate('storeDetail',store);
     };
 
-  return (<>
-   {stores.length > 0 ? 
-
-    <ScrollView style={style.body}>
-     
-        <View style={style.storeParent}>
-          <Spinner
-            visible={showSpinner}
-            textContent={'Loading...'}
-            textStyle={{color : 'white'}}
-          />
-            {stores.map((store,i)=>{
-              return <TouchableOpacity key={i} style={style.storeView} onPress={e=> handleNavigation(store)} >
-                    <StoreCard store={store}/>
-              </TouchableOpacity>
-            })}
+    // Render component
+    return (<>
+        {stores.length > 0 ? 
+        <ScrollView style={style.body}>
+            <View style={style.storeParent}>
+                <Spinner
+                    visible={showSpinner}
+                    textContent={'Loading...'}
+                    textStyle={{color : 'white'}}
+                />
+                {stores.map((store,i)=>{
+                    return <TouchableOpacity key={i} style={style.storeView} onPress={e=> handleNavigation(store)} >
+                        <StoreCard store={store}/>
+                    </TouchableOpacity>
+                })}
+            </View>
+        </ScrollView>
+        :    
+        <View style={style.notFound}> 
+            <Avatar source={{uri : notFoundImage}} size={150}  />
+            <Text style={style.notFoundText}>
+                No stores found.
+            </Text>
         </View>
-    </ScrollView>
-      :    
-      <View style={style.notFound}> 
-        <Avatar source={{uri : notFoundImage}} size={150}  />
-        <Text style={style.notFoundText}>
-          No stores found.
-        </Text>
-      </View>
-    }
+        }
     </>)
 }
 
+// Styles
 const style = StyleSheet.create({
-
     body : {
         paddingHorizontal : 10,
         backgroundColor : bodyColor,

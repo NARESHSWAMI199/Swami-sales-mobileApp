@@ -8,11 +8,13 @@ import axios from 'axios'
 import { toTitleCase } from '../utils'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Spinner from 'react-native-loading-spinner-overlay'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 function Slips(props:any) {
 
   const {navigation} = props;
 
+  // State variables
   const [token , setToken] = useState<string>()
   const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
   const[totalElements,setTotalElements] = useState<number>(1)
@@ -22,18 +24,22 @@ function Slips(props:any) {
   // TODO : change false to true if you want show spinners
   const [showSpinner,setShowSpinner] = useState(true)
 
+  // Effect to get token from props
   useEffect(()=>{
     const getData =  async() =>{
        setToken(await props.token)
        setIsAuthenticated(!!(await props.token) ? true : false)
+       logInfo(`Token and authentication state set`)
     }
     getData()
   },[props.token])
 
 
+  // Effect to fetch slips
   useEffect(()=>{
     axios.defaults.headers['Authorization'] = token;
       const getData = ()=>{
+        logInfo(`Fetching slips`)
         axios.post(slipsUrl+"all",{
           pageNumber : currentPage,
           pageSize: itemsPerPage
@@ -43,9 +49,10 @@ function Slips(props:any) {
           setSlips(response.content)
           setTotalElements(response.totalElements)
           setShowSpinner(false)
+          logInfo(`Slips fetched successfully`)
       })
       .catch(err => {
-          console.log("Slips view  : "+err.message)
+          logError(`Error fetching slips: ${err.message}`)
           setShowSpinner(false)
       })
     }
@@ -55,11 +62,13 @@ function Slips(props:any) {
 },[token])
 
 
-
+// Function to handle navigation to slip items
 const handleRedirect = (slipId:number)=>{
+  logInfo(`Navigating to slip items: ${slipId}`)
   navigation.navigate('slipItems',{slipId : slipId})
 }
 
+  // Render component
   return (
     <>
       <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
@@ -107,6 +116,7 @@ const handleRedirect = (slipId:number)=>{
 const style = StyleSheet.create({
   body: {
     height: '100%',
+    
     backgroundColor: '#f8f9fa'
   },
   list: {

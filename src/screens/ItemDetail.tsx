@@ -10,6 +10,7 @@ import { Icon } from '@rneui/themed';
 import CustomCarousel from '../components/Carousel';
 import CommentView from '../components/CommentView';
 import CommentInputBox from '../components/CommentInputBox';
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
@@ -20,14 +21,19 @@ const ItemDetail = (props: any) => {
 
   const item: Item = route.params;
 
+  // Function to update search query
   const updateSearch = (search: any) => {
     setState(search);
+    logInfo(`Search query updated: ${search}`)
   };
 
+  // Function to refresh comments
   const refreshComment = () => {
     setCommentUpdated(commentUpdated ? false : true)
+    logInfo(`Comments refreshed`)
   }
 
+  // Function to render "View More" text
   const renderViewMore = (onPress: any) => {
     return (
       <View style={styles.viewMoreLess}>
@@ -37,6 +43,7 @@ const ItemDetail = (props: any) => {
     )
   }
 
+  // Function to render "View Less" text
   const renderViewLess = (onPress: any) => {
     return (
       <View style={styles.viewMoreLess}>
@@ -46,12 +53,15 @@ const ItemDetail = (props: any) => {
     )
   }
 
+  // Function to handle comment focus
   const handleCommentFoucs = (parentId: number) => {
     commentRef.current?.blur();
     commentRef.current?.focus();
     setParentId(parentId)
+    logInfo(`Comment focused with parentId: ${parentId}`)
   }
 
+  // Render component
   return (
     <>
       <StatusBar translucent backgroundColor="transparent" barStyle="dark-content" />
@@ -114,7 +124,7 @@ const ItemDetail = (props: any) => {
 
           <View style={{ display: 'flex', alignItems: 'center' }}>
             <Pressable
-              onPress={(e) => console.log("clicked")}
+              onPress={(e) => logInfo("Add to slip clicked")}
               style={styles.button}
               accessibilityLabel="Learn more about this purple button"
             >
@@ -141,6 +151,7 @@ const ItemDetail = (props: any) => {
   )
 }
 
+// Styles
 const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',

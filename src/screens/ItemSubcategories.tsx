@@ -4,6 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import SingleSubcategoryCard from '../components/SingleSubcategoryCard';
 import { Subcategory } from '../redux';
 import { itemsUrl } from '../utils/utils';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function ItemSubcategories(props:any) {
 
@@ -11,9 +12,12 @@ function ItemSubcategories(props:any) {
         categoryId
     } = props
 
+    // State variables
     const [subcategories,setSubcategories] = useState([]);
   
+    // Effect to fetch subcategories based on categoryId
     useEffect(()=>{
+        logInfo(`Fetching subcategories for categoryId: ${categoryId}`)
         axios.post(itemsUrl +"subcategory",{
             pageSize : 6 ,
             categoryId : categoryId, 
@@ -22,19 +26,19 @@ function ItemSubcategories(props:any) {
         .then(res=>{
             let data = res.data;
             setSubcategories(data)
+            logInfo(`Subcategories fetched successfully`)
         }).catch(err => {
-            console.log("ItemSubcategories.tsx : " ,err.message)
+            logError(`Error fetching subcategories: ${err.message}`)
         })
     },[categoryId])
     
-
-
-
+    // Function to handle navigation to subcategorized items
     const handleNavigation = (subcategory : Subcategory) => {
+        logInfo(`Navigating to subcategorized items: ${subcategory.id}`)
         props.navigation.navigate('subCategrizedItems',subcategory);
       };
 
-
+    // Render component
   return (
     <View style={style.container}>
         {subcategories.map((subcategory,i)=>{
@@ -46,6 +50,7 @@ function ItemSubcategories(props:any) {
   )
 }
 
+// Styles
 const style = StyleSheet.create({
     container : {
         display  : 'flex',

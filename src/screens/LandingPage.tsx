@@ -4,95 +4,81 @@ import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 
 import { connect, useDispatch } from 'react-redux'
 import { ApplicationState, onUpdateLocation } from '../redux'
-
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const screenWidth = Dimensions.get('screen').width
 
 const _LandingScreen = (props : any) => {
-    
+    // State variables
     const [errorMsg,setErrorMsg] = useState("")
     const [address, setAddress] = useState<Location.LocationGeocodedAddress>()
-
     const [displayAddress, setDisplayAddress] = useState("Waiting for current location.")
     const [showPermissionButton, setShowPermissionButton] = useState(false)
     const [ask ,setAsk] = useState(true)
     const dispatch = useDispatch();
 
-    useEffect (()=>{
-        (async () =>{
+    // Effect to request location permissions and fetch location
+    useEffect (()=> {
+        (async () => {
             try {
-            var {status} =  await Location.requestForegroundPermissionsAsync()
-            console.log("the status : " + status)
-            if( status !== 'granted'){
-                setErrorMsg('Permission to access location is not granted.')
-                Alert.alert(
-                    "Insufficient permissions!",
-                    "Sorry, we need location permissions to make this work! Make sure location is enable",
-                    [{ text: "Okay" }]
-                );
                 var {status} =  await Location.requestForegroundPermissionsAsync()
-            }
-
-            let location: any = await Location.getLastKnownPositionAsync()
-            //if(location == null) location = await Location.getCurrentPositionAsync()
-            if (location !=null){
-                const {coords} = location
-                const { latitude ,longitude} = coords;
-                console.log("coords : ",coords)    
-                let  addressResponse : any = await Location.reverseGeocodeAsync({latitude,longitude})
-                
-                for(let item of addressResponse){
-                    let currentAddress = `${item.name},${item.street},${item.postalCode}, ${item.country}`
-                    setDisplayAddress(currentAddress)
-                    console.log("redirecting to home....")  
-                    setAddress(addressResponse)
-                    /** dispatch the action for reducer */ 
-                    dispatch(onUpdateLocation(addressResponse));
-                    if (currentAddress.length > 0){
-                        setTimeout(()=>{
-                            props.navigation.navigate('tab')
-                        },100) 
-                    }
-                    return;
+                logInfo(`Location permission status: ${status}`)
+                if( status !== 'granted'){
+                    setErrorMsg('Permission to access location is not granted.')
+                    Alert.alert(
+                        "Insufficient permissions!",
+                        "Sorry, we need location permissions to make this work! Make sure location is enable",
+                        [{ text: "Okay" }]
+                    );
+                    var {status} =  await Location.requestForegroundPermissionsAsync()
                 }
+
+                let location: any = await Location.getLastKnownPositionAsync()
+                if (location != null) {
+                    const {coords} = location
+                    const { latitude ,longitude} = coords;
+                    logInfo(`Location coordinates: ${JSON.stringify(coords)}`)
+                    let addressResponse : any = await Location.reverseGeocodeAsync({latitude,longitude})
+                    
+                    for(let item of addressResponse){
+                        let currentAddress = `${item.name},${item.street},${item.postalCode}, ${item.country}`
+                        setDisplayAddress(currentAddress)
+                        setAddress(addressResponse)
+                        dispatch(onUpdateLocation(addressResponse));
+                        logInfo(`Current address: ${currentAddress}`)
+                        if (currentAddress.length > 0){
+                            setTimeout(()=>{
+                                props.navigation.navigate('tab')
+                            },100) 
+                        }
+                        return;
+                    }
+                } else {
+                    logError("Location not found, redirecting to home.")
+                    props.navigation.navigate('tab')
+                    setShowPermissionButton(true)
+                }
+            } catch(err) {
+                logError(`Error fetching location: ${err.message}`)
             }
-            else{
-                console.log("notify the use something went wrong with location.")    
-                props.navigation.navigate('tab')
-                setShowPermissionButton(true)
-            }
-        }catch(err) {
-            console.log(err)
-        }
         })();
     },[ask])
 
+    // Render component
     return (<>
-            <View  style={style.container}>
-                <View style={style.body}>
-                    <Image source={require('../images/location.png')} style={style.location_icon} />
-                    <View style={style.address_container}>
-                        <Text> Your Current Address </Text>
-                    </View>
-                    <Text style={style.addressText}> Waiting for current location. </Text>
+        <View  style={style.container}>
+            <View style={style.body}>
+                <Image source={require('../images/location.png')} style={style.location_icon} />
+                <View style={style.address_container}>
+                    <Text> Your Current Address </Text>
                 </View>
-                {/* {showPermissionButton ? 
-                    <Button buttonStyle={{
-                        backgroundColor : themeColor,
-                        height : 45,
-                        marginVertical : 20,
-                        marginHorizontal : 50,
-                        borderRadius : 20
-                    }}
-                     onPress={()=>setAsk(ask ? false : true)}><Text style={{color : 'white'}}>Allow Loctaion</Text></Button>
-                 : ''} */}
+                <Text style={style.addressText}> Wating for current location. </Text>
             </View>
-
-        </>
-    )
+        </View>
+    </>)
 }
 
-
+// Styles
 const style = StyleSheet.create({
     container: {
         flex: 1,
@@ -135,11 +121,9 @@ const style = StyleSheet.create({
   
 })
 
-
 const mapToStateProps = (state : ApplicationState) => {
     return {userReducer : state.userReducer}
 }   
-
 
 let LandingScreen  = connect(mapToStateProps)(_LandingScreen)
 export { LandingScreen }

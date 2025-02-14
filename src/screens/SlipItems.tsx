@@ -6,14 +6,15 @@ import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
 import { bodyColor, dummyImageUrl, itemImageUrl, ruppeCurrencyIcon, slipsUrl } from '../utils/utils'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 function Slips(props:any) {
-
 
   const {route,navigation} = props;
 
   const {slipId} = route.params
 
+  // State variables
   const [token , setToken] = useState<string>()
   const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
   const[totalElements,setTotalElements] = useState<number>(1)
@@ -21,19 +22,21 @@ function Slips(props:any) {
   const [itemsPerPage,setItemPerPage] = useState(29)
   const [orderItems,setOrderItems] = useState([])
 
-
+  // Effect to get token from props
   useEffect(()=>{
     const getData =  async() =>{
        setToken(await props.token)
        setIsAuthenticated(!!(await props.token) ? true : false)
+       logInfo(`Token and authentication state set`)
     }
     getData()
   },[props.token])
 
-
+  // Effect to fetch order items based on slipId
   useEffect(()=>{
     axios.defaults.headers['Authorization'] = token;
     const getData = ()=>{
+        logInfo(`Fetching order items for slipId: ${slipId}`)
         axios.post(slipsUrl+"detail/"+slipId,{
             pageNumber : currentPage,
             pageSize: itemsPerPage
@@ -42,24 +45,26 @@ function Slips(props:any) {
             let response = res.data;
             setOrderItems(response.content)
             setTotalElements(response.totalElements)
+            logInfo(`Order items fetched successfully`)
         })
         .catch(err => {
-            console.log("Order Items view  : "+err.message)
+            logError(`Error fetching order items: ${err.message}`)
         })
     }
     if(!!token) getData()
     
-},[token,slipId])
+  },[token,slipId])
 
+  // Function to handle navigation to item detail
+  const handleRedirect = (order : any)=>{
+    logInfo(`Navigating to item detail: ${order.item.id}`)
+    navigation.navigate('itemDetail', {
+        ...order.item,
+        quantity : order.quantity
+    })
+  }
 
-
-const handleRedirect = (order : any)=>{
-  navigation.navigate('itemDetail', {
-      ...order.item,
-      quantity : order.quantity
-  })
-}
-
+  // Render component
   return (<>
   
   <ImageBackground
@@ -134,7 +139,7 @@ const handleRedirect = (order : any)=>{
                             status='success' 
                             value={order.item?.price.toLocaleString('en-US')+" "+ruppeCurrencyIcon}
 
-                            textStyle = {{
+                            textStyle ={{
                                 color : '#001475',
                                 fontSize : 10,
                                 // fontWeight : 'bold'
@@ -173,7 +178,7 @@ const handleRedirect = (order : any)=>{
                         <Badge 
                             status='success' 
                             value={totalPrice+" "+ruppeCurrencyIcon}
-                            textStyle = {{
+                            textStyle ={{
                                 color : '#001475',
                                 fontSize : 12,
                                 fontWeight : 'bold'

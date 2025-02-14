@@ -6,59 +6,62 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { bodyColor, itemsUrl } from '../utils/utils';
-
-
-
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function TabItems(props:any) {
     const {categoryId,storeId} = props;
+
+    // State variables
     const [showSpinner,setShowSpinner] = useState(false)
     const [items, setItems] = useState([])
 
+    // Effect to fetch items based on categoryId and storeId
     useEffect(() => {
         let data = {
             categoryId : categoryId,
             storeId : storeId,
             pageSize : 99
         }
-        console.log("TabItems")
+        logInfo(`Fetching items for categoryId: ${categoryId} and storeId: ${storeId}`)
         axios.post(itemsUrl+"all",data)
         .then(res => {
                 let items = res.data.content;
                 setItems(items)
                 setShowSpinner(false)
+                logInfo(`Items fetched successfully`)
             })
             .catch(err => {
                 setShowSpinner(false)
-                console.log("TabItems.tsx  : ",err.message)
+                logError(`Error fetching items: ${err.message}`)
             })
     }, [])
 
-
-
+    // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
+        logInfo(`Navigating to item detail: ${item.id}`)
         props.navigation.navigate('itemDetail',item);
     };
 
-
-
-  return (<ScrollView style={style.body}>
-       <View style={style.outerView}>
-        <Spinner
-          visible={showSpinner}
-          textContent={'Loading...'}
-          textStyle={{color : 'white'}}
-        />
-        {items.map((item:Item , i) =>{
-                return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                    <ItemCard  item={item}/>
-                </TouchableOpacity>)
-            })}
+    // Render component
+    return (
+        <ScrollView style={style.body}>
+            <View style={style.outerView}>
+                <Spinner
+                    visible={showSpinner}
+                    textContent={'Loading...'}
+                    textStyle={{color : 'white'}}
+                />
+                {items.map((item:Item , i) =>{
+                    return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
+                        <ItemCard  item={item}/>
+                    </TouchableOpacity>)
+                })}
             </View>
-    </ScrollView>
-  )
+        </ScrollView>
+    )
 }
 
+// Styles
 const style = StyleSheet.create({
     body : {
         backgroundColor : bodyColor,

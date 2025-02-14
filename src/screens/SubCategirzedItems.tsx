@@ -8,6 +8,7 @@ import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import { bodyColor, itemsUrl, notFoundImage } from '../utils/utils';
 import { Avatar } from 'react-native-elements';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function SubCategirzedItems(props:any) {
     const {route, navigation} = props;
@@ -16,74 +17,74 @@ function SubCategirzedItems(props:any) {
         id
     }= route.params
 
+    // State variables
     const [showSpinner,setShowSpinner] = useState(false)
+    const [items, setItems] = useState([])
 
+    // Effect to set navigation options
     useEffect(()=>{
         navigation.setOptions({
             title: toTitleCase(subcategory),
         })
+        logInfo(`Navigation options set for subcategory: ${subcategory}`)
     },[])
 
-    const [items, setItems] = useState([])
-
-
-
+    // Effect to fetch items based on subcategory id
     useEffect(() => {
         let data = {
             subcategoryId : id,
             pageSize : 99
         }
-        console.log("SubCategirzedItems")
+        logInfo(`Fetching items for subcategory id: ${id}`)
         axios.post(itemsUrl+"all",data)
         .then(res => {
                 let item = res.data.content;
                 setItems(item)
                 setShowSpinner(false)
+                logInfo(`Items fetched successfully`)
             })
             .catch(err => {
                 setShowSpinner(false)
-                console.log("SubCategirzedItems : ",err.message)
+                logError(`Error fetching items: ${err.message}`)
             })
     }, [])
 
-
-
+    // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
+        logInfo(`Navigating to item detail: ${item.id}`)
         props.navigation.navigate('itemDetail',item);
     };
 
-
-
-  return (<>
-    {items.length > 0 ? 
-    <ScrollView style={style.body}>
-       <View style={style.outerView}>
-        <Spinner
-          visible={showSpinner}
-          textContent={'Loading...'}
-          textStyle={{color : 'white'}}
-        />
-        {items.map((item:Item , i) =>{
-                return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                    <ItemCard  item={item}/>
-                </TouchableOpacity>)
-            })}
+    // Render component
+    return (<>
+        {items.length > 0 ? 
+        <ScrollView style={style.body}>
+            <View style={style.outerView}>
+                <Spinner
+                    visible={showSpinner}
+                    textContent={'Loading...'}
+                    textStyle={{color : 'white'}}
+                />
+                {items.map((item:Item , i) =>{
+                    return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
+                        <ItemCard  item={item}/>
+                    </TouchableOpacity>)
+                })}
             </View>
-    </ScrollView>
-       :    
-       <View style={style.notFound}> 
-         <Avatar source={{uri : notFoundImage}} size={150}  />
-         <Text style={style.notFoundText}>
-           No items found.
-         </Text>
-       </View>
-    }
-    </>
-  )
+        </ScrollView>
+        :    
+        <View style={style.notFound}> 
+            <Avatar source={{uri : notFoundImage}} size={150}  />
+            <Text style={style.notFoundText}>
+                No items found.
+            </Text>
+        </View>
+        }
+    </>)
 }
 
+// Styles
 const style = StyleSheet.create({
-
     body : {
         paddingHorizontal : 10,
         backgroundColor : bodyColor,

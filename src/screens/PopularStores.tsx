@@ -7,31 +7,40 @@ import StoreCard from '../components/StoreCard';
 import { Store } from '../redux';
 import { bodyColor, storeUrl } from '../utils/utils';
 import PropTypes from 'prop-types';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function PopularStores({ navigation }) {
+  // State variables
   const [stores, setStores] = useState([]);
   const [showSpinner, setShowSpinner] = useState(false);
 
+  // Effect to fetch stores on component mount
   useEffect(() => {
     fetchStores();
   }, []);
 
+  // Function to fetch stores
   const fetchStores = async () => {
     setShowSpinner(true);
+    logInfo(`Fetching popular stores`);
     try {
       const { data } = await axios.post(storeUrl + "all", { pageSize: 12 });
       setStores(data.content);
+      logInfo(`Popular stores fetched successfully`);
     } catch (err) {
-      console.error("PopularStores: ", err.message);
+      logError(`Error fetching popular stores: ${err.message}`);
     } finally {
       setShowSpinner(false);
     }
   };
 
+  // Function to handle navigation to store detail
   const handleNavigation = (store) => {
+    logInfo(`Navigating to store detail: ${store.id}`);
     navigation.navigate('storeDetail', store);
   };
 
+  // Render component
   return (
     <ScrollView style={styles.body}>
       <View style={styles.storeParent}>
@@ -58,6 +67,7 @@ PopularStores.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
 
+// Styles
 const styles = StyleSheet.create({
   body: {
     backgroundColor: bodyColor,

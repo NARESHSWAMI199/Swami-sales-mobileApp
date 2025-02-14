@@ -5,13 +5,11 @@ import { Card, Text } from 'react-native-paper'
 import { Item } from '../redux'
 import { toTitleCase } from '../utils'
 import { itemImageUrl, itemsUrl } from '../utils/utils'
-
-
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const RecentItems = (props : any) => {
 
-
-
+    // Styles
     const style = StyleSheet.create({
         price : {
         fontSize : 12,
@@ -59,25 +57,30 @@ const RecentItems = (props : any) => {
     
     })
 
-
+    // State variables
     const [items, setItems] = useState([])
   
-      useEffect(() => {
+    // Effect to fetch recent items
+    useEffect(() => {
+        logInfo(`Fetching recent items`)
         axios.post(itemsUrl+"all",{pageSize : !!props.size ? props.size : 8,orderBy : 'createdAt'})
         .then(res => {
             let item = res.data.content;
             setItems(item)
+            logInfo(`Recent items fetched successfully`)
         }).catch(err => {
-            console.log("RecentItems.tsx : ",err.message)
+            logError(`Error fetching recent items: ${err.message}`)
         })
     }, [])
 
-
+    // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
+        logInfo(`Navigating to item detail: ${item.id}`)
         props.navigation.navigate('itemDetail',item);
-      };
+    };
 
-  return (
+    // Render component
+    return (
         <View style={style.container}>
         {items.map((item:Item , i) =>{
                 const avtar = itemImageUrl+item.slug+"/"+item.avatars?.split(',')[0]
@@ -99,10 +102,5 @@ const RecentItems = (props : any) => {
             </View>
   )
 }
-
-
-
-
-
 
 export default RecentItems

@@ -7,76 +7,83 @@ import { Item } from '../redux'
 import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import RecentItems from './RecentItems'
 import Spinner from 'react-native-loading-spinner-overlay'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const ItemFilters = (props : any) => {
-
+    // State variables
     const [search,setSearch] = useState(false)
     const [items, setItems] = useState([])
     const [selectedCategory, setSelectedCategory] = useState(-1)
     const [query, setQuery] = useState("") 
     const [showPopular, setShowPuplar] = useState(true) 
     const [searchResult , setSearchResult] = useState("New Products")
-    // TODO : change false to true if you want show spinners
     const [showSpinner,setShowSpinner] = useState(true)
 
+    // Effect to set selected category based on props
     useEffect(()=>{
         setSelectedCategory(props.categoryId)
+        logInfo(`Selected category set to ${props.categoryId}`)
     },[props.categoryId])
 
+    // Function to update search query
     const updateSearch = (search : any) => {
         setQuery(search);
+        logInfo(`Search query updated: ${search}`)
     };
-  
-      useEffect(() => {
-            axios.post(itemsUrl+"all",{
-                searchKey : query,
-                categoryId : selectedCategory,
-                subcategoryId : !!props.subcategory ? props.subcategory : null,
-                pageSize : 50 
-            })
-            .then(res => {
-                    let item = res.data.content;
-                    if(query != ""){
-                        if(item.length < 1) {
-                            setSearchResult("Currently not aviable this kind of products.")
-                        }else{
-                            setSearchResult("Search Results.")
-                        }
-                        setShowPuplar(false)
-                        setShowSpinner(false)
-                    }else{
-                        setShowPuplar(true)
-                        setSearchResult("New Products")
-                        setShowSpinner(false)
-                    }
-                    setItems(item)
-              
-                   
-                })
-                .catch(err => {
-                    console.log("ItemFilters.tsx : ",err.message)
-                })
+
+    // Effect to fetch items based on data and search query
+    useEffect(() => {
+        logInfo(`Fetching items with query: ${query} and category: ${selectedCategory}`)
+        axios.post(itemsUrl+"all",{
+            searchKey : query,
+            categoryId : selectedCategory,
+            subcategoryId : !!props.subcategory ? props.subcategory : null,
+            pageSize : 50 
+        })
+        .then(res => {
+            let item = res.data.content;
+            if(query != ""){
+                if(item.length < 1) {
+                    setSearchResult("Currently not available this kind of products.")
+                }else{
+                    setSearchResult("Search Results.")
+                }
+                setShowPuplar(false)
+                setShowSpinner(false)
+            }else{
+                setShowPuplar(true)
+                setSearchResult("New Products")
+                setShowSpinner(false)
+            }
+            setItems(item)
+            logInfo(`Items fetched successfully`)
+        })
+        .catch(err => {
+            setShowSpinner(false)
+            logError(`Error fetching items: ${err.message}`)
+        })
     }, [search,selectedCategory])
 
+    // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
+        logInfo(`Navigating to item detail: ${item.id}`)
         props.navigation.navigate('itemDetail',item);
     };
 
-  return (<View style={style.body}>
-    <StatusBar backgroundColor={themeColor}  barStyle="dark-content" />
-   
-            <View 
-                style={{
-                    display : 'flex',
-                    flexDirection : 'row',
-                    paddingTop : 30,
-                    paddingBottom : 15,
-                    marginTop : 20,
-                    paddingHorizontal : 10,
-                    backgroundColor : themeColor
-                }}
-            >
-                
+    // Render component
+    return (<View style={style.body}>
+        <StatusBar backgroundColor={themeColor}  barStyle="dark-content" />
+        <View 
+            style={{
+                display : 'flex',
+                flexDirection : 'row',
+                paddingTop : 30,
+                paddingBottom : 15,
+                marginTop : 20,
+                paddingHorizontal : 10,
+                backgroundColor : themeColor
+            }}
+        >
             <Searchbar
                 placeholder="Search"
                 onChangeText={updateSearch}
@@ -84,6 +91,7 @@ const ItemFilters = (props : any) => {
                 onClearIconPress={()=>{
                     setQuery("")
                     setSearch(search ? false : true)
+                    logInfo(`Search query cleared`)
                 }}
                 autoFocus = {true}
                 onSubmitEditing={() => setSearch(search ? false : true)}
@@ -92,17 +100,14 @@ const ItemFilters = (props : any) => {
                     width : '100%',
                     textAlign : 'center',
                 }}
-                />
-            </View>
-        
-
-            <ScrollView style={style.main}>
+            />
+        </View>
+        <ScrollView style={style.main}>
             {showPopular &&
                 <View>
                     <Text style={style.titleHeadings}>
                         Popular Items
-                </Text>
-
+                    </Text>
                     <ScrollView 
                         horizontal={true} 
                         showsHorizontalScrollIndicator={false}
@@ -112,30 +117,28 @@ const ItemFilters = (props : any) => {
                     </ScrollView>
                 </View>
             }
-
             <View>
-            <Spinner
-                visible={showSpinner}
-                textContent={'Loading...'}
-                textStyle={{color : 'white'}}
+                <Spinner
+                    visible={showSpinner}
+                    textContent={'Loading...'}
+                    textStyle={{color : 'white'}}
                 />
                 <Text style={style.titleHeadings}>
                     {searchResult}
                 </Text>
                 <View style={style.outerView}>
-                {items.map((item:Item , i) =>{
+                    {items.map((item:Item , i) =>{
                         return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
                             <ItemCard  item={item}/>
                         </TouchableOpacity>)
                     })}
                 </View>
             </View>
-    </ScrollView>
-   </View>
-  )
+        </ScrollView>
+    </View>)
 }
 
-
+// Styles
 const style = StyleSheet.create({
     body : {
         display : 'flex',

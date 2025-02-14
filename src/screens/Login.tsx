@@ -4,6 +4,7 @@ import { connect, useDispatch } from 'react-redux';
 import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
 import { Icon } from '@rneui/themed';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 const Login = (props: any) => {
   const { navigation } = props;
@@ -13,36 +14,49 @@ const Login = (props: any) => {
   const dispatch = useDispatch();
   const [token, setToken] = useState(null);
 
+  // Effect to get token from props and navigate if token exists
   useEffect(() => {
     const getData = async () => {
       let authToken = await props.token;
       if (!!authToken) navigation.navigate('tab');
       setToken(authToken);
+      logInfo(`Token set: ${authToken}`);
     };
     getData();
     setError(props.error);
   }, [props.error, props.token]);
 
+  // Function to handle login
   const handleLogin = () => {
     if (!!email && !!password) {
       dispatch(onSignIn(email, password));
+      logInfo(`Login attempted with email: ${email}`);
     } else {
-      setError("Email and password both are required.");
+      let error = "Email and password both are required.";
+      setError(error);
+      logError(email);
     }
   };
 
+  // Function to handle logout
   const handleLogout = () => {
     dispatch(onLogout());
+    logInfo("Logout successful");
   };
 
+  // Function to handle signup navigation
   const handleSignup = () => {
     navigation.navigate("signUp");
+    logInfo("Navigating to signup");
   };
 
+  // Function to handle back navigation
   const handleBack = () => {
     navigation.goBack();
+    logInfo("Navigating back");
   };
 
+  // Render component
   return (
     <>
       <ImageBackground
@@ -91,14 +105,12 @@ const Login = (props: any) => {
                 </View>
                 <TouchableOpacity
                   onPress={handleLogin}
-                  accessibilityLabel="Learn more about this purple button"
                   style={style.button}
                 >
                   <Text style={style.buttonText}>Login</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleSignup}
-                  accessibilityLabel="Learn more about this purple button"
                   style={style.button}
                 >
                   <Text style={style.buttonText}>Don't have an account?</Text>

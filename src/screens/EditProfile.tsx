@@ -6,8 +6,10 @@ import { ApplicationState, UserModel } from '../redux';
 import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
 import { Icon } from 'react-native-elements'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const EditProfile = (props:any) => {
+    // State variables
     const [userData, setUserData] = useState({
         username : '',
         email: '',
@@ -23,52 +25,62 @@ const EditProfile = (props:any) => {
         other : ''
     });
 
-    const handleChange = (key:string, value:string) => {
-        setUserData({ ...userData, [key]: value });
-    };
-
     const [user,setUser] = useState<UserModel>()
     const [token,setToken] = useState()
     const [message,setMessage] = useState()
 
+    // Function to handle input change
+    const handleChange = (key:string, value:string) => {
+        setUserData({ ...userData, [key]: value });
+    };
+
+    // Function to handle go back action
     const handleGoBack = () => {
         props.navigation.goBack();
     };
 
+    // Effect to get user and token from props
     useEffect(()=>{
         const getData = async () =>{
             let user = await props.user
             let token = await props.token
             setUser(JSON.parse(user))
             setToken(token)
+            logInfo(`User and token set`)
         }
         getData()
     },[props.user,props.token])
 
+    // Effect to fetch user data
     useEffect(()=>{
-        if(!!user && !!token)
-        axios.defaults.headers['Authorization'] = token
-        axios.get(authUrl+user?.slug)
-        .then(res=>{
-            setUserData({...res.data,userType : 'Retailer'})
-        }).catch(err=>console.log("Edit Profile get : "+err.message))
+        if(!!user && !!token) {
+            axios.defaults.headers['Authorization'] = token
+            axios.get(authUrl+user?.slug)
+            .then(res=>{
+                setUserData({...res.data,userType : 'Retailer'})
+                logInfo(`User data fetched successfully`)
+            }).catch(err=>{
+                logError(`Error fetching user data: ${err.message}`)
+            })
+        }
     },[user,token])
 
-
-
+    // Function to handle form submission
     const handleSubmit = () => {
         axios.defaults.headers['Authorization'] = token
         axios.post(authUrl + "update",userData)
         .then(res=>{
             alert(toTitleCase(res.data.message))
+            logInfo(`Profile updated successfully`)
         }).
         catch(err=>{
             let error = !!err.response ? err.response.data.message : err.message
             setErrors({...errors, other : error})
-            console.log("Edit Profile get : "+err.message)
+            logError(`Error updating profile: ${err.message}`)
         })
     };
 
+    // Render component
     return (<>
         <ImageBackground
             source={require('../images/bg1.png')}
@@ -122,7 +134,6 @@ const EditProfile = (props:any) => {
             />
             {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
 
-
             <Text style={styles.label}>User Type:</Text>
             <TextInput
                 placeholder='User Type'
@@ -134,7 +145,6 @@ const EditProfile = (props:any) => {
             />
             {errors.contact && <Text style={styles.errorText}>{errors.contact}</Text>}
 
-
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Save</Text>
             </TouchableOpacity>
@@ -144,14 +154,12 @@ const EditProfile = (props:any) => {
         </View>
   
     </View>
-
-
      </ImageBackground>
      </>
     );
 };
 
-
+// Styles
 const styles = StyleSheet.create({
     container : {
         // paddingHorizontal : 40,

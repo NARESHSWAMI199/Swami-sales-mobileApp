@@ -7,20 +7,21 @@ import StoreCard from '../components/StoreCard'
 import { Category, Store } from '../redux'
 import { bodyColor, storeUrl } from '../utils/utils'
 import Spinner from 'react-native-loading-spinner-overlay'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
-
-
-
-
+// Component function
 function Stores(props : any) {
-
+  // State variables
   const [width,setWidth]= useState('32%')
 
+  // Effect to set width based on props
   useEffect(()=>{
     if(!!props.width)
     setWidth(props.width)
+    logInfo(`Width set to ${props.width}`)
   },[props.width])
 
+  // Memoized styles
   const style = useMemo(()=>StyleSheet.create({
     body : {
       display : 'flex',
@@ -60,20 +61,15 @@ function Stores(props : any) {
       height : 35,
       backgroundColor : bodyColor,
   }
-  
   }),[width]) 
-  
 
+  // State variables for stores, search, categories, query, and spinner
   const [stores,setStores] = useState([])
   const [search,setSearch] = useState(false)
-
   const [categories, setCategories] = useState([])
   const [query, setQuery] = useState("")
-
   const [showCategory, setShowCategory] = useState(true)
-  // TODO : change false to true if you want show spinners
   const [showSpinner,setShowSpinner] = useState(true)
-
   const [data,setData] = useState({
       pageSize  : 51, 
       orderBy :'rating',
@@ -81,11 +77,14 @@ function Stores(props : any) {
       subcategoryId : undefined
     })
 
+  // Effect to set showCategory based on props
   useEffect(()=>{
     if(props.showCategory == true || props.showCategory == false )
     setShowCategory(props.showCategory)
+    logInfo(`ShowCategory set to ${props.showCategory}`)
   },[props.showCategory])
 
+  // Effect to update data based on props
   useEffect(()=>{
   setData({
       ...data,
@@ -93,43 +92,52 @@ function Stores(props : any) {
       categoryId : props.categoryId,
       pageSize : props.size
   })
+  logInfo(`Data updated: ${JSON.stringify(data)}`)
   },[props.categoryId,props.size,props.subcategoryId])
 
-
+  // Function to update search query
   const updateSearch =(search : any) => {
     setQuery(search)
+    logInfo(`Search query updated: ${search}`)
   }
 
-    useEffect(() => {
+  // Effect to fetch stores based on data and search query
+  useEffect(() => {
+          logInfo(`Fetching stores with data: ${JSON.stringify(data)} and query: ${query}`)
           axios.post(storeUrl+"all",{...data,searchKey : query})
             .then(res => {
                 let response = res.data.content;
                 setStores(response)
                 setShowSpinner(false)
+                logInfo(`Stores fetched successfully`)
             })
             .catch(err => {
-                console.log("Stores.tsx : ",err.message)
+                logError(`Error fetching stores: ${err.message}`)
                 setShowSpinner(false)
             })
     }, [data,search])
 
-
-    useEffect(() => {
+  // Effect to fetch categories
+  useEffect(() => {
+      logInfo(`Fetching categories`)
       axios.post(storeUrl+"categories",{orderBy : 'category'})
       .then(res => {
           let categories = res.data;
           setCategories(categories)
+          logInfo(`Categories fetched successfully`)
       })
       .catch(err => {
-          console.log("Stores.tsx : ",err.message)
+          logError(`Error fetching categories: ${err.message}`)
       })
     }, [])
 
-
+  // Function to handle navigation to store detail
   const handleNavigation = (store : Store) => {
+    logInfo(`Navigating to store detail: ${store.id}`)
     props.navigation.navigate('storeDetail',store);
   };
 
+  // Render component
   return (<>
   <View style={style.mainHeader}></View>
  <ScrollView style={style.body}>
@@ -142,7 +150,6 @@ function Stores(props : any) {
                 marginTop : 5
             }}
         >
-            
         <Searchbar
             placeholder="Search Stores"
             onChangeText={updateSearch}
@@ -150,6 +157,7 @@ function Stores(props : any) {
             onClearIconPress={()=>{
                 setQuery('')
                 setSearch(search ? false : true)
+                logInfo(`Search query cleared`)
             }}
             onSubmitEditing={() => setSearch(search ? false : true)}
             style={{
@@ -159,14 +167,15 @@ function Stores(props : any) {
         </View>
  
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}   style={style.category} >
-
             {categories.map((category:Category, i)=> (
                 <TouchableOpacity key={i} style={style.categoryParent}
-                  onPress={(e)=> setData({
-                    ...data,
-                    categoryId : category.id
-                  })
-                  }
+                  onPress={(e)=> {
+                    setData({
+                      ...data,
+                      categoryId : category.id
+                    })
+                    logInfo(`Category selected: ${category.id}`)
+                  }}
                 >
                     <Avatar  rounded
                         size={40}
@@ -196,9 +205,6 @@ function Stores(props : any) {
    </ScrollView>
    </>
   )
-
 }
-
-
 
 export default Stores

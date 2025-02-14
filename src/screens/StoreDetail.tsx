@@ -8,6 +8,7 @@ import PaginatedItems from '../components/PaginatedItems';
 import { Store } from '../redux';
 import { toTitleCase } from '../utils';
 import { storeImageUrl } from '../utils/utils';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 const StoreDetail = (props: any) => {
   const { route, navigation } = props;
@@ -15,10 +16,13 @@ const StoreDetail = (props: any) => {
 
   const store: Store = route.params;
 
+  // Function to update search query
   const updateSearch = (search: any) => {
     setState(search);
+    logInfo(`Search query updated: ${search}`);
   };
 
+  // Function to render "View More" text
   const renderViewMore = (onPress: any) => {
     return (
       <View style={styles.viewMoreLess}>
@@ -28,6 +32,7 @@ const StoreDetail = (props: any) => {
     );
   };
 
+  // Function to render "View Less" text
   const renderViewLess = (onPress: any) => {
     return (
       <View style={styles.viewMoreLess}>
@@ -37,6 +42,7 @@ const StoreDetail = (props: any) => {
     );
   };
 
+  // Function to check if background color is white
   const isBackgroundWhite = (color: string) => {
     const whiteThreshold = 240; // Adjust this value as needed
     const rgb = color.match(/\d+/g);
@@ -50,6 +56,7 @@ const StoreDetail = (props: any) => {
   const backgroundColor = 'white'; // Replace with dynamic background color if needed
   const statusBarStyle = isBackgroundWhite(backgroundColor) ? 'dark-content' : 'light-content';
 
+  // Render component
   return (
     <>
       <StatusBar translucent backgroundColor="transparent" barStyle={statusBarStyle} />
@@ -95,6 +102,7 @@ const StoreDetail = (props: any) => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   header: {
     elevation: 0,

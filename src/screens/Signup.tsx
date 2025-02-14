@@ -6,6 +6,7 @@ import { ApplicationState, onSignIn, UserModel } from '../redux';
 import { authUrl, bodyColor, defaultAvtar, themeColor } from '../utils/utils';
 import { toTitleCase } from '../utils';
 import { Icon } from 'react-native-elements'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 const SingUp = (props:any) => {
 
@@ -15,6 +16,7 @@ const SingUp = (props:any) => {
 
     const dispatch = useDispatch()
 
+    // State variables
     const [userData, setUserData] = useState({
         username : '',
         email: '',
@@ -39,29 +41,39 @@ const SingUp = (props:any) => {
     const [user,setUser] = useState<UserModel>()
     const [token,setToken] = useState()
 
+    // Effect to get user and token from props
     useEffect(()=>{
         const getData = async () =>{
             let user = await props.user
             let token = await props.token
             setUser(JSON.parse(user))
             setToken(token)
+            logInfo(`User and token set`)
         }
         getData()
     },[props.user,props.token])
 
+    // Effect to fetch user data
     useEffect(()=>{
-        if(!!user && !!token)
-        axios.defaults.headers['Authorization'] = token
-        axios.get(authUrl+user?.slug)
-        .then(res=>{
-            setUserData(res.data)
-        }).catch(err=>console.log("Edit Profile get : "+err.message))
+        if(!!user && !!token) {
+            axios.defaults.headers['Authorization'] = token
+            axios.get(authUrl+user?.slug)
+            .then(res=>{
+                setUserData(res.data)
+                logInfo(`User data fetched successfully`)
+            }).catch(err=>{
+                logError(`Error fetching user data: ${err.message}`)
+            })
+        }
     },[user,token])
 
+    // Function to handle go back action
     const handleGoBack = () => {
         props.navigation.goBack();
+        logInfo("Navigating back")
     };
 
+    // Function to handle form submission
     const handleSubmit = async() => {
 
         if(userData.confirm != userData.password){
@@ -69,6 +81,7 @@ const SingUp = (props:any) => {
                 ...errors,
                 confirm : "Password and confrim password doesn't match."
             })
+            logError("Password and confirm password doesn't match.")
             return false;
         }
 
@@ -77,13 +90,18 @@ const SingUp = (props:any) => {
         .then(res=>{
             alert(toTitleCase(res.data.message))
             dispatch(onSignIn(userData.email,userData.password))
-            navigation.navigate("Settings")           
+            navigation.navigate("Settings")  
+            logInfo(`User registered successfully`)         
         }).
-        catch(err=>console.log("Edit Profile get : "+err.message))
+        catch(err=>{
+            logError(`Error registering user: ${err.message}`)
+        })
     };
 
+    // Function to handle login navigation
     const handleLogin = () => {
         navigation.navigate('login')
+        logInfo("Navigating to login")
     }
 
     return (<>

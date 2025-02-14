@@ -6,29 +6,33 @@ import { Category } from '../redux';
 import { toTitleCase } from '../utils';
 import { itemsUrl } from '../utils/utils';
 import ItemSubcategories from './ItemSubcategories';
+import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function ItemCategories(props:any) {
 
+    // State variables
     const [categories,setCategories] = useState([]);
 
+    // Effect to fetch categories
     useEffect(()=>{
+        logInfo(`Fetching categories`);
         axios.post(itemsUrl +"categories",{pageSize : !!props.size ? props.size  : 6})
         .then(res=>{
             let data = res.data;
-            setCategories(data)
+            setCategories(data);
+            logInfo(`Categories fetched successfully`);
         }).catch(err => {
-            console.log("ItemCategories.tsx : " ,err)
+            logError(`Error fetching categories: ${err.message}`);
         })
     },[])
     
-
-
-
+    // Function to handle navigation to categorized items
     const handleNavigation = (category : Category) => {
+        logInfo(`Navigating to categorized items: ${category.id}`);
         props.navigation.navigate('categrizedItems',category);
       };
 
-
+    // Render component
   return (
     <View>
         {categories.map((category:Category,i)=>{
@@ -52,6 +56,7 @@ function ItemCategories(props:any) {
   )
 }
 
+// Styles
 const style = StyleSheet.create({
     paginate : {
         display : 'flex',

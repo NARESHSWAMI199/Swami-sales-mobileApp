@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 import { connect, useDispatch } from 'react-redux'
 import { ApplicationState, onLogout } from '../redux'
 import { bodyColor, themeColor } from '../utils/utils'
+import { logError, logInfo } from '../utils/logger' // Import logger
 
 function Settings(props: any) {
 
@@ -12,39 +13,51 @@ function Settings(props: any) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>()
     const dispatch = useDispatch()
 
+    // Effect to get token from props and set authentication state
     useEffect(() => {
         const getData = async () => {
             let token = await props.token
             setIsAuthenticated(!!token)
+            logInfo(`Authentication state set: ${!!token}`)
         }
         getData()
     }, [props.token])
 
+    // Function to handle navigation based on page name
     const handleRedirect = (pageName: string) => {
         if (pageName === 'login') {
             navigation.navigate('login')
+            logInfo("Navigating to login")
         }
         else if (pageName === 'logout') {
             dispatch(onLogout())
+            logInfo("Logout successful")
         }
         else if (pageName === 'slips') {
             navigation.navigate("slips")
+            logInfo("Navigating to slips")
         }
         else if (pageName === 'edit-profile') {
             navigation.navigate('editProfile')
+            logInfo("Navigating to edit profile")
         }
         else if (pageName === 'register') {
             navigation.navigate('signUp')
+            logInfo("Navigating to sign up")
         }
         else {
-            /** redirect to about */
+            // navtigate to about page
+            logInfo("Navigating to about")
         }
     }
 
+    // Function to handle back navigation
     const handleBack = () => {
         navigation.goBack();
+        logInfo("Navigating back")
     }
 
+    // Render component
     return (
         <>
             <View style={style.body}>
