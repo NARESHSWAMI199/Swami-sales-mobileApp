@@ -1,14 +1,14 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { ImageBackground, StatusBar, StyleSheet, Text, View } from 'react-native'
-import { Avatar, Badge } from 'react-native-elements'
+import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { Avatar, Badge, Icon, Card, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
-import { bodyColor, dummyImageUrl, itemImageUrl, ruppeCurrencyIcon, slipsUrl } from '../utils/utils'
+import { bodyColor, dummyImageUrl, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
-function Slips(props:any) {
+function SlipItems(props:any) {
 
   const {route,navigation} = props;
 
@@ -64,229 +64,177 @@ function Slips(props:any) {
     })
   }
 
+  const handleBack = () => {
+    navigation.goBack();
+  }
+
   // Render component
-  return (<>
-  
-  <ImageBackground
-        source={require('../images/slipbg.png')}
-        resizeMode = 'cover'
-    >
-    <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
-    <View style={style.body}>
-    {/* Don't remove this main header */}
-      <View style={style.mainHeader}></View>
-
-      <View  style={{...style.list}}>
-        <View style={{...style.listItem,
-          backgroundColor : '#054263',
-            marginHorizontal : 8,
-            marginVertical : 5,
-            borderRadius : 20
-          }}>
-          <Text style={{
-                ...style.itemTitle,
-                ...style.rowItem,
-                color : bodyColor,
-                width : 105
-            }}
-          >
-            Item Name
-          </Text>
-          <Text style={{
-                ...style.price,
-                ...style.rowItem,
-                color : bodyColor,
-            }}>
-              Item Price
-          </Text>
-          <Text style={{
-                ...style.quantity,
-                ...style.rowItem,
-                color : bodyColor,
-                fontWeight : 'bold'
-            }}>
-            Quan.
-          </Text>
-
-          <Text style={{
-            ...style.totalPrice,
-            ...style.rowItem,
-            color : bodyColor,
-            }}>
-            Total Price
-          </Text>
+  return (
+    <>
+      <StatusBar translucent backgroundColor={themeColor} barStyle="light-content" />
+      <View style={style.body}>
+        <View style={style.headerContainer}>
+          <Pressable style={style.mainHeader} onPress={handleBack}>
+            <Icon
+              name="arrow-back"
+              type="material"
+              size={24}
+              color="white"
+              style={{ fontWeight: 'bold', marginHorizontal: 5 }}
+            />
+            <Text style={style.headerText}>
+              Slip Items
+            </Text>
+          </Pressable>
         </View>
-      </View>
-
-
-    {orderItems.length > 0 ? 
-        orderItems.map((orderItem , index)=>{
+        {orderItems.length > 0 ? 
+          orderItems.map((orderItem , index)=>{
             let order = orderItem.itemOrder;
             let totalPrice = (order.item.price * order.quantity).toLocaleString('en-US')
             let name = order.item?.name;
             name = name.substring(0,20) +((order.item?.name)?.length > 20 ? ".." : '')
-            return <TouchableOpacity key={index} style={style.list} onPress={()=>handleRedirect(order)}>
-                <View style={{...style.listItem}}>
-                    <View style={{...style.itemBody}}>
-                        <Avatar source={{uri : itemImageUrl+order.item.slug+"/"+(order.item.avatars.split(","))[0]}} size={35} rounded/>
-                        <Text style={style.itemTitle}>
-                            {name}
-                        </Text>
+            let discountPercentage = (( (order.item.price - order.item.discount) / order.item.price) * 100).toFixed(2);
+            let actualPrice = order.item.price - order.item.discount;
+            return (
+              <Pressable key={index} style={style.list} onPress={()=>handleRedirect(order)}>
+                <View style={style.card}>
+                  <View style={style.listItem}>
+                    <Avatar source={{uri : itemImageUrl+order.item.slug+"/"+(order.item.avatars.split(","))[0]}} size={60} rounded/>
+                    <View style={style.itemDetails}>
+                      <Text style={style.itemTitle}>{name}</Text>
+                      <Rating imageSize={18} readonly startingValue={order.item.rating} style={style.rating} />
+                      <Text style={style.price}>{order.item?.price.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
+                      <Text style={style.discount}>Discount: {discountPercentage}%</Text>
+                      <Text style={style.quantity}>Quantity: {order.quantity}</Text>
+                      <Text style={style.totalPrice}>Total: {actualPrice+" "+ruppeCurrencyIcon}</Text>
                     </View>
-
-                    <View style={{...style.price,...style.rowItem}}>
-                        <Badge 
-                            status='success' 
-                            value={order.item?.price.toLocaleString('en-US')+" "+ruppeCurrencyIcon}
-
-                            textStyle ={{
-                                color : '#001475',
-                                fontSize : 10,
-                                // fontWeight : 'bold'
-                            }}
-
-                            badgeStyle={{
-                                paddingHorizontal : 5,
-                                backgroundColor : '#ebf0f7'
-                            }} 
-                        />
-                        </View>
-
-                    <View style={{...style.quantity,...style.rowItem}}>
-                        <Badge 
-                            status='success' 
-                            value={"x"+order.quantity}
-
-                            textStyle = {{
-                                color : '#001475',
-                                fontSize : 10,
-                                // fontWeight : 'bold'
-                            }}
-
-                            badgeStyle={{
-                                backgroundColor : '#fceded'
-                            }} 
-                        />
-                    </View>
-
-
-                    <View style={{
-                        ...style.totalPrice,
-                        ...style.rowItem,
-                        width : 100
-                    }}>
-                        <Badge 
-                            status='success' 
-                            value={totalPrice+" "+ruppeCurrencyIcon}
-                            textStyle ={{
-                                color : '#001475',
-                                fontSize : 12,
-                                fontWeight : 'bold'
-                            }}
-
-                            badgeStyle={{
-                                paddingHorizontal : 5,
-                                backgroundColor : '#eff5e9'
-                            }} 
-                        />
-                    </View>
-            </View>
-        </TouchableOpacity>
-         }) :
-        <View style={{      
-                display : 'flex',
-                flexDirection : 'column',
-                justifyContent : 'center',
-                alignItems : 'center',
-                flex : 1
-            }}>
-            <Text style={{
-                    fontSize : 14,
-                    fontWeight : 'bold',
-                    color : 'gray'
-                    }}>
-                Currently no orders found
+                  </View>
+                </View>
+              </Pressable>
+            )
+          }) :
+          <View style={style.noOrders}>
+            <Text style={style.noOrdersText}>
+              Currently no orders found
             </Text>
-        </View>
-    }
-    </View>
-    </ImageBackground>
-    </> )
+          </View>
+        }
+      </View>
+    </>
+  )
 }
 
 const style = StyleSheet.create({
   body: {
-    height : '100%'
+    height: '100%',
+    backgroundColor: '#f8f9fa'
   },
-  list : {
-    height : 65,
-    width : '100%',
-    marginVertical : 3
+  headerContainer: {
+    backgroundColor: themeColor,
+    paddingTop: 50, // Increased height
+    paddingBottom: 20,
+    paddingHorizontal: 10,
+    elevation: 5,
+    marginBottom: 10, // Fix margin from bottom
   },
-  mainHeader : {
-    height : 80,
-    backgroundColor : '#054263',
-    borderRadius : 40
+  mainHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  listItem : {
-    display : 'flex',
-    flexDirection : 'row',
-    alignItems : 'center',
-    paddingHorizontal : 15,
-    borderColor : 'gray',
-    backgroundColor : bodyColor,
-    flex : 1,
+  headerText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  listHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: bodyColor,
+    marginHorizontal: 10,
+    marginTop: 10, // Fix margin from top
+  },
+  listHeaderText: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#000', // Dark text color
+    width: 100,
+    textAlign: 'center'
+  },
+  list: {
+    width: '100%',
+    marginVertical: 5
+  },
+  card: {
+    borderRadius: 15, // Increased border radius for premium look
+    padding: 15,
+    marginHorizontal: 15, // Perfect margin from both x sides
+    backgroundColor: 'white',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 3,
+      height: 1, // Small shadow height
     },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 0.5
+    shadowOpacity: 0.22, // Small shadow opacity
+    shadowRadius: 4.84, // Small shadow radius
+    elevation: 2, // Small elevation
+  
   },
-  itemTitle : {
-    fontWeight : 'bold',
-    color : 'gray',
-    marginStart : 10,
-    fontSize : 12,
-    width : 80,
+  listItem: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemDetails: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  itemTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#000',
+  },
+  rating: {
+    alignSelf: 'flex-start',
+    marginVertical: 5,
   },
   price: {
-    fontWeight : 'bold',
-    color : 'green',
-    width : 80,
-    alignItems : 'flex-start',
+    fontSize: 14,
+    color: 'green',
   },
-  itemBody : {
-    display : 'flex',
-    flexDirection : 'row',
-    alignItems : 'center',
+  discount: {
+    fontSize: 14,
+    color: 'red',
   },
-  rowItem : {
-    // textAlign : 'center',
-    alignItems : 'flex-start',
-    fontSize : 13
-  },
-  quantity : {
-    width : 50,
-    alignItems : 'flex-start'
+  quantity: {
+    fontSize: 14,
+    color: '#000',
   },
   totalPrice: {
-    fontWeight : 'bold',
-    color : 'green',
-    width : 80,
-    alignItems : 'flex-start'
+    fontSize: 14,
+    color: 'green',
+    fontWeight: 'bold',
   },
+  noOrders: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
+  },
+  noOrdersText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: 'gray'
+  }
 })
 
-
 const mapToStateProps = (state:ApplicationState) =>{
-    return {
-        token : state.userReducer.token,
-    }
+  return {
+    token: state.userReducer.token,
+  }
 }
 
-
-
-export default connect(mapToStateProps)(Slips)
+export default connect(mapToStateProps)(SlipItems)

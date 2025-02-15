@@ -20,7 +20,7 @@ const ItemCard = (props: any) => {
     } = props.item;
 
     // Log item details
-    logInfo(`Rendering ItemCard for ${name}`);
+    // logInfo(`Rendering ItemCard for ${name}`);
 
     const avatar = itemImageUrl + slug + "/" + avatars?.split(',')[0];
 

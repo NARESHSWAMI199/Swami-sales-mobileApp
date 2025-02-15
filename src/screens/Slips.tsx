@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { StatusBar, StyleSheet, Text, View, ActivityIndicator, Pressable } from 'react-native'
 import { Avatar, Badge, Icon } from 'react-native-elements'
 import { bodyColor, dummyImageUrl, longToDate, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
 import { ApplicationState } from '../redux'
@@ -67,18 +67,33 @@ const handleRedirect = (slipId:number)=>{
   navigation.navigate('slipItems',{slipId : slipId})
 }
 
+const handleBack = () => {
+  navigation.goBack();
+}
+
   // Render component
   return (
     <>
-      <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
+      <StatusBar translucent backgroundColor={themeColor} barStyle="light-content" />
       <View style={style.body}>
-        <View style={style.mainHeader}></View>
-        <View style={{...style.list}}>
-          <View style={{...style.listItem, backgroundColor: '#054263', marginHorizontal: 10, borderRadius: 20}}>
-            <Text style={{...style.itemTitle, color: bodyColor}}>Slip name</Text>
-            <Text style={{...style.itemTitle, color: bodyColor}}>Last updated at</Text>
-            <Text style={{...style.itemTitle, color: bodyColor}}>Created at</Text>
-          </View>
+        <View style={style.headerContainer}>
+          <Pressable style={style.mainHeader} onPress={handleBack}>
+            <Icon
+              name="arrow-back"
+              type="material"
+              size={24}
+              color="white"
+              style={{ fontWeight: 'bold', marginHorizontal: 5 }}
+            />
+            <Text style={style.headerText}>
+              Slips
+            </Text>
+          </Pressable>
+        </View>
+        <View style={style.listHeader}>
+          <Text style={style.listHeaderText}>Slip Name</Text>
+          <Text style={style.listHeaderText}>Last Updated</Text>
+          <Text style={style.listHeaderText}>Created At</Text>
         </View>
         {loading ? (
           <View style={style.spinnerContainer}>
@@ -122,23 +137,43 @@ const style = StyleSheet.create({
     height: '100%',
     backgroundColor: '#f8f9fa'
   },
+  headerContainer: {
+    backgroundColor: themeColor,
+    paddingTop: 50, // Increased height
+    paddingBottom: 20,
+    paddingHorizontal: 10,
+    elevation: 5,
+  },
+  mainHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  listHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: bodyColor,
+    marginHorizontal: 10,
+    marginTop: 10, // Fix margin from top
+  },
+  listHeaderText: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#000', // Dark text color
+    width: 100,
+    textAlign: 'center'
+  },
   list: {
     height: 65,
     width: '100%',
     marginVertical: 3
-  },
-  mainHeader: {
-    height: 80,
-    backgroundColor: '#054263',
-    borderRadius: 40,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
   },
   listItem: {
     display: 'flex',
@@ -148,19 +183,12 @@ const style = StyleSheet.create({
     borderColor: 'gray',
     backgroundColor: bodyColor,
     flex: 1,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-    elevation: 6,
+    marginHorizontal: 10,
+    marginTop: 10, // Fix margin from top
   },
   itemTitle: {
     fontWeight: 'bold',
-    fontSize: 12,
-    color: 'gray',
+    fontSize: 14, // Increased font size
     marginHorizontal: 5,
     width: 100,
     textAlign: 'center'
@@ -181,6 +209,19 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: themeColor,
+    borderRadius: 5,
+    margin: 10,
+  },
+  goBackText: {
+    color: 'white',
+    marginLeft: 5,
+  },
+
   // addSlip: {
   //   height: 50,
   //   width: 50,
