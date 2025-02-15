@@ -111,7 +111,7 @@ function Stores(props : any) {
                 logInfo(`Stores fetched successfully`)
             })
             .catch(err => {
-                logError(`Error fetching stores: ${err.message}`)
+                logError(`Error fetching stores: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
                 setLoading(false)
             })
     }, [data,search])
@@ -126,7 +126,7 @@ function Stores(props : any) {
           logInfo(`Categories fetched successfully`)
       })
       .catch(err => {
-          logError(`Error fetching categories: ${err.message}`)
+          logError(`Error fetching categories: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
       })
     }, [])
 

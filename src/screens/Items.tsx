@@ -113,7 +113,7 @@ const Items = (props : any) => {
             })
             .catch(err => {
                 setLoading(false)
-                logError(`Error fetching items: ${err.message}`)
+                logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             })
     }, [search,data])
 
@@ -128,7 +128,7 @@ const Items = (props : any) => {
                     logInfo(`Categories fetched successfully`)
                 })
                 .catch(err => {
-                    logError(`Error fetching categories: ${err.message}`)
+                    logError(`Error fetching categories: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
                 })
         }
         getCategories()

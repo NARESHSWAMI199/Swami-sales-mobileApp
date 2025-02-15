@@ -27,7 +27,7 @@ const AddToSlip = (props: any) => {
         logInfo(`Slips fetched successfully`);
       })
       .catch(err => {
-        logError(`Error fetching slips: ${err.message}`);
+        logError(`Error fetching slips: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
         setLoading(false);
       })
   }, []);
@@ -57,7 +57,7 @@ const AddToSlip = (props: any) => {
         navigation.navigate('slipItems', { slipId: selectedSlip });
       })
       .catch(err => {
-        logError(`Error adding item to slip: ${err.message}`);
+        logError(`Error adding item to slip: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
       })
   }
 

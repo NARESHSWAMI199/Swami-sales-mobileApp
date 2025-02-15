@@ -28,6 +28,7 @@ const EditProfile = (props:any) => {
     const [user,setUser] = useState<UserModel>()
     const [token,setToken] = useState()
     const [message,setMessage] = useState()
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>()
 
     // Function to handle input change
     const handleChange = (key:string, value:string) => {
@@ -45,6 +46,7 @@ const EditProfile = (props:any) => {
             let user = await props.user
             let token = await props.token
             setUser(JSON.parse(user))
+            setIsAuthenticated(!!token)
             setToken(token)
             logInfo(`User and token set`)
         }
@@ -54,7 +56,6 @@ const EditProfile = (props:any) => {
     // Effect to fetch user data
     useEffect(()=>{
         if(!!user && !!token) {
-            axios.defaults.headers['Authorization'] = token
             axios.get(authUrl+user?.slug)
             .then(res=>{
                 setUserData({...res.data,userType : 'Retailer'})
@@ -67,7 +68,6 @@ const EditProfile = (props:any) => {
 
     // Function to handle form submission
     const handleSubmit = () => {
-        axios.defaults.headers['Authorization'] = token
         axios.post(authUrl + "update",userData)
         .then(res=>{
             alert(toTitleCase(res.data.message))
@@ -255,6 +255,7 @@ const styles = StyleSheet.create({
 const mapToStateProps = (state : ApplicationState) => {
     return {
         token : state.userReducer.token,
+        isAuthenticated : state.userReducer.isAuthenticated,
         user : state.userReducer.user
     }
 }

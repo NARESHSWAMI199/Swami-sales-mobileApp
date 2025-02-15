@@ -28,7 +28,7 @@ function ItemSubcategories(props:any) {
             setSubcategories(data)
             logInfo(`Subcategories fetched successfully`)
         }).catch(err => {
-            logError(`Error fetching subcategories: ${err.message}`)
+            logError(`Error fetching subcategories: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     },[categoryId])
     

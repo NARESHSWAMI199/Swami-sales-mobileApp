@@ -22,7 +22,7 @@ function ItemCategories(props:any) {
             setCategories(data);
             logInfo(`Categories fetched successfully`);
         }).catch(err => {
-            logError(`Error fetching categories: ${err.message}`);
+            logError(`Error fetching categories: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
         })
     },[])
     

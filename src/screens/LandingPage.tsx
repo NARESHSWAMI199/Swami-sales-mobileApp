@@ -59,7 +59,7 @@ const _LandingScreen = (props : any) => {
                     setShowPermissionButton(true)
                 }
             } catch(err) {
-                logError(`Error fetching location: ${err.message}`)
+                logError(`Error fetching location: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             }
         })();
     },[ask])

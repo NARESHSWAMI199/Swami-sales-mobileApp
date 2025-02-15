@@ -27,7 +27,7 @@ const ItemSubCategoryCard = (props : any) =>  {
             setItems(data);
             logInfo(`Fetched ${data.length} items for subcategory ${subcategory}`);
         }).catch(err => {
-            logError(`Error fetching items for subcategory ${subcategory}: ${err.message}`);
+            logError(`Error fetching items for subcategory ${subcategory}: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
         })
     },[props.subcategory])
 
@@ -81,7 +81,7 @@ const StoreSubCategoryCard = (props : any) =>  {
             setStores(data);
             logInfo(`Fetched ${data.length} stores for subcategory ${subcategory.subcategory}`);
         }).catch(err => {
-            logError(`Error fetching stores for subcategory ${subcategory.subcategory}: ${err.message}`);
+            logError(`Error fetching stores for subcategory ${subcategory.subcategory}: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
         })
     },[subcategory])
 

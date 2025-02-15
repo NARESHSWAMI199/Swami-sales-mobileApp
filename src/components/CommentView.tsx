@@ -9,10 +9,8 @@ import { Icon} from "@rneui/themed"
 import CommentInputBox from "./CommentInputBox"
 import { connect } from "react-redux"
 import { ApplicationState } from "../redux"
-import Pagination from "./Pagination"
 import { logError, logInfo } from '../utils/logger' // Import logger
 
-let maxButtons = 5
 const itemsPerPage = 10
 const CommentView = (props:any) =>{
 
@@ -31,7 +29,8 @@ const CommentView = (props:any) =>{
     const [isAuthenticated , setIsAuthenticated] = useState<boolean>()
     const[totalElements,setTotalElements] = useState<number>(1)
     const [currentPage, setCurrentPage] = useState(0);
-   
+    const [loading, setLoading] = useState(false);
+
     // Effect to get token from props
     useEffect(()=>{
       const getData =  async() =>{
@@ -44,8 +43,8 @@ const CommentView = (props:any) =>{
 
     // Effect to fetch comments
     useEffect(()=>{
-        axios.defaults.headers['Authorization'] = token;
-        logInfo(`Fetching comments for itemId: ${itemId}`)
+        logInfo(`Fetching comments for itemId: ${itemId} and page: ${currentPage} and token: ${axios.defaults.headers['Authorization']}`)
+        setLoading(true);
         axios.post(commentUrl+"all",{
             itemId : itemId,
             pageNumber : currentPage,
@@ -53,12 +52,14 @@ const CommentView = (props:any) =>{
         })
         .then(res=>{
             let response = res.data;
-            setComments(response.content)
+            setComments(prevComments => [...prevComments, ...response.content])
             setTotalElements(response.totalElements)
             logInfo(`Comments fetched successfully`)
+            setLoading(false);
         })
         .catch(err => {
-            logError(`Error fetching comments: ${err.message}`)
+            logError(`Error fetching comments: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+            setLoading(false);
         })
     },[props.isCommentUpdate,token,currentPage])
 
@@ -99,7 +100,6 @@ const CommentView = (props:any) =>{
     const handleLikes = async(commentId:number) =>{
         /** TODO : you can also redirect to login page */
         if(!isAuthenticated) return false
-        axios.defaults.headers['Authorization'] = token;
         await axios.get(commentUrl+"like/"+commentId)
         .then(res=>{
             let response = res.data;
@@ -115,14 +115,13 @@ const CommentView = (props:any) =>{
             logInfo(`Likes updated for comment id: ${commentId}`)
         })
         .catch(err => {
-            logError(`Error updating likes: ${err.message}`)
+            logError(`Error updating likes: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     }
 
     // Function to handle dislikes
     const handleDislike = async (commentId:number) =>{
         if(!isAuthenticated) return false
-        axios.defaults.headers['Authorization'] = token;
         await axios.get(commentUrl+"dislike/"+commentId)
         .then(res=>{
             let response = res.data;
@@ -138,7 +137,7 @@ const CommentView = (props:any) =>{
             logInfo(`Dislikes updated for comment id: ${commentId}`)
         })
         .catch(err => {
-            logError(`Error updating dislikes: ${err.message}`)
+            logError(`Error updating dislikes: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     }
 
@@ -160,12 +159,6 @@ const CommentView = (props:any) =>{
         logInfo(`Discarding text`)
     }
 
-    // Function to handle page change
-    const handlePageChange = (page) => {
-        setCurrentPage(page)
-        logInfo(`Page changed to ${page}`)
-    }
-
     // Function to update main comment
     const updateMainComment = (comment : any) =>{
         setComments(previous => previous.filter((_comment : any)=> {
@@ -180,8 +173,18 @@ const CommentView = (props:any) =>{
         logInfo(`Main comment updated for comment id: ${comment.id}`)
     }
 
+    // Function to handle scroll event
+    const handleScroll = (event: any) => {
+        const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+        const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+        if (isCloseToBottom && !loading && comments.length < totalElements) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    }
+
     // Render component
-    return (<View><View>
+    return (<View>
+        <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
         {comments.map((comment : any,index : number) => {
             return (
                 <View key={index}  style={{
@@ -274,6 +277,7 @@ const CommentView = (props:any) =>{
                 </View>
             )
         } )}
+        </ScrollView>
                 <Modal
                     animationType="slide"
                     transparent={true}
@@ -327,16 +331,6 @@ const CommentView = (props:any) =>{
                 </View>
                 </Modal>
             </View>
-
-        <View style={style.pagination}>
-            <Pagination
-                handlePageChange = {handlePageChange} 
-                itemsPerPage={itemsPerPage}
-                totalElements={totalElements}
-                maxButtons = {maxButtons}
-            />
-        </View>
-    </View>
     )
 }
 
@@ -431,10 +425,7 @@ const style = StyleSheet.create({
         justifyContent : 'center',
         alignItems : 'center',
         marginRight : 25
-      },
-    pagination : {
-        marginVertical : 10
-    }
+      }
 })
 
 

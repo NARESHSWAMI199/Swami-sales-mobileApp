@@ -36,7 +36,6 @@ function Slips(props:any) {
 
   // Effect to fetch slips
   useEffect(()=>{
-    axios.defaults.headers['Authorization'] = token;
       const getData = ()=>{
         logInfo(`Fetching slips`)
         axios.post(slipsUrl+"all",{

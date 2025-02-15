@@ -39,7 +39,6 @@ const CommentRepliesView = (props:any) =>{
 
     // Effect to fetch parent comment details
     useEffect(()=>{
-        axios.defaults.headers['Authorization'] = token;
         logInfo(`Fetching parent comment details for slug: ${parent.slug}`)
         axios.get(commentUrl+"detail/"+parent.slug)
         .then(res=>{
@@ -47,13 +46,12 @@ const CommentRepliesView = (props:any) =>{
             logInfo(`Parent comment details fetched successfully`)
         })
         .catch(err => {
-            logError(`Error fetching parent comment details: ${err.message}`)
+            logError(`Error fetching parent comment details: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     },[token])
 
     // Effect to fetch replies
     useEffect(()=>{
-        axios.defaults.headers['Authorization'] = token;
         logInfo(`Fetching replies for itemId: ${itemId} and parentId: ${parent.id}`)
         axios.post(commentUrl+"all",{itemId : itemId, parentId : parent.id})
         .then(res=>{

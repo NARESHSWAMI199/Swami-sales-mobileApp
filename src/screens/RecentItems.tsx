@@ -69,7 +69,7 @@ const RecentItems = (props : any) => {
             setItems(item)
             logInfo(`Recent items fetched successfully`)
         }).catch(err => {
-            logError(`Error fetching recent items: ${err.message}`)
+            logError(`Error fetching recent items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     }, [])
 

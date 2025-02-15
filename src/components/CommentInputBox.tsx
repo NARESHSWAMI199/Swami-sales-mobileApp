@@ -42,7 +42,6 @@ function CommentInputBox(props:any) {
   // Function to handle comment submission
   const handleComment = () => {
     if(!!message){
-    axios.defaults.headers['Authorization'] = token
     axios.post(commentUrl + "add",{
         message : message,
         itemId : itemId,
@@ -54,7 +53,7 @@ function CommentInputBox(props:any) {
         setMessage('')
       })
       .catch(err => {
-        logError(`Error adding comment: ${err.message}`)
+        logError(`Error adding comment: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
       })
     }
   }

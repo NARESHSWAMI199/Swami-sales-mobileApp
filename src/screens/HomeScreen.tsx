@@ -18,6 +18,11 @@ import Stores from './Stores'
 const HomeScreen = (props: any) => {
     const { navigation } = props;
 
+    // Adding auth token to axios headers
+    useEffect(() => {
+        axios.defaults.headers['Authorization'] = props.token;
+    }, [props.token])
+
     // Function to hide the tab bar
     const hideTabBar = () => {
         navigation.setOptions({

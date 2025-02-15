@@ -24,7 +24,7 @@ const CategoryTabs = (props: any) => {
                 logInfo(`Fetched ${categories.length} categories`);
             })
             .catch(err => {
-                logError(`Error fetching categories: ${err.message}`);
+                logError(`Error fetching categories: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
             })
     }, [])
 

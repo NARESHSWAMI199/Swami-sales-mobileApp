@@ -34,7 +34,6 @@ function SlipItems(props:any) {
 
   // Effect to fetch order items based on slipId
   useEffect(()=>{
-    axios.defaults.headers['Authorization'] = token;
     const getData = async()=>{
         logInfo(`Fetching order items for slipId: ${slipId}`)
         axios.post(slipsUrl+"detail/"+slipId,{
@@ -45,12 +44,13 @@ function SlipItems(props:any) {
             let response = res.data;
             let responseContent = response.content;
             logInfo(`Fetching store details for order items`);
-            const updatedOrderItems = await Promise.all(responseContent.map(async (orderItem) => {
+            const updatedOrderItems = await Promise.all(responseContent.map(async (orderItem:any) => {
               const order = orderItem.itemOrder;
+              if(!order?.item) return orderItem;
               try {
                 const res = await axios.get(`${storeUrl}-detail/${order.item?.wholesaleId}`);
                 order.item.storeName = res.data.storeName;
-                logInfo(`Store details fetched successfully for storeId: ${order.item.wholesaleId} and Store name: ${JSON.stringify(res.data.storeName)}`);
+                logInfo(`Store details fetched successfully for storeId: ${order.item?.wholesaleId} and Store name: ${JSON.stringify(res.data.storeName)}`);
               } catch (err) {
                 logError(`Error fetching store details: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
               }
@@ -72,7 +72,7 @@ function SlipItems(props:any) {
 
   // Function to handle navigation to item detail
   const handleRedirect = (order : any)=>{
-    logInfo(`Navigating to item detail: ${order.item.id}`)
+    logInfo(`Navigating to item detail: ${order.item?.id}`)
     navigation.navigate('itemDetail', {
         ...order.item,
         quantity : order.quantity
@@ -142,29 +142,30 @@ function SlipItems(props:any) {
         {orderItems.length > 0 ? 
           orderItems.map((orderItem , index)=>{
             let order = orderItem.itemOrder;
-            let actualPrice = order.item.price - order.item.discount;
+            if(!order?.item) return null;
+            let actualPrice = order.item?.price - order.item?.discount;
             let totalPrice = (actualPrice * order.quantity).toLocaleString('en-US')
             let name = order.item?.name;
             name = name.substring(0,20) +((order.item?.name)?.length > 20 ? ".." : '')
 
-            let discountPercentage = (( (order.item.discount) / order.item.price) * 100).toFixed(2);
-            let savedPrice = (order.item.discount * order.quantity).toLocaleString('en-US');
+            let discountPercentage = (( (order.item?.discount) / order.item?.price) * 100).toFixed(2);
+            let savedPrice = (order.item?.discount * order.quantity).toLocaleString('en-US');
             return (
               <Pressable key={index} style={style.list} onPress={()=>handleRedirect(order)}>
                 <View style={style.card}>
                   <View style={style.listItem}>
-                    <Avatar source={{uri : itemImageUrl+order.item.slug+"/"+(order.item.avatars.split(","))[0]}} size={60} rounded/>
+                    <Avatar source={{uri : itemImageUrl+order.item?.slug+"/"+(order.item?.avatars.split(","))[0]}} size={60} rounded/>
                     <View style={style.itemDetails}>
                       <Text style={style.itemTitle}>{order.item?.name}</Text>
-                      <Rating imageSize={18} readonly startingValue={order.item.rating} style={style.rating} />
+                      <Rating imageSize={18} readonly startingValue={order.item?.rating} style={style.rating} />
                       <Text style={style.price}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
                       <Text style={style.discount}>Discount: {discountPercentage}%</Text>
                       <Text style={style.quantity}>Quantity: {order.quantity}</Text>
-                      {order.item.discount > 0 && (
+                      {order.item?.discount > 0 && (
                         <Text style={style.savedPrice}>Saved: {savedPrice+" "+ruppeCurrencyIcon}</Text>
                       )}
                       <Text style={style.totalPrice}>Total: {totalPrice+" "+ruppeCurrencyIcon}</Text>
-                      <Text style={style.storeName}>Store: {order.item.storeName}</Text>
+                      <Text style={style.storeName}>Store: {order.item?.storeName}</Text>
                     </View>
                     <TouchableOpacity onPress={() => handleRemoveOrder(orderItem.id)} style={style.deleteButton}>
                       <Icon name="delete" type="material" size={24} color="red" />

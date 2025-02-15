@@ -50,7 +50,7 @@ const StoreSubCategories = (props: any) => {
                 setSubcategories(data);
                 logInfo(`Fetched ${data.length} store subcategories`);
             }).catch(err => {
-                logError(`Error fetching store subcategories: ${err.message}`);
+                logError(`Error fetching store subcategories: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
             })
     }, [])
 

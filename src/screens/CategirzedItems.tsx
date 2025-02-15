@@ -43,7 +43,7 @@ function CategirzedItems(props:any) {
             })
             .catch(err => {
                 setLoading(false)
-                logError(`Error fetching items: ${err.message}`)
+                logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             })
     }, [])
 

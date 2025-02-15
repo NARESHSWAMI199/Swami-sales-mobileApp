@@ -54,6 +54,7 @@ export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
 
 const  onLogoutAction = () => {
     const removeToken = async() =>{
+        axios.defaults.headers['Authorization'] = null
         await AsyncStorage.removeItem('token')
         await AsyncStorage.removeItem('user')
     }
@@ -100,6 +101,7 @@ export const onSignIn :any = (email : string, password : string) => {
         .then(async(res)=>{
             let authToken = res.data.token;
             let user = res.data.user;
+            axios.defaults.headers['Authorization'] = authToken
             await AsyncStorage.setItem('token',authToken)
             await AsyncStorage.setItem('user', JSON.stringify(user))
             let payload = {
@@ -137,7 +139,7 @@ export const authCheckState = () => {
     return async (dispatch : any) => {
         const token = await AsyncStorage.getItem('token');
         console.log(token)
-        if (token === undefined) {
+        if (token === undefined || token === null) {
             dispatch(onLogoutAction());
         } else {
             dispatch(onSingInAction(token));

@@ -27,7 +27,7 @@ function PopularStores({ navigation }) {
       setStores(data.content);
       logInfo(`Popular stores fetched successfully`);
     } catch (err) {
-      logError(`Error fetching popular stores: ${err.message}`);
+      logError(`Error fetching popular stores: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
     } finally {
       setLoading(false);
     }

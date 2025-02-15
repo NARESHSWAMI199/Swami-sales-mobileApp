@@ -56,7 +56,6 @@ const SingUp = (props:any) => {
     // Effect to fetch user data
     useEffect(()=>{
         if(!!user && !!token) {
-            axios.defaults.headers['Authorization'] = token
             axios.get(authUrl+user?.slug)
             .then(res=>{
                 setUserData(res.data)
@@ -85,7 +84,6 @@ const SingUp = (props:any) => {
             return false;
         }
 
-        axios.defaults.headers['Authorization'] = token
         axios.post(authUrl + "register",userData)
         .then(res=>{
             alert(toTitleCase(res.data.message))

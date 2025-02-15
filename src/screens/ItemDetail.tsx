@@ -72,7 +72,7 @@ const ItemDetail = (props: any) => {
           logInfo(`Store details fetched successfully for storeId: ${item.wholesaleId}`)
         })
         .catch(err => {
-          logError(`Error fetching store details: ${err.message}`)
+          logError(`Error fetching store details: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     }
   }, [item]);

@@ -57,7 +57,7 @@ const StoreCategoryCard = () => {
                     logInfo(`Fetched ${categories.length} store categories`);
                 })
                 .catch(err => {
-                    logError(`Error fetching store categories: ${err.message}`);
+                    logError(`Error fetching store categories: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
                 })
         }
         getCategories()

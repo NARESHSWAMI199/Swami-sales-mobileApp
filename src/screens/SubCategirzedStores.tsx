@@ -44,7 +44,7 @@ function SubCategirzedStores(props:any) {
           })
           .catch(err => {
               setLoading(false)
-              logError(`Error fetching stores: ${err.message}`)
+              logError(`Error fetching stores: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
           })
     }, [])
 
