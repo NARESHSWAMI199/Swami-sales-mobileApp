@@ -114,7 +114,7 @@ function Stores(props : any) {
                 logError(`Error fetching stores: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
                 setLoading(false)
             })
-    }, [data,search])
+    }, [search])
 
   // Effect to fetch categories
   useEffect(() => {

@@ -17,6 +17,15 @@ const ItemFilters = (props : any) => {
     const [showPopular, setShowPuplar] = useState(true) 
     const [searchResult , setSearchResult] = useState("New Products")
     const [loading, setLoading] = useState(true)
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [totalElements, setTotalElements] = useState(0);
+    const [data, setData] = useState({
+        searchKey: query,
+        categoryId: props.categoryId,
+        subcategoryId: props.subcategoryId,
+        pageSize: 51,
+        pageNumber: 0
+    });
 
     // Effect to set selected category based on props
     useEffect(()=>{
@@ -33,12 +42,7 @@ const ItemFilters = (props : any) => {
     // Effect to fetch items based on data and search query
     useEffect(() => {
         logInfo(`Fetching items with query: ${query} and category: ${selectedCategory}`)
-        axios.post(itemsUrl+"all",{
-            searchKey : query,
-            categoryId : selectedCategory,
-            subcategoryId : !!props.subcategory ? props.subcategory : null,
-            pageSize : 50 
-        })
+        axios.post(itemsUrl+"all",{...data, searchKey: query, categoryId: selectedCategory})
         .then(res => {
             let item = res.data.content;
             if(query != ""){
@@ -55,6 +59,7 @@ const ItemFilters = (props : any) => {
                 setLoading(false)
             }
             setItems(item)
+            setTotalElements(res.data.totalElements);
             logInfo(`Items fetched successfully`)
         })
         .catch(err => {
@@ -62,6 +67,24 @@ const ItemFilters = (props : any) => {
             logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
     }, [search,selectedCategory])
+
+    // Function to fetch more items on scroll end
+    const fetchMoreItems = () => {
+        if (items.length >= totalElements) return;
+        setIsFetchingMore(true);
+        axios.post(itemsUrl + "all", { ...data, searchKey: query, categoryId: selectedCategory, pageNumber: data.pageNumber + 1 })
+            .then(res => {
+                let newItems = res.data.content;
+                setItems([...items, ...newItems]);
+                setData({ ...data, pageNumber: data.pageNumber + 1 });
+                setIsFetchingMore(false);
+                logInfo(`More items fetched successfully`)
+            })
+            .catch(err => {
+                setIsFetchingMore(false);
+                logError(`Error fetching more items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+            })
+    };
 
     // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
@@ -101,7 +124,15 @@ const ItemFilters = (props : any) => {
                 }}
             />
         </View>
-        <ScrollView style={style.main}>
+        <ScrollView 
+            style={style.main}
+            onScroll={({ nativeEvent }) => {
+                if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+                    fetchMoreItems();
+                }
+            }}
+            scrollEventThrottle={400}
+        >
             {showPopular &&
                 <View>
                     <Text style={style.titleHeadings}>
@@ -133,6 +164,7 @@ const ItemFilters = (props : any) => {
                         </View>
                     </>
                 )}
+                {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
             </View>
         </ScrollView>
     </View>)

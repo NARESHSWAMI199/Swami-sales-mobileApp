@@ -66,8 +66,11 @@ const Items = (props : any) => {
         searchKey : query,
         categoryId : props.categoryId,
         subcategoryId : props.subcategoryId,
-        pageSize : 51
+        pageSize : 51,
+        pageNumber: 0
     })
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [totalElements, setTotalElements] = useState(0);
 
     // Effect to set showCategory based on props
     useEffect(()=>{
@@ -104,10 +107,11 @@ const Items = (props : any) => {
     // Effect to fetch items based on data and search query
     useEffect(() => {
         logInfo(`Fetching items with data: ${JSON.stringify(data)} and query: ${query}`)
-        axios.post(itemsUrl+"all",{...data,searchKey : query,orderBy : 'rating'})
+        axios.post(itemsUrl+"all",{...data,pageNumber : 0,searchKey : query,orderBy : 'rating'})
         .then(res => {
                 let item = res.data.content;
                 setItems(item)
+                setTotalElements(res.data.totalElements);
                 setLoading(false)
                 logInfo(`Items fetched successfully`)
             })
@@ -115,7 +119,7 @@ const Items = (props : any) => {
                 setLoading(false)
                 logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             })
-    }, [search,data])
+    }, [search])
 
     // Effect to fetch categories
     useEffect(() => {
@@ -140,9 +144,35 @@ const Items = (props : any) => {
         props.navigation.navigate('itemDetail',item);
     };
 
+    // Function to fetch more items on scroll end
+    const fetchMoreItems = () => {
+        if (items.length >= totalElements) return;
+        setIsFetchingMore(true);
+        axios.post(itemsUrl + "all", { ...data, searchKey: query, orderBy: 'rating', pageNumber: data.pageNumber + 1 })
+            .then(res => {
+                let newItems = res.data.content;
+                setItems([...items, ...newItems]);
+                setData({ ...data, pageNumber: data.pageNumber + 1 });
+                setIsFetchingMore(false);
+                logInfo(`More items fetched successfully`)
+            })
+            .catch(err => {
+                setIsFetchingMore(false);
+                logError(`Error fetching more items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+            })
+    };
+
     // Render component
     return (<>  
-    <ScrollView style={style.body}>
+    <ScrollView 
+        style={style.body}
+        onScroll={({ nativeEvent }) => {
+            if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+                fetchMoreItems();
+            }
+        }}
+        scrollEventThrottle={400}
+    >
         {!!showCategory && 
         <>
             <View  style={style.mainHeader}></View>
@@ -205,6 +235,7 @@ const Items = (props : any) => {
                     </TouchableOpacity>)
                 })
             )}
+            {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
         </View>
     </ScrollView>
     </>)

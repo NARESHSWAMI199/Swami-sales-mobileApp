@@ -1,18 +1,28 @@
 import { Icon } from '@rneui/themed';
-import React, { useState } from 'react';
-import { Image, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Badge, Rating } from 'react-native-elements';
-import { Text, Appbar } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import ViewMoreText from 'react-native-view-more-text';
-import PaginatedItems from '../components/PaginatedItems';
-import { Store } from '../redux';
+import { Store, Item } from '../redux';
 import { toTitleCase } from '../utils';
-import { storeImageUrl } from '../utils/utils';
+import { storeImageUrl, itemsUrl, themeColor } from '../utils/utils';
 import { logError, logInfo } from '../utils/logger'; // Import logger
+import ItemCard from '../components/ItemCard';
+import axios from 'axios';
 
 const StoreDetail = (props: any) => {
   const { route, navigation } = props;
   const [state, setState] = useState("");
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [totalElements, setTotalElements] = useState(0);
+  const [data, setData] = useState({
+    storeId: route.params.id,
+    pageSize: 51,
+    pageNumber: 0
+  });
 
   const store: Store = route.params;
 
@@ -56,11 +66,56 @@ const StoreDetail = (props: any) => {
   const backgroundColor = 'white'; // Replace with dynamic background color if needed
   const statusBarStyle = isBackgroundWhite(backgroundColor) ? 'dark-content' : 'light-content';
 
+  // Effect to fetch items based on storeId
+  useEffect(() => {
+    logInfo(`Fetching items for storeId: ${data.storeId}`)
+    axios.post(itemsUrl + "all", { ...data })
+      .then(res => {
+        let item = res.data.content;
+        setItems(item);
+        setTotalElements(res.data.totalElements);
+        setLoading(false);
+        logInfo(`Items fetched successfully`)
+      })
+      .catch(err => {
+        setLoading(false);
+        logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+      })
+  }, []);
+
+  // Function to fetch more items on scroll end
+  const fetchMoreItems = () => {
+    if (items.length >= totalElements) return;
+    setIsFetchingMore(true);
+    axios.post(itemsUrl + "all", { ...data, pageNumber: data.pageNumber + 1 })
+      .then(res => {
+        let newItems = res.data.content;
+        if (newItems.length > 0) {
+          setItems(prevItems => [...prevItems, ...newItems]);
+          setData({ ...data, pageNumber: data.pageNumber + 1 });
+        }
+        setIsFetchingMore(false);
+        logInfo(`More items fetched successfully`)
+      })
+      .catch(err => {
+        setIsFetchingMore(false);
+        logError(`Error fetching more items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+      })
+  };
+
   // Render component
   return (
     <>
       <StatusBar translucent backgroundColor="transparent" barStyle={statusBarStyle} />
-      <ScrollView style={{ backgroundColor }}>
+      <ScrollView
+        style={{ backgroundColor }}
+        onScroll={({ nativeEvent }) => {
+          if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+            fetchMoreItems();
+          }
+        }}
+        scrollEventThrottle={400}
+      >
         <View style={styles.imageParent}>
           <Image style={styles.image}
             source={{ uri: storeImageUrl + store.slug + "/" + store.avatar }}
@@ -79,10 +134,7 @@ const StoreDetail = (props: any) => {
             <Rating type='custom' imageSize={25} readonly startingValue={store.rating} />
           </View>
 
-          <View>
-            <Text style={styles.titleHeadings}>Our Latest Products</Text>
-            <PaginatedItems {...props} storeId={store.id} />
-            <View style={styles.aboutUsContainer}>
+          <View style={styles.aboutUsContainer}>
               <Text style={styles.subtitle}>About us:</Text>
               <ViewMoreText
                 numberOfLines={3}
@@ -92,6 +144,21 @@ const StoreDetail = (props: any) => {
                 <Text style={styles.description}>{store.description.trim()}</Text>
               </ViewMoreText>
             </View>
+
+          <View>
+            <Text style={styles.titleHeadings}>Our Latest Products</Text>
+            {loading ? (
+              <ActivityIndicator size="large" color={themeColor} />
+            ) : (
+              <View style={styles.outerView}>
+                {items.map((item: Item, i) => (
+                  <TouchableOpacity key={i} style={styles.innerView} onPress={() => props.navigation.navigate('itemDetail', item)}>
+                    <ItemCard item={item} />
+                  </TouchableOpacity>
+                ))}
+                {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
+              </View>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -197,7 +264,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     marginVertical: 10,
-  }
+  },
+  outerView: {
+    display: 'flex',
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: '100%',
+    backgroundColor: 'white'
+  },
+  innerView: {
+    width: '32%',
+    margin: 2,
+  },
 });
 
 export default StoreDetail;
