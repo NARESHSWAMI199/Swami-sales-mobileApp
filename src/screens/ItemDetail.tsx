@@ -1,6 +1,7 @@
+import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View, Image, Pressable, StatusBar, TouchableOpacity } from 'react-native'
-import { bodyColor, getPercentage, itemImageUrl, themeColor, userImageUrl } from '../utils/utils'
+import { bodyColor, getPercentage, itemImageUrl, themeColor, storeUrl } from '../utils/utils'
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import { Text } from 'react-native-paper';
@@ -18,6 +19,7 @@ const ItemDetail = (props: any) => {
   const [commentUpdated, setCommentUpdated] = useState(false)
   const commentRef = useRef(null);
   const [parentId, setParentId] = useState<number>(0)
+  const [storeName, setStoreName] = useState<string>("");
 
   const item: Item = route.params;
 
@@ -60,6 +62,20 @@ const ItemDetail = (props: any) => {
     setParentId(parentId)
     logInfo(`Comment focused with parentId: ${parentId}`)
   }
+
+  // Fetch store details
+  useEffect(() => {
+    if (item) {
+      axios.get(`${storeUrl}-detail/${item.wholesaleId}`)
+        .then(res => {
+          setStoreName(res.data.storeName);
+          logInfo(`Store details fetched successfully for storeId: ${item.wholesaleId}`)
+        })
+        .catch(err => {
+          logError(`Error fetching store details: ${err.message}`)
+        })
+    }
+  }, [item]);
 
   // Render component
   return (
@@ -108,7 +124,7 @@ const ItemDetail = (props: any) => {
 
           <View style={{ display: 'flex', flexDirection: 'row' }}>
             <Text style={styles.subtitle}>Store : </Text>
-            <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{"Swami sales"}</Text>
+            <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{storeName}</Text>
           </View>
 
           <View>

@@ -1,12 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Pressable, StatusBar, StyleSheet, Text, View } from 'react-native'
-import { Avatar, Badge, Icon, Card, Rating } from 'react-native-elements'
+import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { Avatar, Icon, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
-import { bodyColor, dummyImageUrl, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
+import { and } from 'react-native-reanimated'
 
 function SlipItems(props:any) {
 
@@ -21,6 +21,7 @@ function SlipItems(props:any) {
   const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage,setItemPerPage] = useState(29)
   const [orderItems,setOrderItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
   // Effect to get token from props
   useEffect(()=>{
@@ -35,20 +36,35 @@ function SlipItems(props:any) {
   // Effect to fetch order items based on slipId
   useEffect(()=>{
     axios.defaults.headers['Authorization'] = token;
-    const getData = ()=>{
+    const getData = async()=>{
         logInfo(`Fetching order items for slipId: ${slipId}`)
         axios.post(slipsUrl+"detail/"+slipId,{
             pageNumber : currentPage,
             pageSize: itemsPerPage
         })
-        .then(res=>{
+        .then(async(res)=>{
             let response = res.data;
-            setOrderItems(response.content)
+            let responseContent = response.content;
+            logInfo(`Fetching store details for order items`);
+            const updatedOrderItems = await Promise.all(responseContent.map(async (orderItem) => {
+              const order = orderItem.itemOrder;
+              try {
+                const res = await axios.get(`${storeUrl}-detail/${order.item?.wholesaleId}`);
+                order.item.storeName = res.data.storeName;
+                logInfo(`Store details fetched successfully for storeId: ${order.item.wholesaleId} and Store name: ${JSON.stringify(res.data.storeName)}`);
+              } catch (err) {
+                logError(`Error fetching store details: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
+              }
+              return orderItem;
+            }));
+            setOrderItems(updatedOrderItems);
             setTotalElements(response.totalElements)
             logInfo(`Order items fetched successfully`)
+            setLoading(false);
         })
         .catch(err => {
             logError(`Error fetching order items: ${err.message}`)
+            setLoading(false);
         })
     }
     if(!!token) getData()
@@ -66,6 +82,14 @@ function SlipItems(props:any) {
 
   const handleBack = () => {
     navigation.goBack();
+  }
+
+  if (loading) {
+    return (
+      <View style={style.spinnerContainer}>
+        <ActivityIndicator size="large" color={themeColor} />
+      </View>
+    );
   }
 
   // Render component
@@ -93,20 +117,21 @@ function SlipItems(props:any) {
             let totalPrice = (order.item.price * order.quantity).toLocaleString('en-US')
             let name = order.item?.name;
             name = name.substring(0,20) +((order.item?.name)?.length > 20 ? ".." : '')
-            let discountPercentage = (( (order.item.price - order.item.discount) / order.item.price) * 100).toFixed(2);
             let actualPrice = order.item.price - order.item.discount;
+            let discountPercentage = (( (order.item.discount) / order.item.price) * 100).toFixed(2);
             return (
               <Pressable key={index} style={style.list} onPress={()=>handleRedirect(order)}>
                 <View style={style.card}>
                   <View style={style.listItem}>
                     <Avatar source={{uri : itemImageUrl+order.item.slug+"/"+(order.item.avatars.split(","))[0]}} size={60} rounded/>
                     <View style={style.itemDetails}>
-                      <Text style={style.itemTitle}>{name}</Text>
+                      <Text style={style.itemTitle}>{order.item?.name}</Text>
                       <Rating imageSize={18} readonly startingValue={order.item.rating} style={style.rating} />
-                      <Text style={style.price}>{order.item?.price.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
+                      <Text style={style.price}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
                       <Text style={style.discount}>Discount: {discountPercentage}%</Text>
                       <Text style={style.quantity}>Quantity: {order.quantity}</Text>
-                      <Text style={style.totalPrice}>Total: {actualPrice+" "+ruppeCurrencyIcon}</Text>
+                      <Text style={style.totalPrice}>Total: {totalPrice+" "+ruppeCurrencyIcon}</Text>
+                      <Text style={style.storeName}>Store: {order.item.storeName}</Text>
                     </View>
                   </View>
                 </View>
@@ -193,7 +218,7 @@ const style = StyleSheet.create({
   },
   itemTitle: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
     color: '#000',
   },
   rating: {
@@ -217,6 +242,11 @@ const style = StyleSheet.create({
     color: 'green',
     fontWeight: 'bold',
   },
+  storeName: {
+    fontSize: 14,
+    color: '#000',
+    fontWeight: 'bold',
+  },
   noOrders: {
     display: 'flex',
     flexDirection: 'column',
@@ -228,6 +258,11 @@ const style = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: 'gray'
+  },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   }
 })
 
