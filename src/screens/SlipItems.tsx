@@ -1,12 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator, Alert, TouchableOpacity } from 'react-native'
 import { Avatar, Icon, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
 import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
-import { and } from 'react-native-reanimated'
 
 function SlipItems(props:any) {
 
@@ -80,6 +79,35 @@ function SlipItems(props:any) {
     })
   }
 
+  // Function to handle item removal
+  const handleRemoveOrder = (orderItemId: number) => {
+    Alert.alert(
+      "Remove Item",
+      "Are you sure you want to remove this item?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Remove",
+          onPress: () => {
+            axios.post(slipsUrl + "remove-order", { id: orderItemId })
+              .then(res => {
+                logInfo(`Item removed successfully`);
+                setOrderItems(orderItems.filter(orderItem => orderItem.id !== orderItemId));
+              })
+              .catch(err => {
+                console.log(err)
+                logError(`Error removing item: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
+              })
+          },
+          style: "destructive"
+        }
+      ]
+    );
+  }
+
   const handleBack = () => {
     navigation.goBack();
   }
@@ -114,11 +142,13 @@ function SlipItems(props:any) {
         {orderItems.length > 0 ? 
           orderItems.map((orderItem , index)=>{
             let order = orderItem.itemOrder;
-            let totalPrice = (order.item.price * order.quantity).toLocaleString('en-US')
+            let actualPrice = order.item.price - order.item.discount;
+            let totalPrice = (actualPrice * order.quantity).toLocaleString('en-US')
             let name = order.item?.name;
             name = name.substring(0,20) +((order.item?.name)?.length > 20 ? ".." : '')
-            let actualPrice = order.item.price - order.item.discount;
+
             let discountPercentage = (( (order.item.discount) / order.item.price) * 100).toFixed(2);
+            let savedPrice = (order.item.discount * order.quantity).toLocaleString('en-US');
             return (
               <Pressable key={index} style={style.list} onPress={()=>handleRedirect(order)}>
                 <View style={style.card}>
@@ -130,9 +160,15 @@ function SlipItems(props:any) {
                       <Text style={style.price}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
                       <Text style={style.discount}>Discount: {discountPercentage}%</Text>
                       <Text style={style.quantity}>Quantity: {order.quantity}</Text>
+                      {order.item.discount > 0 && (
+                        <Text style={style.savedPrice}>Saved: {savedPrice+" "+ruppeCurrencyIcon}</Text>
+                      )}
                       <Text style={style.totalPrice}>Total: {totalPrice+" "+ruppeCurrencyIcon}</Text>
                       <Text style={style.storeName}>Store: {order.item.storeName}</Text>
                     </View>
+                    <TouchableOpacity onPress={() => handleRemoveOrder(orderItem.id)} style={style.deleteButton}>
+                      <Icon name="delete" type="material" size={24} color="red" />
+                    </TouchableOpacity>
                   </View>
                 </View>
               </Pressable>
@@ -231,21 +267,29 @@ const style = StyleSheet.create({
   },
   discount: {
     fontSize: 14,
-    color: 'red',
+    color: '#FF6347'
   },
   quantity: {
     fontSize: 14,
     color: '#000',
   },
   totalPrice: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'green',
+    fontWeight: 'bold',
+  },
+  savedPrice: {
+    fontSize: 14,
+    color: '#0D6900',
     fontWeight: 'bold',
   },
   storeName: {
     fontSize: 14,
     color: '#000',
     fontWeight: 'bold',
+  },
+  deleteButton: {
+    marginLeft: 'auto',
   },
   noOrders: {
     display: 'flex',

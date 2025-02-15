@@ -28,6 +28,7 @@
     "react-native": "0.71.14",
     "react-native-animated-dots-carousel": "^2.0.0",
     "react-native-async-storage": "^0.0.1",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-elements": "^3.4.3",
     "react-native-exit-app": "^2.0.0",
     "react-native-gesture-handler": "~2.9.0",

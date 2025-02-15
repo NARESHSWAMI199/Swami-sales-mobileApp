@@ -22,6 +22,7 @@ import SignUp from './src/screens/Signup';
 import Slips from './src/screens/Slips';
 import SlipItems from './src/screens/SlipItems';
 import { Ionicons } from '@expo/vector-icons';
+import AddToSlip from './src/screens/AddToSlip';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -115,6 +116,7 @@ export default function App() {
           <Screen name="signUp" component={SignUp} options={{ header: () => null }} />
           <Screen name="slips" component={Slips} options={{ header: () => null }} />
           <Screen name="slipItems" component={SlipItems} options={{ header: () => null }} />
+          <Screen name="AddToSlip" component={AddToSlip} options={{ header: () => null }} />
         </Navigator>
       </NavigationContainer>
     </Provider>

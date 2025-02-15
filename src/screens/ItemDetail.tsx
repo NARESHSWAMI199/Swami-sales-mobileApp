@@ -77,6 +77,11 @@ const ItemDetail = (props: any) => {
     }
   }, [item]);
 
+  // Function to handle add to slip
+  const handleAddToSlip = () => {
+    navigation.navigate('AddToSlip', { item });
+  }
+
   // Render component
   return (
     <>
@@ -140,7 +145,7 @@ const ItemDetail = (props: any) => {
 
           <View style={{ display: 'flex', alignItems: 'center' }}>
             <Pressable
-              onPress={(e) => logInfo("Add to slip clicked")}
+              onPress={handleAddToSlip}
               style={styles.button}
               accessibilityLabel="Learn more about this purple button"
             >

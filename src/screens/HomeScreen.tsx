@@ -101,13 +101,17 @@ const HomeScreen = (props: any) => {
         {/* Main container */}
         <View style={style.container}>
             <View style={{ backgroundColor: themeColor }}>
-                <View style={{ paddingHorizontal: 10}}>
+                <View style={{ paddingHorizontal: 10 }}>
                     <Searchbar
                         placeholder="Search"
                         value={''}
                         onPressOut={handleFilter}
                         autoFocus={false}
-                        style={style.searchBox} // Updated style
+                        style={{
+                            width: '100%',
+                            alignSelf: 'center',
+                            marginVertical: 10,
+                        }}
                     />
                 </View>
 
@@ -117,13 +121,14 @@ const HomeScreen = (props: any) => {
                     showsHorizontalScrollIndicator={false}>
                     <Tab value={index} onChange={setIndex} dense>
                         <Tab.Item
-                            titleStyle={{ fontSize: 14, color: 'white', minWidth: 50 }}
+                            titleStyle={{ fontSize: 14, color: 'white', minWidth: 40 }}
                         >
-                            <Icon
-                                name="list"
-                                type="material"
+                            <Avatar
+                                rounded
                                 size={20}
-                                color="white"
+                                source={{
+                                    uri: 'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
+                                }}
                             />
                             {"All"}
                         </Tab.Item>
@@ -357,12 +362,6 @@ const style = StyleSheet.create({
     logo: {
         width: 30,
         height: 30,
-    },
-    searchBox: {
-        width: '100%',
-        alignSelf: 'center',
-        marginVertical: 10,
-        borderRadius: 15, // Improved curve
     }
 })
 
