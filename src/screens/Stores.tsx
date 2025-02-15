@@ -1,12 +1,11 @@
 import axios from 'axios'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
 import StoreCard from '../components/StoreCard'
 import { Category, Store } from '../redux'
 import { bodyColor, storeUrl } from '../utils/utils'
-import Spinner from 'react-native-loading-spinner-overlay'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 // Component function
@@ -69,7 +68,7 @@ function Stores(props : any) {
   const [categories, setCategories] = useState([])
   const [query, setQuery] = useState("")
   const [showCategory, setShowCategory] = useState(true)
-  const [showSpinner,setShowSpinner] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [data,setData] = useState({
       pageSize  : 51, 
       orderBy :'rating',
@@ -108,12 +107,12 @@ function Stores(props : any) {
             .then(res => {
                 let response = res.data.content;
                 setStores(response)
-                setShowSpinner(false)
+                setLoading(false)
                 logInfo(`Stores fetched successfully`)
             })
             .catch(err => {
                 logError(`Error fetching stores: ${err.message}`)
-                setShowSpinner(false)
+                setLoading(false)
             })
     }, [data,search])
 
@@ -191,16 +190,15 @@ function Stores(props : any) {
         </>
         }
         <View style={style.storeParent}>
-          <Spinner
-            visible={showSpinner}
-            textContent={'Loading...'}
-            textStyle={{color : 'white'}}
-          />
-            {stores.map((store,i)=>{
+          {loading ? (
+            <ActivityIndicator size="large" color={bodyColor} />
+          ) : (
+            stores.map((store,i)=>{
               return <TouchableOpacity key={i} style={style.storeView} onPress={e=> handleNavigation(store)} >
                     <StoreCard store={store}/>
               </TouchableOpacity>
-            })}
+            })
+          )}
           </View>
    </ScrollView>
    </>

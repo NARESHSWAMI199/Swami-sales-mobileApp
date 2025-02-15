@@ -1,12 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Searchbar } from 'react-native-paper'
 import ItemCard from '../components/ItemCard'
 import { Item } from '../redux'
 import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import RecentItems from './RecentItems'
-import Spinner from 'react-native-loading-spinner-overlay'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 const ItemFilters = (props : any) => {
@@ -17,7 +16,7 @@ const ItemFilters = (props : any) => {
     const [query, setQuery] = useState("") 
     const [showPopular, setShowPuplar] = useState(true) 
     const [searchResult , setSearchResult] = useState("New Products")
-    const [showSpinner,setShowSpinner] = useState(true)
+    const [loading, setLoading] = useState(true)
 
     // Effect to set selected category based on props
     useEffect(()=>{
@@ -49,17 +48,17 @@ const ItemFilters = (props : any) => {
                     setSearchResult("Search Results.")
                 }
                 setShowPuplar(false)
-                setShowSpinner(false)
+                setLoading(false)
             }else{
                 setShowPuplar(true)
                 setSearchResult("New Products")
-                setShowSpinner(false)
+                setLoading(false)
             }
             setItems(item)
             logInfo(`Items fetched successfully`)
         })
         .catch(err => {
-            setShowSpinner(false)
+            setLoading(false)
             logError(`Error fetching items: ${err.message}`)
         })
     }, [search,selectedCategory])
@@ -118,21 +117,22 @@ const ItemFilters = (props : any) => {
                 </View>
             }
             <View>
-                <Spinner
-                    visible={showSpinner}
-                    textContent={'Loading...'}
-                    textStyle={{color : 'white'}}
-                />
-                <Text style={style.titleHeadings}>
-                    {searchResult}
-                </Text>
-                <View style={style.outerView}>
-                    {items.map((item:Item , i) =>{
-                        return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                            <ItemCard  item={item}/>
-                        </TouchableOpacity>)
-                    })}
-                </View>
+                {loading ? (
+                    <ActivityIndicator size="large" color={themeColor} />
+                ) : (
+                    <>
+                        <Text style={style.titleHeadings}>
+                            {searchResult}
+                        </Text>
+                        <View style={style.outerView}>
+                            {items.map((item:Item , i) =>{
+                                return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
+                                    <ItemCard  item={item}/>
+                                </TouchableOpacity>)
+                            })}
+                        </View>
+                    </>
+                )}
             </View>
         </ScrollView>
     </View>)

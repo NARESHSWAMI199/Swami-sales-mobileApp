@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
@@ -17,7 +16,7 @@ function PopularItems(props:any) {
     }= route.params
 
     // State variables
-    const [showSpinner,setShowSpinner] = useState(false)
+    const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([])
 
     // Effect to set navigation options
@@ -39,11 +38,11 @@ function PopularItems(props:any) {
         .then(res => {
                 let item = res.data.content;
                 setItems(item)
-                setShowSpinner(false)
+                setLoading(false)
                 logInfo(`Items fetched successfully`)
             })
             .catch(err => {
-                setShowSpinner(false)
+                setLoading(false)
                 logError(`Error fetching items: ${err.message}`)
             })
     }, [])
@@ -58,16 +57,17 @@ function PopularItems(props:any) {
     return (
         <ScrollView style={style.body}>
             <View style={style.outerView}>
-                <Spinner
-                    visible={showSpinner}
-                    textContent={'Loading...'}
-                    textStyle={{color : 'white'}}
-                />
-                {items.map((item:Item , i) =>{
-                    return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                        <ItemCard  item={item}/>
-                    </TouchableOpacity>)
-                })}
+                {loading ? (
+                    <ActivityIndicator size="large" color={bodyColor} />
+                ) : (
+                    items.map((item:Item , i) =>{
+                        return(
+                            <TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
+                                <ItemCard  item={item}/>
+                            </TouchableOpacity>
+                        )
+                    })
+                )}
             </View>
         </ScrollView>
     )
@@ -94,7 +94,9 @@ const style = StyleSheet.create({
         flexDirection : 'row',
         flexWrap: 'wrap',
         width:'98%',
-        backgroundColor : 'white'
+        backgroundColor : 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     innerView : {
         width : '32%',

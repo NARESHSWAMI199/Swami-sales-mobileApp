@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import Items from './Items'
-import { Store, Subcategory } from '../redux';
-import { bodyColor, notFoundImage, storeUrl } from '../utils/utils';
-import { toTitleCase } from '../utils';
-import Stores from './Stores';
-import Spinner from 'react-native-loading-spinner-overlay';
-import StoreCard from '../components/StoreCard';
-import axios from 'axios';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Avatar } from 'react-native-elements';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
+import { Avatar } from 'react-native-elements'
+import StoreCard from '../components/StoreCard'
+import { Store } from '../redux'
+import { bodyColor, notFoundImage, storeUrl } from '../utils/utils'
+import { toTitleCase } from '../utils'
+import axios from 'axios'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 function SubCategirzedStores(props:any) {
@@ -20,8 +17,8 @@ function SubCategirzedStores(props:any) {
     }= route.params
 
     // State variables
-    const [stores,setStores] = useState([])
-    const [showSpinner,setShowSpinner] = useState(false)
+    const [loading, setLoading] = useState(true);
+    const [stores, setStores] = useState([])
 
     // Effect to set navigation options
     useEffect(()=>{
@@ -42,11 +39,11 @@ function SubCategirzedStores(props:any) {
           .then(res => {
               let response = res.data.content;
               setStores(response)
-              setShowSpinner(false)
+              setLoading(false)
               logInfo(`Stores fetched successfully`)
           })
           .catch(err => {
-              setShowSpinner(false)
+              setLoading(false)
               logError(`Error fetching stores: ${err.message}`)
           })
     }, [])
@@ -62,16 +59,17 @@ function SubCategirzedStores(props:any) {
         {stores.length > 0 ? 
         <ScrollView style={style.body}>
             <View style={style.storeParent}>
-                <Spinner
-                    visible={showSpinner}
-                    textContent={'Loading...'}
-                    textStyle={{color : 'white'}}
-                />
-                {stores.map((store,i)=>{
-                    return <TouchableOpacity key={i} style={style.storeView} onPress={e=> handleNavigation(store)} >
-                        <StoreCard store={store}/>
-                    </TouchableOpacity>
-                })}
+                {loading ? (
+                    <ActivityIndicator size="large" color={bodyColor} />
+                ) : (
+                    stores.map((store,i)=>{
+                        return (
+                            <TouchableOpacity key={i} style={style.storeView} onPress={e=> handleNavigation(store)} >
+                                <StoreCard store={store}/>
+                            </TouchableOpacity>
+                        )
+                    })
+                )}
             </View>
         </ScrollView>
         :    
@@ -104,8 +102,10 @@ const style = StyleSheet.create({
         display : 'flex',
         flexDirection : 'row',
         flexWrap : 'wrap',
-      },
-      storeView : {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    storeView : {
         width :'32%',
         backgroundColor : 'white',
         borderRadius : 10,

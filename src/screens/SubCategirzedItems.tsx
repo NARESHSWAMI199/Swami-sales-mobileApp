@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
@@ -18,7 +17,7 @@ function SubCategirzedItems(props:any) {
     }= route.params
 
     // State variables
-    const [showSpinner,setShowSpinner] = useState(false)
+    const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([])
 
     // Effect to set navigation options
@@ -40,11 +39,11 @@ function SubCategirzedItems(props:any) {
         .then(res => {
                 let item = res.data.content;
                 setItems(item)
-                setShowSpinner(false)
+                setLoading(false)
                 logInfo(`Items fetched successfully`)
             })
             .catch(err => {
-                setShowSpinner(false)
+                setLoading(false)
                 logError(`Error fetching items: ${err.message}`)
             })
     }, [])
@@ -60,16 +59,15 @@ function SubCategirzedItems(props:any) {
         {items.length > 0 ? 
         <ScrollView style={style.body}>
             <View style={style.outerView}>
-                <Spinner
-                    visible={showSpinner}
-                    textContent={'Loading...'}
-                    textStyle={{color : 'white'}}
-                />
-                {items.map((item:Item , i) =>{
-                    return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
-                        <ItemCard  item={item}/>
-                    </TouchableOpacity>)
-                })}
+                {loading ? (
+                    <ActivityIndicator size="large" color={bodyColor} />
+                ) : (
+                    items.map((item:Item , i) =>{
+                        return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
+                            <ItemCard  item={item}/>
+                        </TouchableOpacity>)
+                    })
+                )}
             </View>
         </ScrollView>
         :    

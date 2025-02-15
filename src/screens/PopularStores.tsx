@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Spinner from 'react-native-loading-spinner-overlay';
 import StoreCard from '../components/StoreCard';
 import { Store } from '../redux';
 import { bodyColor, storeUrl } from '../utils/utils';
@@ -12,7 +11,7 @@ import { logError, logInfo } from '../utils/logger'; // Import logger
 function PopularStores({ navigation }) {
   // State variables
   const [stores, setStores] = useState([]);
-  const [showSpinner, setShowSpinner] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Effect to fetch stores on component mount
   useEffect(() => {
@@ -21,7 +20,7 @@ function PopularStores({ navigation }) {
 
   // Function to fetch stores
   const fetchStores = async () => {
-    setShowSpinner(true);
+    setLoading(true);
     logInfo(`Fetching popular stores`);
     try {
       const { data } = await axios.post(storeUrl + "all", { pageSize: 12 });
@@ -30,7 +29,7 @@ function PopularStores({ navigation }) {
     } catch (err) {
       logError(`Error fetching popular stores: ${err.message}`);
     } finally {
-      setShowSpinner(false);
+      setLoading(false);
     }
   };
 
@@ -44,20 +43,21 @@ function PopularStores({ navigation }) {
   return (
     <ScrollView style={styles.body}>
       <View style={styles.storeParent}>
-        <Spinner
-          visible={showSpinner}
-          textContent={'Loading...'}
-          textStyle={{ color: 'white' }}
-        />
-        {stores.map((store, i) => (
-          <TouchableOpacity
-            key={i}
-            style={styles.storeView}
-            onPress={() => handleNavigation(store)}
-          >
-            <StoreCard store={store} />
-          </TouchableOpacity>
-        ))}
+        {loading ? (
+          <View style={styles.spinnerContainer}>
+            <ActivityIndicator size="large" color={bodyColor} />
+          </View>
+        ) : (
+          stores.map((store, i) => (
+            <TouchableOpacity
+              key={i}
+              style={styles.storeView}
+              onPress={() => handleNavigation(store)}
+            >
+              <StoreCard store={store} />
+            </TouchableOpacity>
+          ))
+        )}
       </View>
     </ScrollView>
   );
@@ -85,12 +85,19 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   storeView: {
     width: 120,
     backgroundColor: 'white',
     borderRadius: 10,
     marginHorizontal: 2,
+  },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

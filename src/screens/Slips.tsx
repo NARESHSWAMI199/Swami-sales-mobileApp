@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
+import { StatusBar, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
 import { Avatar, Badge, Icon } from 'react-native-elements'
 import { bodyColor, dummyImageUrl, longToDate, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
 import { ApplicationState } from '../redux'
@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import axios from 'axios'
 import { toTitleCase } from '../utils'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Spinner from 'react-native-loading-spinner-overlay'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 function Slips(props:any) {
@@ -22,7 +21,7 @@ function Slips(props:any) {
   const [itemsPerPage,setItemPerPage] = useState(29)
   const [slips,setSlips] = useState([])
   // TODO : change false to true if you want show spinners
-  const [showSpinner,setShowSpinner] = useState(true)
+  const [loading, setLoading] = useState(true)
 
   // Effect to get token from props
   useEffect(()=>{
@@ -48,12 +47,12 @@ function Slips(props:any) {
           let response = res.data;
           setSlips(response.content)
           setTotalElements(response.totalElements)
-          setShowSpinner(false)
+          setLoading(false)
           logInfo(`Slips fetched successfully`)
       })
       .catch(err => {
           logError(`Error fetching slips: ${err.message}`)
-          setShowSpinner(false)
+          setLoading(false)
       })
     }
 
@@ -81,30 +80,35 @@ const handleRedirect = (slipId:number)=>{
             <Text style={{...style.itemTitle, color: bodyColor}}>Created at</Text>
           </View>
         </View>
-        <Spinner visible={showSpinner} textContent={'Loading...'} textStyle={{color: 'white'}} />
-        {slips.map((slip, i) => (
-          <TouchableOpacity key={i} style={style.list} onPress={() => handleRedirect(slip.id)} activeOpacity={1}>
-            <View style={style.listItem}>
-              <Text style={style.itemTitle}>{toTitleCase(slip.slipName)}</Text>
-              <View style={style.itemTitle}>
-                <Badge 
-                  status='success' 
-                  value={!!slip.updatedAt ? longToDate(slip.updatedAt) : 0}
-                  textStyle={{color: '#001475', fontSize: 10}}
-                  badgeStyle={{paddingHorizontal: 5, backgroundColor: '#eff5e9'}} 
-                />
+        {loading ? (
+          <View style={style.spinnerContainer}>
+            <ActivityIndicator size="large" color={themeColor} />
+          </View>
+        ) : (
+          slips.map((slip, i) => (
+            <TouchableOpacity key={i} style={style.list} onPress={() => handleRedirect(slip.id)} activeOpacity={1}>
+              <View style={style.listItem}>
+                <Text style={style.itemTitle}>{toTitleCase(slip.slipName)}</Text>
+                <View style={style.itemTitle}>
+                  <Badge 
+                    status='success' 
+                    value={!!slip.updatedAt ? longToDate(slip.updatedAt) : 0}
+                    textStyle={{color: '#001475', fontSize: 10}}
+                    badgeStyle={{paddingHorizontal: 5, backgroundColor: '#eff5e9'}} 
+                  />
+                </View>
+                <View style={style.itemTitle}>
+                  <Badge 
+                    status='error' 
+                    value={!!slip.createdAt ? longToDate(slip.createdAt) : 0}
+                    textStyle={{color: '#001475', fontSize: 10}}
+                    badgeStyle={{paddingHorizontal: 5, backgroundColor: '#f2f5fa'}} 
+                  />
+                </View>
               </View>
-              <View style={style.itemTitle}>
-                <Badge 
-                  status='error' 
-                  value={!!slip.createdAt ? longToDate(slip.createdAt) : 0}
-                  textStyle={{color: '#001475', fontSize: 10}}
-                  badgeStyle={{paddingHorizontal: 5, backgroundColor: '#f2f5fa'}} 
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          ))
+        )}
       </View>
       {/* <View style={style.addSlip}>
         <Icon type="font-awesome" name='plus' size={20} color={"#054263"}/>
@@ -116,7 +120,6 @@ const handleRedirect = (slipId:number)=>{
 const style = StyleSheet.create({
   body: {
     height: '100%',
-    
     backgroundColor: '#f8f9fa'
   },
   list: {
@@ -172,6 +175,11 @@ const style = StyleSheet.create({
   },
   quantity: {
     width: 40
+  },
+  spinnerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   // addSlip: {
   //   height: 50,

@@ -1,8 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { ActivityIndicator, StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Spinner from 'react-native-loading-spinner-overlay';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { bodyColor, itemsUrl } from '../utils/utils';
@@ -14,13 +13,13 @@ const maxButtons = 5;
 
 function PaginatedItems(props: any) {
     const { categoryId, storeId } = props;
-    const [showSpinner, setShowSpinner] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([]);
     const [totalElements, setTotalElements] = useState<number>(1);
     const [currentPage, setCurrentPage] = useState(0);
 
     useEffect(() => {
-        setShowSpinner(true);
+        setLoading(true);
         let data = {
             categoryId: categoryId,
             storeId: storeId,
@@ -32,11 +31,11 @@ function PaginatedItems(props: any) {
                 let response = res.data;
                 setItems(response.content);
                 setTotalElements(response.totalElements);
-                setShowSpinner(false);
+                setLoading(false);
                 logInfo(`Fetched ${response.content.length} items for page ${currentPage}`);
             })
             .catch(err => {
-                setShowSpinner(false);
+                setLoading(false);
                 logError(`Error fetching items: ${err.message}`);
             });
     }, [currentPage]);
@@ -55,18 +54,17 @@ function PaginatedItems(props: any) {
         <>
             <ScrollView style={style.body}>
                 <View style={style.outerView}>
-                    <Spinner
-                        visible={showSpinner}
-                        textContent={'Loading...'}
-                        textStyle={{ color: 'white' }}
-                    />
-                    {items.map((item: Item, i) => {
-                        return (
-                            <TouchableOpacity key={i} style={style.innerView} onPress={() => handleNavigation(item)}>
-                                <ItemCard item={item} />
-                            </TouchableOpacity>
-                        );
-                    })}
+                    {loading ? (
+                        <ActivityIndicator size="large" color={bodyColor} />
+                    ) : (
+                        items.map((item: Item, i) => {
+                            return (
+                                <TouchableOpacity key={i} style={style.innerView} onPress={() => handleNavigation(item)}>
+                                    <ItemCard item={item} />
+                                </TouchableOpacity>
+                            );
+                        })
+                    )}
                 </View>
             </ScrollView>
             <View style={style.pagination}>
@@ -93,7 +91,9 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         width: '98%',
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     innerView: {
         width: '32%',
