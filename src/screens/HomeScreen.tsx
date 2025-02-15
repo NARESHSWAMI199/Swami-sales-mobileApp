@@ -20,7 +20,11 @@ const HomeScreen = (props: any) => {
 
     // Adding auth token to axios headers
     useEffect(() => {
-        axios.defaults.headers['Authorization'] = props.token;
+        const  updateToken = async () => {
+            let token = await props.token;
+            axios.defaults.headers['Authorization'] = token;
+        }
+        updateToken();
     }, [props.token])
 
     // Function to hide the tab bar

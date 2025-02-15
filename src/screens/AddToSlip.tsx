@@ -7,6 +7,7 @@ import { TextInput } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import { logError, logInfo } from '../utils/logger' // Import logger
 import DropDownPicker from 'react-native-dropdown-picker';
+import { log } from 'react-native-reanimated';
 
 const AddToSlip = (props: any) => {
   const { route, navigation } = props;
@@ -20,6 +21,7 @@ const AddToSlip = (props: any) => {
 
   // Fetch slips
   useEffect(() => {
+    logInfo(`Fetching slips`);
     axios.post(slipsUrl + "all",{})
       .then(res => {
         setSlips(res.data.content.map((slip: any) => ({ label: slip.slipName, value: slip.id })));

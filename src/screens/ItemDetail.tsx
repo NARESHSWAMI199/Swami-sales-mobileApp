@@ -12,6 +12,8 @@ import CustomCarousel from '../components/Carousel';
 import CommentView from '../components/CommentView';
 import CommentInputBox from '../components/CommentInputBox';
 import { logError, logInfo } from '../utils/logger' // Import logger
+import { connect } from 'react-redux';
+import { ApplicationState } from '../redux';
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
@@ -79,6 +81,10 @@ const ItemDetail = (props: any) => {
 
   // Function to handle add to slip
   const handleAddToSlip = () => {
+    if (!props.isAuthenticated) {
+      navigation.navigate('login');
+      return;
+    }
     navigation.navigate('AddToSlip', { item });
   }
 
@@ -273,4 +279,10 @@ const styles = StyleSheet.create({
   }
 })
 
-export default ItemDetail
+const mapToStateProps = (state: ApplicationState) => {
+  return {
+    isAuthenticated: !!state.userReducer.token,
+  }
+}
+
+export default connect(mapToStateProps)(ItemDetail)
