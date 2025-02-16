@@ -130,14 +130,13 @@ const HomeScreen = (props: any) => {
                     showsHorizontalScrollIndicator={false}>
                     <Tab value={index} onChange={setIndex} dense>
                         <Tab.Item
-                            titleStyle={{ fontSize: 14, color: 'white', minWidth: 40 }}
+                            titleStyle={{ fontSize: 14, color: 'white', minWidth: 50 }}
                         >
-                            <Avatar
-                                rounded
+                            <Icon
+                                name='home'
+                                type='font-awesome'
                                 size={20}
-                                source={{
-                                    uri: 'https://cdn-icons-png.freepik.com/512/7835/7835563.png'
-                                }}
+                                color='white'
                             />
                             {"All"}
                         </Tab.Item>
@@ -147,10 +146,10 @@ const HomeScreen = (props: any) => {
                                 titleStyle={{
                                     fontSize: 14,
                                     color: 'white',
-                                    minWidth: 40
+                                    minWidth: 50
                                 }}
                             >
-                                <Avatar
+                                  <Avatar
                                     rounded
                                     size={20}
                                     source={{
