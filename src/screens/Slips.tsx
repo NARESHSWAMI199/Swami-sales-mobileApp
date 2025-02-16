@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StatusBar, StyleSheet, Text, View, ActivityIndicator, Pressable } from 'react-native'
+import { StatusBar, StyleSheet, Text, View, ActivityIndicator, Pressable, Modal, TextInput, Alert } from 'react-native'
 import { Avatar, Badge, Icon } from 'react-native-elements'
 import { bodyColor, dummyImageUrl, longToDate, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
 import { ApplicationState } from '../redux'
 import { connect } from 'react-redux'
 import axios from 'axios'
 import { toTitleCase } from '../utils'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 function Slips(props:any) {
@@ -22,6 +22,11 @@ function Slips(props:any) {
   const [slips,setSlips] = useState([])
   // TODO : change false to true if you want show spinners
   const [loading, setLoading] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [newSlipName, setNewSlipName] = useState('');
+  const [editSlipName, setEditSlipName] = useState('');
+  const [editSlipId, setEditSlipId] = useState(null);
 
   // Effect to get token from props
   useEffect(()=>{
@@ -70,11 +75,84 @@ const handleBack = () => {
   navigation.goBack();
 }
 
+const handleAddSlip = () => {
+  if (newSlipName.trim() === '') {
+    Alert.alert('Error', 'Slip name cannot be empty');
+    return;
+  }
+
+  axios.post(slipsUrl + "add", { name: newSlipName })
+    .then(res => {
+      setSlips([res.data.res,...slips]);
+      setModalVisible(false);
+      setNewSlipName('');
+      logInfo(`Slip added successfully`);
+    })
+    .catch(err => {
+      logError(`Error adding slip: ${err.message}`);
+      Alert.alert('Error', 'Failed to add slip');
+    });
+}
+
+const handleDeleteSlip = (slipId: number) => {
+  Alert.alert(
+    'Confirm Delete',
+    'Are you sure you want to delete this slip?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          axios.post(`${slipsUrl}delete`, { id: slipId })
+            .then(() => {
+              setSlips(slips.filter(slip => slip.id !== slipId));
+              logInfo(`Slip deleted successfully`);
+            })
+            .catch(err => {
+              logError(`Error deleting slip: ${err.message}`);
+              Alert.alert('Error', 'Failed to delete slip');
+            });
+        },
+        style: 'destructive',
+      },
+    ],
+    { cancelable: true }
+  );
+}
+
+const handleEditSlip = () => {
+  if (editSlipName.trim() === '') {
+    Alert.alert('Error', 'Slip name cannot be empty');
+    return;
+  }
+
+  axios.post(`${slipsUrl}update`, { id: editSlipId, name: editSlipName })
+    .then(() => {
+      setSlips(slips.map(slip => slip.id === editSlipId ? { ...slip, slipName: editSlipName, updatedAt: new Date().getTime() } : slip));
+      setEditModalVisible(false);
+      setEditSlipName('');
+      logInfo(`Slip updated successfully`);
+    })
+    .catch(err => {
+      logError(`Error updating slip: ${err.message}`);
+      Alert.alert('Error', 'Failed to update slip');
+    });
+}
+
+const openEditModal = (slip) => {
+  setEditSlipId(slip.id);
+  setEditSlipName(slip.slipName);
+  setEditModalVisible(true);
+}
+
   // Render component
   return (
     <>
       <StatusBar translucent backgroundColor={themeColor} barStyle="light-content" />
-      <View style={style.body}>
+      <ScrollView style={style.body}>
         <View style={style.headerContainer}>
           <Pressable style={style.mainHeader} onPress={handleBack}>
             <Icon
@@ -93,6 +171,7 @@ const handleBack = () => {
           <Text style={style.listHeaderText}>Slip Name</Text>
           <Text style={style.listHeaderText}>Last Updated</Text>
           <Text style={style.listHeaderText}>Created At</Text>
+          <Text style={style.listHeaderText}>Actions</Text>
         </View>
         {loading ? (
           <View style={style.spinnerContainer}>
@@ -100,7 +179,7 @@ const handleBack = () => {
           </View>
         ) : (
           slips.map((slip, i) => (
-            <TouchableOpacity key={i} style={style.list} onPress={() => handleRedirect(slip.id)} activeOpacity={1}>
+            <Pressable key={i} style={style.list} onPress={() => handleRedirect(slip.id)}>
               <View style={style.listItem}>
                 <Text style={style.itemTitle}>{toTitleCase(slip.slipName)}</Text>
                 <View style={style.itemTitle}>
@@ -119,14 +198,88 @@ const handleBack = () => {
                     badgeStyle={{paddingHorizontal: 5, backgroundColor: '#f2f5fa'}} 
                   />
                 </View>
+                <View style={style.actions}>
+                  <Icon
+                    name="edit"
+                    type="material"
+                    size={20}
+                    color="blue"
+                    onPress={() => openEditModal(slip)}
+                  />
+                  <Icon
+                    name="delete"
+                    type="material"
+                    size={20}
+                    color="red"
+                    onPress={() => handleDeleteSlip(slip.id)}
+                  />
+                </View>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           ))
         )}
-      </View>
-      {/* <View style={style.addSlip}>
-        <Icon type="font-awesome" name='plus' size={20} color={"#054263"}/>
-      </View> */}
+
+      </ScrollView>
+      {/* Add Slip Button */}
+      <Pressable style={style.addSlip} onPress={() => setModalVisible(true)}>
+        <Icon type="font-awesome" name='plus' size={20} color={"#054263"} />
+      </Pressable>
+ 
+      {/* Add Slip Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={style.modalView}>
+          <View style={style.modalContent}>
+            <Text style={style.modalTitle}>Add New Slip</Text>
+            <TextInput
+              style={style.input}
+              placeholder="Enter slip name"
+              value={newSlipName}
+              onChangeText={setNewSlipName}
+            />
+            <View style={style.modalButtons}>
+              <Pressable style={style.button} onPress={handleAddSlip}>
+                <Text style={style.buttonText}>Save</Text>
+              </Pressable>
+              <Pressable style={style.button} onPress={() => setModalVisible(false)}>
+                <Text style={style.buttonText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Edit Slip Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={editModalVisible}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={style.modalView}>
+          <View style={style.modalContent}>
+            <Text style={style.modalTitle}>Edit Slip</Text>
+            <TextInput
+              style={style.input}
+              placeholder="Enter slip name"
+              value={editSlipName}
+              onChangeText={setEditSlipName}
+            />
+            <View style={style.modalButtons}>
+              <Pressable style={style.button} onPress={handleEditSlip}>
+                <Text style={style.buttonText}>Save</Text>
+              </Pressable>
+              <Pressable style={style.button} onPress={() => setEditModalVisible(false)}>
+                <Text style={style.buttonText}>Cancel</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   )
 }
@@ -166,31 +319,28 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     color: '#000', // Dark text color
-    width: 100,
     textAlign: 'center'
   },
   list: {
     height: 65,
-    width: '100%',
-    marginVertical: 3
+    display: 'flex',
+    marginHorizontal: 2,
+    marginVertical: 2,
   },
   listItem: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
     borderColor: 'gray',
     backgroundColor: bodyColor,
     flex: 1,
-    marginHorizontal: 10,
-    marginTop: 10, // Fix margin from top
   },
   itemTitle: {
     fontWeight: 'bold',
     fontSize: 14, // Increased font size
-    marginHorizontal: 5,
-    width: 100,
-    textAlign: 'center'
+    textAlign: 'center',
+    display: 'flex',
+    flex : 1,
   },
   itemBody: {
     display: 'flex',
@@ -220,25 +370,72 @@ const style = StyleSheet.create({
     color: 'white',
     marginLeft: 5,
   },
-
-  // addSlip: {
-  //   height: 50,
-  //   width: 50,
-  //   backgroundColor: bodyColor,
-  //   position: 'absolute',
-  //   borderRadius: 50,
-  //   bottom: 30,
-  //   right: 20,
-  //   justifyContent: 'center',
-  //   shadowColor: "#000",
-  //   shadowOffset: {
-  //     width: 0,
-  //     height: 3,
-  //   },
-  //   shadowOpacity: 0.27,
-  //   shadowRadius: 4.65,
-  //   elevation: 6,
-  // }
+  addSlip: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    height: 60,
+    width: 60,
+    backgroundColor: 'white',
+    borderRadius: 25,
+    marginLeft:'auto',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: 300,
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    padding: 10,
+    backgroundColor: themeColor,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: 80,
+  },
 })
 
 const mapToStateProps = (state:ApplicationState) =>{

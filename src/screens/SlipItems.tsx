@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
 import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
+import { ScrollView } from 'react-native-gesture-handler'
 
 function SlipItems(props:any) {
 
@@ -124,7 +125,7 @@ function SlipItems(props:any) {
   return (
     <>
       <StatusBar translucent backgroundColor={themeColor} barStyle="light-content" />
-      <View style={style.body}>
+      <ScrollView style={style.body}>
         <View style={style.headerContainer}>
           <Pressable style={style.mainHeader} onPress={handleBack}>
             <Icon
@@ -181,7 +182,7 @@ function SlipItems(props:any) {
             </Text>
           </View>
         }
-      </View>
+      </ScrollView>
     </>
   )
 }
