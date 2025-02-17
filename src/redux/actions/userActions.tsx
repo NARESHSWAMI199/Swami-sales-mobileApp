@@ -4,8 +4,9 @@ import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
 import { tokens } from 'react-native-paper/lib/typescript/styles/themes/v3/tokens';
+import { logError, logInfo } from '../../utils/logger';
 
-export interface UpdataLocationAction {
+export interface UpdateLocationAction {
     readonly type : 'ON_UPDATE_LOCATION',
     payload : LocationGeocodedAddress
 } 
@@ -33,7 +34,7 @@ export interface UserLoginAction  {
 } 
 
 
-export type UserAction = UpdataLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
+export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
 
 export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
     return (dispatch : any) => {

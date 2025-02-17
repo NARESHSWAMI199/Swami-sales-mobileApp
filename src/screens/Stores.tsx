@@ -3,8 +3,9 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { Searchbar } from 'react-native-paper'
+import { connect } from 'react-redux'
 import StoreCard from '../components/StoreCard'
-import { Category, Store } from '../redux'
+import { ApplicationState, Category, Store } from '../redux'
 import { bodyColor, storeUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
@@ -73,7 +74,8 @@ function Stores(props : any) {
       pageSize  : 51, 
       orderBy :'rating',
       categoryId : undefined,
-      subcategoryId : undefined
+      subcategoryId : undefined,
+      zipCode: props.location?.postalCode // Add zipCode from props
     })
 
   // Effect to set showCategory based on props
@@ -89,10 +91,11 @@ function Stores(props : any) {
       ...data,
       subcategoryId : props.subcategoryId,
       categoryId : props.categoryId,
-      pageSize : props.size
+      pageSize : props.size,
+      zipCode: props.location?.postalCode // Update zipCode from props
   })
   logInfo(`Data updated: ${JSON.stringify(data)}`)
-  },[props.categoryId,props.size,props.subcategoryId])
+  },[props.categoryId,props.size,props.subcategoryId, props.location?.postalCode])
 
   // Function to update search query
   const updateSearch =(search : any) => {
@@ -205,4 +208,8 @@ function Stores(props : any) {
   )
 }
 
-export default Stores
+const mapStateToProps = (state: ApplicationState) => ({
+    location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(Stores)
