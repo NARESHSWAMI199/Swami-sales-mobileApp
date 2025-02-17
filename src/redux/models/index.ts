@@ -75,7 +75,9 @@ export interface Item {
     slug : string,
     quantity : number,
     store : Store,
-    wholesaleId : number
+    wholesaleId : number,
+    capacity : number,
+    itemSubCategory : Subcategory
 }
 
 export interface Store {
@@ -106,7 +108,8 @@ export interface Subcategory {
     id: number,
     categoryId: number,
     subcategory : string,
-    icon: string
+    icon: string,
+    unit: string
 }
 
 

@@ -138,6 +138,13 @@ const ItemDetail = (props: any) => {
             <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{storeName}</Text>
           </View>
 
+          {item.capacity > 0 && (
+            <View style={{ display: 'flex', flexDirection: 'row' }}>
+              <Text style={styles.subtitle}>Capacity : </Text>
+              <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{item.capacity} {item.itemSubCategory.unit}</Text>
+            </View>
+          )}
+
           <View>
             <Text style={styles.subtitle}>Description : </Text>
             <ViewMoreText

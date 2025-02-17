@@ -7,7 +7,6 @@ import { TextInput } from 'react-native-paper';
 import { Icon } from '@rneui/themed';
 import { logError, logInfo } from '../utils/logger' // Import logger
 import DropDownPicker from 'react-native-dropdown-picker';
-import { log } from 'react-native-reanimated';
 
 const AddToSlip = (props: any) => {
   const { route, navigation } = props;
@@ -126,15 +125,23 @@ const AddToSlip = (props: any) => {
                 placeholder="Select a slip"
                 style={styles.input}
                 dropDownContainerStyle={styles.dropdownContainer}
+                listMode="SCROLLVIEW"
+                scrollViewProps={{
+                  nestedScrollEnabled: true,
+                  showsVerticalScrollIndicator: true, // Ensure scroll indicator is shown
+                }}
+                maxHeight={200} // Set max height to show 5 items
+                zIndex={1000} // Ensure the dropdown is above other elements
               />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleAddToSlip}>
+            <Pressable style={styles.button} onPress={handleAddToSlip}>
               <Text style={styles.buttonText}>Add to Slip</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         )}
         keyExtractor={item => item.key}
+        contentContainerStyle={{ flexGrow: 1 }}
       />
     </>
   )
@@ -163,6 +170,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: 'white',
+    flex: 1,
   },
   inputContainer: {
     marginBottom: 20,
@@ -205,8 +213,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dropdownContainer: {
-    backgroundColor: 'white',
     borderColor: 'gray',
+    maxHeight: 200, // Set a max height for the dropdown to show 5 items
+    zIndex: 1000, // Ensure the dropdown is above other elements
   }
 })
 
