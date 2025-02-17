@@ -2,13 +2,14 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 import StoreCard from '../components/StoreCard';
-import { Store } from '../redux';
+import { ApplicationState, Store } from '../redux';
 import { bodyColor, storeUrl } from '../utils/utils';
 import PropTypes from 'prop-types';
 import { logError, logInfo } from '../utils/logger'; // Import logger
 
-function PopularStores({ navigation }) {
+function PopularStores({ navigation, location }) {
   // State variables
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ function PopularStores({ navigation }) {
     setLoading(true);
     logInfo(`Fetching popular stores`);
     try {
-      const { data } = await axios.post(storeUrl + "all", { pageSize: 12 });
+      const { data } = await axios.post(storeUrl + "all", { pageSize: 12, zipCode: location?.postalCode });
       setStores(data.content);
       logInfo(`Popular stores fetched successfully`);
     } catch (err) {
@@ -65,6 +66,7 @@ function PopularStores({ navigation }) {
 
 PopularStores.propTypes = {
   navigation: PropTypes.object.isRequired,
+  location: PropTypes.object.isRequired,
 };
 
 // Styles
@@ -101,4 +103,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PopularStores;
+const mapStateToProps = (state: ApplicationState) => ({
+  location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(PopularStores)

@@ -2,14 +2,15 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 import ItemCard from '../components/ItemCard';
-import { Item } from '../redux';
+import { ApplicationState, Item } from '../redux';
 import { toTitleCase } from '../utils';
 import { bodyColor, itemsUrl } from '../utils/utils';
 import { logError, logInfo } from '../utils/logger'; // Import logger
 
 function CategirzedItems(props:any) {
-    const {route, navigation} = props;
+    const {route, navigation, location} = props;
     const {
         category,
         id
@@ -31,7 +32,8 @@ function CategirzedItems(props:any) {
     useEffect(() => {
         let data = {
             categoryId : id,
-            pageSize : 99
+            pageSize : 99,
+            zipCode: location?.postalCode // Add zipCode from props
         }
         logInfo(`Fetching items for category id: ${id}`)
         axios.post(itemsUrl+"all",data)
@@ -105,4 +107,8 @@ const style = StyleSheet.create({
 
 })
 
-export default CategirzedItems
+const mapStateToProps = (state: ApplicationState) => ({
+    location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(CategirzedItems)

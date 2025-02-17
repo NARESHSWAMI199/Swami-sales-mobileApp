@@ -2,7 +2,8 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Card, Text } from 'react-native-paper'
-import { Item } from '../redux'
+import { connect } from 'react-redux'
+import { ApplicationState, Item } from '../redux'
 import { toTitleCase } from '../utils'
 import { itemImageUrl, itemsUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
@@ -63,7 +64,7 @@ const RecentItems = (props : any) => {
     // Effect to fetch recent items
     useEffect(() => {
         logInfo(`Fetching recent items`)
-        axios.post(itemsUrl+"all",{pageSize : !!props.size ? props.size : 8,orderBy : 'createdAt'})
+        axios.post(itemsUrl+"all",{pageSize : !!props.size ? props.size : 8,orderBy : 'createdAt', zipCode: props.location?.postalCode})
         .then(res => {
             let item = res.data.content;
             setItems(item)
@@ -103,4 +104,8 @@ const RecentItems = (props : any) => {
   )
 }
 
-export default RecentItems
+const mapStateToProps = (state: ApplicationState) => ({
+    location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(RecentItems)

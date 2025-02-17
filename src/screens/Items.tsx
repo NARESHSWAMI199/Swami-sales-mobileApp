@@ -3,8 +3,9 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { Searchbar, Text } from 'react-native-paper'
+import { connect } from 'react-redux'
 import ItemCard from '../components/ItemCard'
-import { Category, Item } from '../redux'
+import { ApplicationState, Category, Item } from '../redux'
 import { toTitleCase } from '../utils'
 import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
@@ -67,7 +68,8 @@ const Items = (props : any) => {
         categoryId : props.categoryId,
         subcategoryId : props.subcategoryId,
         pageSize : 51,
-        pageNumber: 0
+        pageNumber: 0,
+        zipCode: props.location?.postalCode // Add zipCode from props
     })
     const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [totalElements, setTotalElements] = useState(0);
@@ -85,10 +87,11 @@ const Items = (props : any) => {
             ...data,
             categoryId : props.categoryId,
             pageSize : props.size,
-            subcategoryId : props.subcategoryId
+            subcategoryId : props.subcategoryId,
+            zipCode: props.location?.postalCode // Update zipCode from props
         })
         logInfo(`Data updated: ${JSON.stringify(data)}`)
-    },[props.categoryId,props.subcategoryId,props.size])
+    },[props.categoryId,props.subcategoryId,props.size, props.location?.postalCode])
 
     // Effect to set navigation options
     useEffect(()=>{
@@ -241,4 +244,8 @@ const Items = (props : any) => {
     </>)
 }
 
-export default Items
+const mapStateToProps = (state: ApplicationState) => ({
+    location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(Items)

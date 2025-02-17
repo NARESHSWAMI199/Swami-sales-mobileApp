@@ -2,8 +2,9 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Searchbar } from 'react-native-paper'
+import { connect } from 'react-redux'
 import ItemCard from '../components/ItemCard'
-import { Item } from '../redux'
+import { ApplicationState, Item } from '../redux'
 import { bodyColor, itemsUrl, themeColor } from '../utils/utils'
 import RecentItems from './RecentItems'
 import { logError, logInfo } from '../utils/logger' // Import logger
@@ -24,7 +25,8 @@ const ItemFilters = (props : any) => {
         categoryId: props.categoryId,
         subcategoryId: props.subcategoryId,
         pageSize: 51,
-        pageNumber: 0
+        pageNumber: 0,
+        zipCode: props.location?.postalCode // Add zipCode from props
     });
 
     // Effect to set selected category based on props
@@ -201,4 +203,8 @@ const style = StyleSheet.create({
 
 })
 
-export default ItemFilters
+const mapStateToProps = (state: ApplicationState) => ({
+    location: state.userReducer.location
+})
+
+export default connect(mapStateToProps)(ItemFilters)

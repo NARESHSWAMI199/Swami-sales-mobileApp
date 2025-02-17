@@ -6,6 +6,9 @@ import { Store } from '../redux'
 import { storeUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
+
+
+// @Important : This component not in use.
 // Component function
 function AllStores(props : any) {
   // State variables
