@@ -238,7 +238,8 @@ const CommentView = (props: any) => {
                                     <Text style={style.message}>
                                         {comment.message}
                                     </Text>
-                                    <View style={{ ...style.replyActions }}>
+                                    <View style={style.replyActions}>
+                                    <View style={{ display: 'flex', flexDirection: 'row' ,width: '70%'}}>
                                         <View style={style.likesOrDislikeBody}>
                                             <Pressable onPress={() => {
                                                 handleLikes(comment.id)
@@ -285,18 +286,21 @@ const CommentView = (props: any) => {
                                                 size={20}
                                             />
                                         </Pressable>
+                                        </View>
+                                        <View style={{width: '30%',marginRight: 30 }}>
+                                            <Pressable>
+                                                <Icon
+                                                    style={{ ...style.iconStyle}}
+                                                    name='ellipsis-v'
+                                                    type='font-awesome'
+                                                    color={'#565757'}
+                                                    size={20}
+                                                />
+                                            </Pressable>
+                                        </View>
 
-                                        <Pressable>
-                                            <Icon
-                                                style={{ ...style.iconStyle, marginLeft: 100 }}
-                                                name='ellipsis-v'
-                                                type='font-awesome'
-                                                color={'#565757'}
-                                                size={20}
-                                            />
-                                        </Pressable>
                                     </View>
-
+                              
                                     <TouchableOpacity onPress={() => showReplies(comment)}>
                                         <Text style={style.totalReplies} >
                                             Reply {comment.repliesCount}
@@ -423,9 +427,9 @@ const style = StyleSheet.create({
     replyActions: {
         display: 'flex',
         flexDirection: 'row',
-        width: '70%',
+        width: '100%',
         marginTop: 5,
-        justifyContent: 'space-between', // Add space between elements
+        justifyContent: 'space-between',
     }, iconStyle: {
         display: 'flex',
         justifyContent: 'center',

@@ -97,7 +97,7 @@ const ItemDetail = (props: any) => {
       </TouchableOpacity>
       <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
         <View style={styles.imageParent}>
-          <CustomCarousel images={
+          <CustomCarousel style={styles.carousel} images={
             item.avatars && item.avatars.split(',').map(avtar => {
               return (
                 <Image
@@ -180,6 +180,9 @@ const ItemDetail = (props: any) => {
 
 // Styles
 const styles = StyleSheet.create({
+  carousel : {
+    backgroundColor: '#f5f9ff',
+  },
   backButton: {
     position: 'absolute',
     top: 40,

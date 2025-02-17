@@ -25,7 +25,8 @@ const ItemCard = (props: any) => {
     const avatar = itemImageUrl + slug + "/" + avatars?.split(',')[0];
 
     return (
-        <View style={style.card}>
+        <View style={style.main}>
+          <View style={style.card}>
             <View style={style.cover}>
                 <Image
                     style={style.cardCover}
@@ -68,29 +69,34 @@ const ItemCard = (props: any) => {
                 <Text style={style.actualPrice}>{"\u20B9 " + price}</Text>
             </View>
         </View>
+        </View>
     );
 }
 
 const style = StyleSheet.create({
+    main : {
+        maxHeight: 300,
+        minHeight: 250,
+    },
     card: {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
         alignContent: 'center',
-        padding: 10,
-        backgroundColor: 'white',
-        borderRadius: 10,
-        marginBottom: 10,
-    },
+        backgroundColor: 'white'
+        },
     cover: {
-        height: 120,
+        height: 100,
         borderRadius: 10,
         overflow: 'hidden',
         position: 'relative',
+        marginHorizontal : 2
     },
     cardCover: {
         width: '100%',
         height: '100%',
+        backgroundColor: '#f5f9ff',
+        borderRadius: 0.1 // this covering perfect for zooming instead of resizeMode = 'cover'
     },
     discountLabel: {
         position: 'absolute',
