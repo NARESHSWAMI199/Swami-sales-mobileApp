@@ -11,6 +11,7 @@ import { connect } from "react-redux"
 import { ApplicationState } from "../redux"
 import { logError, logInfo } from '../utils/logger' // Import logger
 import { useNavigation, NavigationProp } from '@react-navigation/native'
+import { log } from "react-native-reanimated"
 
 const itemsPerPage = 10
 const CommentView = (props: any) => {
@@ -50,6 +51,16 @@ const CommentView = (props: any) => {
         getData()
     }, [props.token])
 
+
+
+    // adding new comment in pervious comments
+    useEffect(()=>{
+        logInfo(`Adding new comment`)
+        if(!!props.newComment)
+        setComments([props.newComment,...comments])
+    },[props.newComment])
+
+
     // Effect to fetch comments
     useEffect(() => {
         logInfo(`Fetching comments for itemId: ${itemId}`)
@@ -70,7 +81,7 @@ const CommentView = (props: any) => {
                 logError(`Error fetching comments: ${err.message}`)
                 setLoading(false);
             })
-    }, [props.isCommentUpdate, token, currentPage])  // props.isCommentUpdate is a prop that is passed when i enter a new comment
+    }, [token, currentPage])  // props.isCommentUpdate is a prop that is passed when i enter a new comment
 
     // Function to show replies
     const showReplies = (parent: any) => {

@@ -49,7 +49,8 @@ function CommentInputBox(props:any) {
       })
       .then(res => {
         logInfo(`Comment added successfully`)
-        props.isCommentUpdated(true)
+        let comment = res.data.res; // getting comment from response
+        props.addNewComment(comment) // adding comment to parent component
         setMessage('')
       })
       .catch(err => {

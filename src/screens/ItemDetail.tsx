@@ -22,7 +22,7 @@ const ItemDetail = (props: any) => {
   const commentRef = useRef(null);
   const [parentId, setParentId] = useState<number>(0)
   const [storeName, setStoreName] = useState<string>("");
-
+  const [newComment, setNewComment] = useState<string>("");
   const item: Item = route.params;
 
   // Function to update search query
@@ -31,9 +31,9 @@ const ItemDetail = (props: any) => {
     logInfo(`Search query updated: ${search}`)
   };
 
-  // Function to refresh comments
-  const refreshComment = () => {
-    setCommentUpdated(commentUpdated ? false : true)
+  // Function to add new comments
+  const addNewComment = (comment:string) => {
+    setNewComment(comment);
     logInfo(`Comments refreshed`)
   }
 
@@ -169,14 +169,14 @@ const ItemDetail = (props: any) => {
 
         {/* Comments Section */}
         <View>
-          <CommentView handleReply={handleCommentFoucs} isCommentUpdate={commentUpdated} itemId={item.id} />
+          <CommentView handleReply={handleCommentFoucs} newComment={newComment} itemId={item.id} />
         </View>
       </ScrollView>
       <CommentInputBox
         commentRef={commentRef}
         itemId={item.id}
         parentId={parentId}
-        isCommentUpdated={refreshComment}
+        addNewComment={addNewComment}
         commentContainer={styles.commentInputBody}
         style={styles.commentInput}
       />
