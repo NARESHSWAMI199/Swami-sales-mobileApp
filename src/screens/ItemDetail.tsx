@@ -169,7 +169,6 @@ const ItemDetail = (props: any) => {
 
         {/* Comments Section */}
         <View>
-          <Text style={{ ...styles.subtitle, paddingHorizontal: 10 }}>Comments : </Text>
           <CommentView handleReply={handleCommentFoucs} isCommentUpdate={commentUpdated} itemId={item.id} />
         </View>
       </ScrollView>

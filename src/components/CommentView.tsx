@@ -1,10 +1,10 @@
 import axios from "axios"
 import { useEffect, useRef, useState } from "react"
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View, Alert } from "react-native"
 import { Avatar, Button, Input } from "react-native-elements"
 import { TouchableOpacity } from "react-native"
 import CommentRepliesView from "./CommentReplies"
-import { bodyColor, commentUrl, defaultAvtar, themeColor, userImageUrl } from "../utils/utils"
+import { bodyColor, commentUrl, defaultAvtar, getUser, themeColor, userImageUrl } from "../utils/utils"
 import { Icon } from "@rneui/themed"
 import CommentInputBox from "./CommentInputBox"
 import { connect } from "react-redux"
@@ -22,12 +22,23 @@ const CommentView = (props: any) => {
     const [refresh, setRefresh] = useState(false)
     const commentRef = useRef(null);
     const [messagePrefix, setMessagePrefix] = useState('')
+    const [selectedComment, setSelectedComment] = useState<any>(null);
 
     const [token, setToken] = useState<string>()
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>()
     const [totalElements, setTotalElements] = useState<number>(1)
     const [currentPage, setCurrentPage] = useState(0);
     const [loading, setLoading] = useState(false);
+
+    const [user, setUser] = useState<any>()
+
+    // setting user
+    useEffect(() => {
+        let updatedUser = async()=> {
+           setUser(await props.user)
+        }
+        updatedUser()
+    },[props.user]) 
 
     // Effect to get token from props
     useEffect(() => {
@@ -41,7 +52,7 @@ const CommentView = (props: any) => {
 
     // Effect to fetch comments
     useEffect(() => {
-        logInfo(`Fetching comments for itemId: ${itemId} and header: ${axios.defaults.headers['Authorization']}`)
+        logInfo(`Fetching comments for itemId: ${itemId}`)
         setLoading(true);
         axios.post(commentUrl + "all", {
             itemId: itemId,
@@ -50,7 +61,7 @@ const CommentView = (props: any) => {
         })
             .then(res => {
                 let response = res.data;
-                setComments(prevComments => [...prevComments, ...response.content])
+                setComments(prevComments => [...response.content,...prevComments])
                 setTotalElements(response.totalElements)
                 logInfo(`Comments fetched successfully`)
                 setLoading(false);
@@ -59,7 +70,7 @@ const CommentView = (props: any) => {
                 logError(`Error fetching comments: ${err.message}`)
                 setLoading(false);
             })
-    }, [props.isCommentUpdate, token, currentPage])
+    }, [props.isCommentUpdate, token, currentPage])  // props.isCommentUpdate is a prop that is passed when i enter a new comment
 
     // Function to show replies
     const showReplies = (parent: any) => {
@@ -193,6 +204,44 @@ const CommentView = (props: any) => {
         }
     }
 
+    // Function to delete comment
+    const deleteComment = (commentSlug: string) => {
+        Alert.alert(
+            "Delete Comment",
+            "Are you sure you want to delete this comment?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: () => {
+                        axios.post(`${commentUrl}delete/${commentSlug}`)
+                            .then(() => {
+                                setComments(comments.filter((comment: any) => comment.slug !== commentSlug));
+                                logInfo(`Comment deleted: ${commentSlug}`);
+                            })
+                            .catch(err => {
+                                logError(`Error deleting comment: ${err.message}`);
+                            });
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    }
+
+    // Function to show options (reply and delete)
+    const showOptions = (comment: any) => {
+        setSelectedComment(comment);
+    }
+
+    // Function to hide options
+    const hideOptions = () => {
+        setSelectedComment(null);
+    }
+
     // Effect to handle navigation focus
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -214,6 +263,7 @@ const CommentView = (props: any) => {
     // Render component
     return (<View>
         <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
+            {comments.length > 0 && <Text style={style.commentsLabel}>Comments : </Text>}
             {comments.map((comment: any, index: number) => {
                 return (
                     <View key={index} style={{
@@ -225,8 +275,10 @@ const CommentView = (props: any) => {
                                 <Avatar size={25}
                                     rounded
                                     source={{
-                                        uri: !!comment.user.avtar ? userImageUrl + comment.user.slug + "/" + comment.user.avtar : defaultAvtar
-                                    }} />
+                                        uri: !!comment.user?.avtar ? userImageUrl + comment.user.slug + "/" + comment.user.avtar : defaultAvtar
+                                    }}
+                                    title={!comment.user?.avtar ? `${comment.user?.username?.charAt(0)}${comment.user?.surname?.charAt(0)}` : undefined}
+                                />
                             </View>
                             <View style={style.messageView}>
                                 <View>
@@ -288,7 +340,7 @@ const CommentView = (props: any) => {
                                         </Pressable>
                                         </View>
                                         <View style={{width: '30%',marginRight: 30 }}>
-                                            <Pressable>
+                                            <Pressable onPress={() => showOptions(comment)}>
                                                 <Icon
                                                     style={{ ...style.iconStyle}}
                                                     name='ellipsis-v'
@@ -297,6 +349,18 @@ const CommentView = (props: any) => {
                                                     size={20}
                                                 />
                                             </Pressable>
+                                            {selectedComment?.id === comment.id && (
+                                                <View style={style.optionsContainer}>
+                                                    <Pressable onPress={() => handleReply(comment)}>
+                                                        <Text style={style.optionText}>Reply </Text>
+                                                    </Pressable>
+                                                    {comment.user.id === user?.id && (
+                                                        <Pressable onPress={() => deleteComment(comment.slug)}>
+                                                            <Text style={style.optionText}>Delete</Text>
+                                                        </Pressable>
+                                                    )}
+                                                </View>
+                                            )}
                                         </View>
 
                                     </View>
@@ -461,13 +525,38 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 25
+    },
+    optionsContainer: {
+        position: 'absolute',
+        top: -30,
+        left: 0, // Changed to left side
+        backgroundColor: 'white',
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+        zIndex: 1,
+    },
+    optionText: {
+        padding: 10,
+        fontSize: 14,
+        color: 'black',
+    },
+    commentsLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginVertical: 10,
+        marginLeft: 10,
     }
 })
 
 const mapToStateProps = (state: ApplicationState) => {
     return {
         token: state.userReducer.token,
-        isAuthenticated: !!state.userReducer.token ? true : false
+        isAuthenticated: !!state.userReducer.token ? true : false,
+        user : state.userReducer.user
     }
 }
 
