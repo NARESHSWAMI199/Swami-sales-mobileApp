@@ -3,9 +3,9 @@ import moment from "moment"
  
 
 
-// const host = "http://192.168.1.5:8082/"
+const host = "http://192.168.1.11:8082/"
 
-const host = "http://10.11.13.49:8082/"
+// const host = "http://10.11.13.49:8082/"
 // const host = "http://202.157.82.29:8081/"
 export const authUrl = host+"auth/"
 export const slipsUrl = host+"slips/"
