@@ -20,7 +20,7 @@ const CommentView = (props: any) => {
     const [comments, setComments] = useState<any>([])
     const [parent, setParent] = useState<any>({})
     const [showRepliesModel, setShowRepliesModal] = useState(false)
-    const [refresh, setRefresh] = useState(false)
+    const [newReplyComment, setNewReplyComment] = useState(false)
     const commentRef = useRef(null);
     const [messagePrefix, setMessagePrefix] = useState('')
     const [selectedComment, setSelectedComment] = useState<any>(null);
@@ -98,10 +98,10 @@ const CommentView = (props: any) => {
         logInfo(`Closing replies modal`)
     }
 
-    // Function to refresh comment replies
-    const refreshCommentReplies = () => {
-        setRefresh(refresh ? false : true)
-        logInfo(`Refreshing comment replies`)
+    // Function to updating comment replies
+    const updateNewReplyComment = (newReply : any) => {
+        setNewReplyComment(newReply)
+        logInfo(`Updating comment replies`)
     }
 
     // Function to handle reply action
@@ -197,9 +197,10 @@ const CommentView = (props: any) => {
         setComments(previous => previous.filter((_comment: any) => {
             if (comment.id == _comment.id) {
                 _comment.likes = comment.likes,
-                    _comment.dislikes = comment.dislikes
+                _comment.dislikes = comment.dislikes
                 _comment.isLiked = comment.isLiked,
-                    _comment.isDisliked = comment.isDisliked
+                _comment.isDisliked = comment.isDisliked,
+                _comment.repliesCount = comment.repliesCount
             }
             return _comment
         }))
@@ -256,8 +257,7 @@ const CommentView = (props: any) => {
     // Effect to handle navigation focus
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
-            // Refresh comments when the screen is focused
-            setRefresh(refresh ? false : true);
+            // ANything you want to do when the screen is focused
         });
 
         const unsubscribeBlur = navigation.addListener('blur', () => {
@@ -421,7 +421,7 @@ const CommentView = (props: any) => {
                             updateMainComment={updateMainComment}
                             handleChildReply={handleChildReply}
                             handleParentReply={handleReply}
-                            refresh={refresh}
+                            newReplyComment={newReplyComment}
                             parent={parent}
                             itemId={parent.itemId}
                         />
@@ -430,7 +430,7 @@ const CommentView = (props: any) => {
                             parentId={parent.id}
                             itemId={parent.itemId}
                             commentRef={commentRef}
-                            isCommentUpdated={refreshCommentReplies}
+                            addNewComment={updateNewReplyComment}
                             commentContainer={style.commentInputBody}
                             style={style.commentInput}
                             onDiscardText={discardText}

@@ -1,7 +1,7 @@
 import { Icon } from "@rneui/themed"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native"
 import { Avatar } from "react-native-elements"
 import { ScrollView } from "react-native-gesture-handler"
 import { connect } from "react-redux"
@@ -19,6 +19,17 @@ const CommentRepliesView = (props: any) => {
     const [parentComment, setParentComment] = useState<any>({})
     const [token, setToken] = useState<string>()
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>()
+    const [selectedComment, setSelectedComment] = useState<any>(null);
+    const [user, setUser] = useState<any>()
+
+    // setting user
+    useEffect(() => {
+        let updatedUser = async()=> {
+           setUser(await props.user)
+        }
+        updatedUser()
+    },[props.user]) 
+
 
     // Effect to get token from props
     useEffect(() => {
@@ -29,6 +40,17 @@ const CommentRepliesView = (props: any) => {
         }
         getData()
     }, [props.token])
+
+
+    
+
+
+    // adding new comment in pervious comments
+    useEffect(()=>{
+        logInfo(`Adding new comment`)
+        if(!!props.newReplyComment)
+        setReplies([...replies,props.newReplyComment])
+    },[props.newReplyComment])
 
     // Effect to update main comment
     useEffect(() => {
@@ -51,7 +73,7 @@ const CommentRepliesView = (props: any) => {
     // Effect to fetch replies
     useEffect(() => {
         logInfo(`Fetching replies for itemId: ${itemId} and parentId: ${parent.id}`)
-        axios.post(commentUrl + "all", { itemId: itemId, parentId: parent.id })
+        axios.post(commentUrl + "all", { itemId: itemId, parentId: parent.id})
             .then(res => {
                 let response = res.data;
                 setReplies(response.content)
@@ -60,7 +82,7 @@ const CommentRepliesView = (props: any) => {
             .catch(err => {
                 logError(`Error fetching replies: ${err.message}`)
             })
-    }, [props.refresh, token])
+    }, [token])
 
     // Function to handle likes for replies
     const handleRepliesLikes = (propsComment: any, isReply: boolean) => {
@@ -165,6 +187,44 @@ const CommentRepliesView = (props: any) => {
         );
     }
 
+
+    // Function to show options (reply and delete)
+    const showOptions = (comment: any) => {
+        setSelectedComment(comment);
+    }
+
+
+    
+    // Function to delete comment
+    const deleteComment = (commentSlug: string) => {
+        Alert.alert(
+            "Delete Comment",
+            "Are you sure you want to delete this comment?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: () => {
+                        axios.post(`${commentUrl}delete/${commentSlug}`)
+                            .then(() => {
+                                setReplies(replies.filter((comment: any) => comment.slug !== commentSlug));
+                                logInfo(`Comment deleted: ${commentSlug}`);
+                            })
+                            .catch(err => {
+                                logError(`Error deleting comment: ${err.message}`);
+                            });
+                    },
+                    style: "destructive"
+                }
+            ]
+        );
+    }
+
+
+
     // Render component
     return (
         <View style={style.body}>
@@ -185,48 +245,54 @@ const CommentRepliesView = (props: any) => {
                             {"@ " + parentComment?.user?.username?.toLowerCase()}
                         </Text>
                         {highlightText(parentComment.message)}
+
+                        {/* Parent Commment action buttons */}
                         <View style={style.replyActions}>
-                            <View style={style.likesBody}>
-                                <Pressable onPress={() => {
-                                    handleRepliesLikes(parentComment, false)
-                                }}>
+                            <View style={{ display: 'flex', flexDirection: 'row' ,width: '70%'}}>
+                                <View style={style.likesBody}>
+                                    <Pressable onPress={() => {
+                                        handleRepliesLikes(parentComment, false)
+                                    }}>
+                                        <Icon
+                                            style={{ ...style.iconStyle, marginRight: 5 }}
+                                            name='thumbs-up'
+                                            type='font-awesome'
+                                            color={!parentComment.isLiked ? '#565757' : themeColor}
+                                            size={20}
+                                        />
+                                    </Pressable>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'gray' }}>
+                                        {!!parentComment.likes && parentComment.likes}
+                                    </Text>
+                                </View>
+                                <View style={style.likesBody}>
+                                    <Pressable onPress={() => {
+                                        handleRepliesDisLikes(parentComment, false)
+                                    }}>
+                                        <Icon
+                                            style={{ ...style.iconStyle, marginRight: 5 }}
+                                            name='thumbs-down'
+                                            type='font-awesome'
+                                            color={!parentComment.isDisliked ? '#565757' : themeColor}
+                                            size={20}
+                                        />
+                                    </Pressable>
+                                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'gray' }}>
+                                        {!!parentComment.dislikes && parentComment.dislikes}
+                                    </Text>
+                                </View>
+                                <Pressable onPress={() => handleReply(parentComment, false)}>
                                     <Icon
-                                        style={{ ...style.iconStyle, marginRight: 5 }}
-                                        name='thumbs-up'
+                                        style={style.iconStyle}
+                                        name='reply'
                                         type='font-awesome'
-                                        color={!parentComment.isLiked ? '#565757' : themeColor}
                                         size={20}
                                     />
                                 </Pressable>
-                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'gray' }}>
-                                    {!!parentComment.likes && parentComment.likes}
-                                </Text>
                             </View>
-                            <View style={style.likesBody}>
-                                <Pressable onPress={() => {
-                                    handleRepliesDisLikes(parentComment, false)
-                                }}>
-                                    <Icon
-                                        style={{ ...style.iconStyle, marginRight: 5 }}
-                                        name='thumbs-down'
-                                        type='font-awesome'
-                                        color={!parentComment.isDisliked ? '#565757' : themeColor}
-                                        size={20}
-                                    />
-                                </Pressable>
-                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'gray' }}>
-                                    {!!parentComment.dislikes && parentComment.dislikes}
-                                </Text>
-                            </View>
-                            <Pressable onPress={() => handleReply(parentComment, false)}>
-                                <Icon
-                                    style={style.iconStyle}
-                                    name='reply'
-                                    type='font-awesome'
-                                    size={20}
-                                />
-                            </Pressable>
                         </View>
+                        {/* ! End Parent comment action buttons */}
+
                     </View>
                 </View>
             </View>
@@ -251,7 +317,11 @@ const CommentRepliesView = (props: any) => {
                                         {"@" + reply?.user?.username?.toLowerCase()}
                                     </Text>
                                     {highlightText(reply.message)}
-                                    <View style={{ ...style.replyActions }}>
+
+
+                                    {/* Reply aciton icons */}
+                                <View style={{ ...style.replyActions }}>
+                                    <View style={{ display: 'flex', flexDirection: 'row' ,width: '70%'}}>
                                         <View style={style.likesBody}>
                                             <Pressable onPress={() => {
                                                 handleRepliesLikes(reply, true)
@@ -294,6 +364,33 @@ const CommentRepliesView = (props: any) => {
                                             />
                                         </Pressable>
                                     </View>
+
+                                    <View style={{width: '30%',marginRight: 30 }}>
+                                        <Pressable onPress={() => showOptions(reply)}>
+                                            <Icon
+                                                style={{ ...style.iconStyle}}
+                                                name='ellipsis-v'
+                                                type='font-awesome'
+                                                color={'#565757'}
+                                                size={20}
+                                            />
+                                        </Pressable>
+                                        {selectedComment?.id === reply.id && (
+                                            <View style={style.optionsContainer}>
+                                                <Pressable onPress={() => handleReply(reply,true)}>
+                                                    <Text style={style.optionText}>Reply </Text>
+                                                </Pressable>
+                                                {reply.user.id === user?.id && (
+                                                    <Pressable onPress={() => deleteComment(reply.slug)}>
+                                                        <Text style={style.optionText}>Delete</Text>
+                                                    </Pressable>
+                                                )}
+                                            </View>
+                                        )}
+                                    </View>
+                            </View>
+                                    {/* !End Reply action icons */}
+
                                 </View>
                             </View>
                         </View>
@@ -339,7 +436,7 @@ const style = StyleSheet.create({
     replyActions: {
         display: 'flex',
         flexDirection: 'row',
-        width: '70%',
+        width: '100%',
         marginTop: 5
     }, iconStyle: {
         display: 'flex',
@@ -354,13 +451,32 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 25,
-    }
+    },
+    optionsContainer: {
+        position: 'absolute',
+        top: -50,
+        left: 0, // Changed to left side
+        backgroundColor: 'white',
+        borderRadius: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+        zIndex: 1,
+    },
+    optionText: {
+        padding: 10,
+        fontSize: 14,
+        color: 'black',
+    },
 })
 
 const mapToStateProps = (state: ApplicationState) => {
     return {
         token: state.userReducer.token,
-        isAuthenticated: !!state.userReducer.token ? true : false
+        isAuthenticated: !!state.userReducer.token ? true : false,
+        user : state.userReducer.user
     }
 }
 
