@@ -6,7 +6,7 @@ import { Searchbar } from 'react-native-paper'
 import { connect } from 'react-redux'
 import StoreCard from '../components/StoreCard'
 import { ApplicationState, Category, Store } from '../redux'
-import { bodyColor, storeUrl } from '../utils/utils'
+import { bodyColor, storeUrl, themeColor } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
 
 // Component function
@@ -70,11 +70,14 @@ function Stores(props : any) {
   const [query, setQuery] = useState("")
   const [showCategory, setShowCategory] = useState(true)
   const [loading, setLoading] = useState(true)
+  const [totalElements,setTotalElements] = useState(0)
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [data,setData] = useState({
       pageSize  : 51, 
       orderBy :'rating',
       categoryId : undefined,
       subcategoryId : undefined,
+      pageNumber : 0,
       zipCode: props.location?.postalCode // Add zipCode from props
     })
 
@@ -110,6 +113,7 @@ function Stores(props : any) {
             .then(res => {
                 let response = res.data.content;
                 setStores(response)
+                setTotalElements(response.totalElements)
                 setLoading(false)
                 logInfo(`Stores fetched successfully`)
             })
@@ -118,6 +122,30 @@ function Stores(props : any) {
                 setLoading(false)
             })
     }, [search])
+
+
+ // Function to fetch more stores on scroll end
+ const fetchMoreStores = () => {
+  if (stores.length >= totalElements) return;
+  setIsFetchingMore(true);
+  axios.post(storeUrl + "all", { ...data, searchKey: query, orderBy: 'rating', pageNumber: data.pageNumber + 1 })
+      .then(res => {
+          let newStores = res.data.content;
+          setStores([...stores, ...newStores]);
+          setData({ ...data, pageNumber: data.pageNumber + 1 });
+          setIsFetchingMore(false);
+          logInfo(`More items fetched successfully`)
+      })
+      .catch(err => {
+          setIsFetchingMore(false);
+          logError(`Error fetching more items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+      })
+};
+
+
+
+
+
 
   // Effect to fetch categories
   useEffect(() => {
@@ -142,7 +170,14 @@ function Stores(props : any) {
   // Render component
   return (<>
   <View style={style.mainHeader}></View>
- <ScrollView style={style.body}>
+ <ScrollView 
+      style={style.body}
+      onScroll={({ nativeEvent }) => {
+        if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+            fetchMoreStores();
+        }
+      }}
+>
     {!!showCategory && 
     <>
         <View 
@@ -202,6 +237,7 @@ function Stores(props : any) {
               </TouchableOpacity>
             })
           )}
+          {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
           </View>
    </ScrollView>
    </>
