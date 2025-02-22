@@ -455,7 +455,7 @@ const style = StyleSheet.create({
     optionsContainer: {
         position: 'absolute',
         top: -50,
-        left: 0, // Changed to left side
+        left: -10, // Changed to left side
         backgroundColor: 'white',
         borderRadius: 5,
         shadowColor: '#000',
