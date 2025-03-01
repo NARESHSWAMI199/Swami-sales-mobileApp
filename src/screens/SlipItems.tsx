@@ -114,7 +114,6 @@ function SlipItems(props:any) {
 
 
   const handleRatingSubmit = (rating:Number) => {
-    console.log(axios.defaults.headers)
     axios.post(itemsUrl + `update/ratings`,
       {
         itemId : selectedItem,
@@ -124,7 +123,7 @@ function SlipItems(props:any) {
         Alert.alert("Thanks you", "Your feedback has been saved succefully.")
         logInfo(res.data.message)
       }).catch(err=>{
-        logError(`Error fetching order items: ${!!err.response ? err.response.data?.message : err.message}`)
+        logError(`Error during update item ratings: ${!!err.response ? err.response.data?.message : err.message}`)
       })
   }
 

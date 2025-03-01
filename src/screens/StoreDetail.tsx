@@ -1,15 +1,16 @@
 import { Icon } from '@rneui/themed';
 import React, { useEffect, useState } from 'react';
-import { Image, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Image, ScrollView, StatusBar, StyleSheet, View, TouchableOpacity, ActivityIndicator, Pressable, Alert } from 'react-native';
 import { Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
 import ViewMoreText from 'react-native-view-more-text';
 import { Store, Item } from '../redux';
 import { toTitleCase } from '../utils';
-import { storeImageUrl, itemsUrl, themeColor } from '../utils/utils';
+import { storeImageUrl, itemsUrl, themeColor, storeUrl } from '../utils/utils';
 import { logError, logInfo } from '../utils/logger'; // Import logger
 import ItemCard from '../components/ItemCard';
 import axios from 'axios';
+import RatingModal from '../components/RatingModal';
 
 const StoreDetail = (props: any) => {
   const { route, navigation } = props;
@@ -18,6 +19,7 @@ const StoreDetail = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState({
     storeId: route.params.id,
     pageSize: 51,
@@ -103,6 +105,21 @@ const StoreDetail = (props: any) => {
       })
   };
 
+
+  const handleRatingSubmit = (rating:Number) => {
+    axios.post(storeUrl + `update/ratings`,
+      {
+        storeId : store.id,
+        rating : rating
+      })
+      .then(res => {
+        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
+        logInfo(res.data.message)
+      }).catch(err=>{
+        logError(`Error during update store ratings: ${!!err.response ? err.response.data?.message : err.message}`)
+      })
+  }
+
   // Render component
   return (
     <>
@@ -146,7 +163,23 @@ const StoreDetail = (props: any) => {
             </View>
 
           <View>
-            <Text style={styles.titleHeadings}>Our Latest Products</Text>
+            {items.length > 0 && 
+            <View style={{display : 'flex',flexDirection : 'row'}}>
+              <View style={{flex :1}}>
+                <Text style={styles.titleHeadings}>Our Latest Products</Text> 
+              </View>
+              <Pressable style={{justifyContent : 'center', alignItems : 'flex-end'}}
+                onPress={()=> {
+                  setModalVisible(!modalVisible)
+                }}>
+              
+                <Text style={{
+                  color : 'blue',
+                  marginHorizontal : 10
+                }}>Rate now</Text> 
+              </Pressable>
+            </View>
+            }
             {loading ? (
               <ActivityIndicator size="large" color={themeColor} />
             ) : (
@@ -165,6 +198,8 @@ const StoreDetail = (props: any) => {
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.fixedBackButton}>
         <Icon name='arrow-back' color='white' />
       </TouchableOpacity>
+
+      <RatingModal modalVisible={modalVisible} setModalVisible={setModalVisible} handleRatingSubmit={handleRatingSubmit} />
     </>
   );
 };

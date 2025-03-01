@@ -1,7 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, View, Image, Pressable, StatusBar, TouchableOpacity } from 'react-native'
-import { bodyColor, getPercentage, itemImageUrl, themeColor, storeUrl } from '../utils/utils'
+import { ScrollView, StyleSheet, View, Image, Pressable, StatusBar, TouchableOpacity, Alert } from 'react-native'
+import { bodyColor, getPercentage, itemImageUrl, themeColor, storeUrl, itemsUrl } from '../utils/utils'
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
 import { Text } from 'react-native-paper';
@@ -14,6 +14,7 @@ import CommentInputBox from '../components/CommentInputBox';
 import { logError, logInfo } from '../utils/logger' // Import logger
 import { connect } from 'react-redux';
 import { ApplicationState } from '../redux';
+import RatingModal from '../components/RatingModal';
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
@@ -23,6 +24,7 @@ const ItemDetail = (props: any) => {
   const [parentId, setParentId] = useState<number>(0)
   const [storeName, setStoreName] = useState<string>("");
   const [newComment, setNewComment] = useState<string>("");
+  const [modalVisible, setModalVisible] = useState(false);
   const item: Item = route.params;
 
   // Function to update search query
@@ -87,6 +89,21 @@ const ItemDetail = (props: any) => {
     }
     navigation.navigate('AddToSlip', { item });
   }
+
+  const handleRatingSubmit = (rating:Number) => {
+    axios.post(itemsUrl + `update/ratings`,
+      {
+        itemId : item.id,
+        rating : rating
+      })
+      .then(res => {
+        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
+        logInfo(res.data.message)
+      }).catch(err=>{
+        logError(`Error during update item ratings: ${!!err.response ? err.response.data?.message : err.message}`)
+      })
+  }
+
 
   // Render component
   return (
@@ -154,6 +171,17 @@ const ItemDetail = (props: any) => {
             >
               <Text style={styles.description}>{item.description.trim()}</Text>
             </ViewMoreText>
+
+            <Pressable style={{justifyContent : 'center', alignItems : 'flex-end'}}
+              onPress={()=> {
+                setModalVisible(!modalVisible)
+              }}>
+            
+              <Text style={{
+                color : 'blue',
+                marginHorizontal : 10
+              }}>Rate now</Text> 
+            </Pressable>
           </View>
 
           <View style={{ display: 'flex', alignItems: 'center' }}>
@@ -180,6 +208,8 @@ const ItemDetail = (props: any) => {
         commentContainer={styles.commentInputBody}
         style={styles.commentInput}
       />
+
+      <RatingModal modalVisible={modalVisible} setModalVisible={setModalVisible} handleRatingSubmit={handleRatingSubmit} />
     </>
   )
 }
