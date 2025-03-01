@@ -1,12 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator, Alert, TouchableOpacity } from 'react-native'
-import { Avatar, Icon, Rating } from 'react-native-elements'
+import { Avatar, Button, Icon, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
-import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl } from '../utils/utils'
+import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl, itemsUrl } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
 import { ScrollView } from 'react-native-gesture-handler'
+import RatingModal from '../components/RatingModal'
 
 function SlipItems(props:any) {
 
@@ -22,6 +23,8 @@ function SlipItems(props:any) {
   const [itemsPerPage,setItemPerPage] = useState(29)
   const [orderItems,setOrderItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState()
 
   // Effect to get token from props
   useEffect(()=>{
@@ -109,6 +112,23 @@ function SlipItems(props:any) {
     );
   }
 
+
+  const handleRatingSubmit = (rating:Number) => {
+    console.log(axios.defaults.headers)
+    axios.post(itemsUrl + `update/ratings`,
+      {
+        itemId : selectedItem,
+        rating : rating
+      })
+      .then(res => {
+        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
+        logInfo(res.data.message)
+      }).catch(err=>{
+        logError(`Error fetching order items: ${!!err.response ? err.response.data?.message : err.message}`)
+      })
+  }
+
+
   const handleBack = () => {
     navigation.goBack();
   }
@@ -172,7 +192,15 @@ function SlipItems(props:any) {
                       <Icon name="delete" type="material" size={24} color="red" />
                     </TouchableOpacity>
                   </View>
-                </View>
+                    <TouchableOpacity style={style.ratingButton} onPress={()=> {
+                        setModalVisible(!modalVisible)
+                        setSelectedItem(order.item?.id)
+                      }}>
+                      <Text style={{color : '#fff', fontWeight : 'bold'}}>
+                        Rate this product
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
               </Pressable>
             )
           }) :
@@ -183,6 +211,13 @@ function SlipItems(props:any) {
           </View>
         }
       </ScrollView>
+
+
+
+      <RatingModal modalVisible={modalVisible} setModalVisible={setModalVisible} handleRatingSubmit={handleRatingSubmit} />
+    
+                      
+
     </>
   )
 }
@@ -309,7 +344,17 @@ const style = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  ratingButton : {
+    backgroundColor : themeColor,
+    display : 'flex',
+    justifyContent : 'center',
+    alignItems : 'center',
+    height : 45,
+    marginTop : 10,
+    borderRadius : 20
   }
+
 })
 
 const mapToStateProps = (state:ApplicationState) =>{
