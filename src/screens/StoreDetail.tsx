@@ -20,13 +20,27 @@ const StoreDetail = (props: any) => {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [totalElements, setTotalElements] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
+  const [totalRatings,setTotalRatings] = useState(0)
   const [data, setData] = useState({
     storeId: route.params.id,
     pageSize: 51,
     pageNumber: 0
   });
 
-  const store: Store = route.params;
+  const [store,SetStore] = useState<Store>(route.params);
+
+
+
+    // Get store ratings
+    useEffect(()=>{
+      axios.get(`${storeUrl}ratings/${store.slug}`)
+      .then(res => {
+        setTotalRatings(res.data.totalRating);
+      }).catch(err=>{
+        logError(`Error fetching rating count details: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+      })
+    },[])
+  
 
   // Function to update search query
   const updateSearch = (search: any) => {
@@ -113,8 +127,10 @@ const StoreDetail = (props: any) => {
         rating : rating
       })
       .then(res => {
-        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
-        logInfo(res.data.message)
+        Alert.alert("Thanks you", "Your feedback has been saved successfully.")
+        let response = res.data;
+        SetStore(previous => ({...previous,rating : response.ratingAvg}))
+        logInfo(response.message)
       }).catch(err=>{
         logError(`Error during update store ratings: ${!!err.response ? err.response.data?.message : err.message}`)
       })
@@ -149,6 +165,9 @@ const StoreDetail = (props: any) => {
           <View style={styles.rating}>
             <Text style={{ ...styles.subtitle, marginTop: 0, marginRight: 10 }}>{"Rating : "}</Text>
             <Rating type='custom' imageSize={25} readonly startingValue={store.rating} />
+            <Text style={{marginHorizontal : 10}}>
+                {totalRatings} ratings
+            </Text>
           </View>
 
           <View style={styles.aboutUsContainer}>

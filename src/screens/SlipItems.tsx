@@ -120,8 +120,9 @@ function SlipItems(props:any) {
         rating : rating
       })
       .then(res => {
-        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
-        logInfo(res.data.message)
+        Alert.alert("Thanks you", "Your feedback has been saved successfully.")
+        let response = res.data;
+        logInfo(response.message)
       }).catch(err=>{
         logError(`Error during update item ratings: ${!!err.response ? err.response.data?.message : err.message}`)
       })

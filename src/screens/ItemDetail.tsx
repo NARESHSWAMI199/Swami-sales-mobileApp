@@ -15,6 +15,7 @@ import { logError, logInfo } from '../utils/logger' // Import logger
 import { connect } from 'react-redux';
 import { ApplicationState } from '../redux';
 import RatingModal from '../components/RatingModal';
+import { log } from 'react-native-reanimated';
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
@@ -25,7 +26,23 @@ const ItemDetail = (props: any) => {
   const [storeName, setStoreName] = useState<string>("");
   const [newComment, setNewComment] = useState<string>("");
   const [modalVisible, setModalVisible] = useState(false);
-  const item: Item = route.params;
+  const [totalRatings,setTotalRatings] = useState(0)
+  // const item: Item = route.params;
+  const [item,setItem] = useState<Item>(route.params)
+
+
+
+
+  // Get item ratings
+  useEffect(()=>{
+    axios.get(`${itemsUrl}ratings/${item.slug}`)
+    .then(res => {
+      setTotalRatings(res.data.totalRating);
+    }).catch(err=>{
+      logError(`Error fetching rating count details: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
+    })
+  },[])
+
 
   // Function to update search query
   const updateSearch = (search: any) => {
@@ -97,8 +114,10 @@ const ItemDetail = (props: any) => {
         rating : rating
       })
       .then(res => {
-        Alert.alert("Thanks you", "Your feedback has been saved succefully.")
-        logInfo(res.data.message)
+        Alert.alert("Thanks you", "Your feedback has been saved successfully.")
+        let response = res.data;
+        setItem(previous => ({...previous,rating : response.ratingAvg}))
+        logInfo(response.message)
       }).catch(err=>{
         logError(`Error during update item ratings: ${!!err.response ? err.response.data?.message : err.message}`)
       })
@@ -148,6 +167,9 @@ const ItemDetail = (props: any) => {
           <View style={styles.rating}>
             <Text style={{ ...styles.subtitle, marginTop: 0, marginRight: 10 }}>{"Rating : "}</Text>
             <Rating type='custom' imageSize={25} readonly startingValue={item.rating} />
+            <Text style={{marginHorizontal : 10}}>
+              {totalRatings} ratings
+            </Text>
           </View>
 
           <View style={{ display: 'flex', flexDirection: 'row' }}>
