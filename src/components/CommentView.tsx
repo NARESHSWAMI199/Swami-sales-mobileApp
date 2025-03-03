@@ -81,7 +81,7 @@ const CommentView = (props: any) => {
                 logError(`Error fetching comments: ${err.message}`)
                 setLoading(false);
             })
-    }, [token, currentPage])  // props.isCommentUpdate is a prop that is passed when i enter a new comment
+    }, [currentPage])  // props.isCommentUpdate is a prop that is passed when i enter a new comment
 
     // Function to show replies
     const showReplies = (parent: any) => {
@@ -107,7 +107,7 @@ const CommentView = (props: any) => {
     // Function to handle reply action
     const handleReply = (parent: any) => {
         if (!isAuthenticated) {
-            navigation.navigate('Login' as never);
+            navigation.navigate('login' as never);
             return;
         }
         setParent(parent)
@@ -123,7 +123,7 @@ const CommentView = (props: any) => {
     // Function to handle likes
     const handleLikes = async (commentId: number) => {
         if (!isAuthenticated) {
-            navigation.navigate('Login' as never);
+            navigation.navigate('login' as never);
             return;
         }
         await axios.get(commentUrl + "like/" + commentId)
@@ -148,7 +148,7 @@ const CommentView = (props: any) => {
     // Function to handle dislikes
     const handleDislike = async (commentId: number) => {
         if (!isAuthenticated) {
-            navigation.navigate('Login' as never);
+            navigation.navigate('login' as never);
             return;
         }
         await axios.get(commentUrl + "dislike/" + commentId)
@@ -173,7 +173,7 @@ const CommentView = (props: any) => {
     // Function to handle child reply
     const handleChildReply = (reply: any) => {
         if (!isAuthenticated) {
-            navigation.navigate('Login' as never);
+            navigation.navigate('login' as never);
             return;
         }
         if (!!reply) {
