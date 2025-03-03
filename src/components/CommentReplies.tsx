@@ -24,6 +24,7 @@ const CommentRepliesView = (props: any) => {
 
     // setting user
     useEffect(() => {
+        let loggedUser= null;
         let updatedUser = async()=> {
            setUser(await props.user)
         }

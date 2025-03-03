@@ -141,7 +141,7 @@ const ItemDetail = (props: any) => {
           {item.capacity > 0 && (
             <View style={{ display: 'flex', flexDirection: 'row' }}>
               <Text style={styles.subtitle}>Capacity : </Text>
-              <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{item.capacity} {item.itemSubCategory.unit}</Text>
+              <Text style={{ ...styles.subtitle, fontWeight: '500', fontSize: 16 }}>{item.capacity} {item.itemSubCategory?.unit}</Text>
             </View>
           )}
 

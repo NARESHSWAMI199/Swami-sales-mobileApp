@@ -107,7 +107,7 @@ export const onSignIn :any = (email : string, password : string) => {
             await AsyncStorage.setItem('user', JSON.stringify(user))
             let payload = {
                 token : authToken,
-                user : JSON.stringify(user),
+                user : user,
                 error : null
             }
             dispatch(onSingInAction(payload));
