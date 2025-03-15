@@ -73,8 +73,10 @@ const ItemDetail = (props: any) => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
               if (review.id == reviewId) {
-                  review.likes = review.likes + response.likes;
-                  review.isLiked = response.isLiked;  
+                review.likes += (!!response.likes) ? response.likes : 0;
+                review.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                review.isLiked = response.isLiked;
+                review.isDisliked = response.isDisliked;
               }
               return review;
           }))
@@ -98,9 +100,10 @@ const ItemDetail = (props: any) => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
               if (review.id == reviewId) {
-                  review.dislikes = review.dislikes + response.dislikes;
-                  review.isDisliked = response.isDisliked;  
-                  
+                  review.likes += (!!response.likes) ? response.likes : 0;
+                  review.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                  review.isLiked = response.isLiked;
+                  review.isDisliked = response.isDisliked;
               }
               return review;
           }))
