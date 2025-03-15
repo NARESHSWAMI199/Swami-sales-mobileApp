@@ -1,21 +1,18 @@
-import axios from 'axios'
-import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, View, Image, Pressable, StatusBar, TouchableOpacity, Alert } from 'react-native'
-import { bodyColor, getPercentage, itemImageUrl, themeColor, storeUrl, itemsUrl } from '../utils/utils'
-import { Item } from '../redux';
-import { toTitleCase } from '../utils';
-import { Text } from 'react-native-paper';
-import { Avatar, Input, Rating, SearchBar } from 'react-native-elements';
-import ViewMoreText from 'react-native-view-more-text';
 import { Icon } from '@rneui/themed';
-import CustomCarousel from '../components/Carousel';
-import CommentView from '../components/CommentView';
-import CommentInputBox from '../components/CommentInputBox';
-import { logError, logInfo } from '../utils/logger' // Import logger
+import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Rating } from 'react-native-elements';
+import { Text } from 'react-native-paper';
+import ViewMoreText from 'react-native-view-more-text';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../redux';
+import CustomCarousel from '../components/Carousel';
 import RatingModal from '../components/RatingModal';
-import { log } from 'react-native-reanimated';
+import UserReview from '../components/UserReview';
+import { ApplicationState, Item } from '../redux';
+import { toTitleCase } from '../utils';
+import { logError, logInfo } from '../utils/logger'; // Import logger
+import { bodyColor, getPercentage, itemImageUrl, itemsUrl, reviewUrl, storeUrl, themeColor } from '../utils/utils';
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
@@ -29,8 +26,10 @@ const ItemDetail = (props: any) => {
   const [totalRatings,setTotalRatings] = useState(0)
   // const item: Item = route.params;
   const [item,setItem] = useState<Item>(route.params)
-
-
+  const [itemReviews, setItemReviews] = useState<any>([]);
+  const [totalReviesElement, setTotalReviewsElement] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
 
   // Get item ratings
@@ -43,6 +42,83 @@ const ItemDetail = (props: any) => {
     })
   },[])
 
+
+  // Function to get ratings
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = () => {
+    setIsFetchingMore(true);
+    axios.post(reviewUrl + 'all', { itemId: item.id, pageNumber })
+      .then(res => {
+        let response = res.data;
+        setItemReviews(prevReviews => [...prevReviews, ...response.content]);
+        setTotalReviewsElement(response.totalElements);
+        setIsFetchingMore(false);
+      })
+      .catch(err => {
+        logError(`Error fetching item reviews: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
+        setIsFetchingMore(false);
+      });
+  };
+
+  const handleLike = async (reviewId: number) => {
+    if (!props.isAuthenticated) {
+      navigation.navigate('login' as never);
+      return;
+  }
+  await axios.get(reviewUrl + "like/" + reviewId)
+      .then(res => {
+          let response = res.data;
+          setItemReviews(previous => previous.filter((review: any) => {
+              if (review.id == reviewId) {
+                  review.likes = review.likes + response.likes;
+                  review.isLiked = response.isLiked;  
+              }
+              return review;
+          }))
+          logInfo(`Liked review with ID: ${reviewId}`);
+      })
+      .catch(err => {
+          logError(`Error updating likes: ${err.message}`)
+      })
+
+  };
+
+
+
+  const handleDisLike = async (reviewId: number) => {
+    if (!props.isAuthenticated) {
+      navigation.navigate('login' as never);
+      return;
+  }
+  await axios.get(reviewUrl + "dislike/" + reviewId)
+      .then(res => {
+          let response = res.data;
+          setItemReviews(previous => previous.filter((review: any) => {
+              if (review.id == reviewId) {
+                  review.dislikes = review.dislikes + response.dislikes;
+                  review.isDisliked = response.isDisliked;  
+                  
+              }
+              return review;
+          }))
+          logInfo(`Liked review with ID: ${reviewId}`);
+      })
+      .catch(err => {
+          logError(`Error updating dislikes: ${err.message}`)
+      })
+
+  };
+
+
+  const handleScroll = ({ nativeEvent }) => {
+    if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+      setPageNumber(prevPageNumber => prevPageNumber + 1);
+      fetchReviews();
+    }
+  };
 
   // Function to update search query
   const updateSearch = (search: any) => {
@@ -131,7 +207,7 @@ const ItemDetail = (props: any) => {
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Icon name='arrow-back' color='white' />
       </TouchableOpacity>
-      <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'}>
+      <ScrollView style={{ backgroundColor: 'white' }} keyboardShouldPersistTaps={'handled'} onScroll={handleScroll} scrollEventThrottle={400}>
         <View style={styles.imageParent}>
           <CustomCarousel style={styles.carousel} images={
             item.avatars && item.avatars.split(',').map(avtar => {
@@ -217,19 +293,31 @@ const ItemDetail = (props: any) => {
           </View>
         </View>
 
-        {/* Comments Section */}
+
+        {/* Item reviews */}
         <View>
-          <CommentView handleReply={handleCommentFoucs} newComment={newComment} itemId={item.id} />
+          <Text style={styles.reviewsHeader}> {totalReviesElement} reviews</Text>
+          {itemReviews.map((review: any, index) => {
+            return (
+              <UserReview review={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+            )
+          })}
+          {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
         </View>
+
+        {/* Comments Section */}
+        {/* <View>
+          <CommentView handleReply={handleCommentFoucs} newComment={newComment} itemId={item.id} />
+        </View> */}
       </ScrollView>
-      <CommentInputBox
+      {/* <CommentInputBox
         commentRef={commentRef}
         itemId={item.id}
         parentId={parentId}
         addNewComment={addNewComment}
         commentContainer={styles.commentInputBody}
         style={styles.commentInput}
-      />
+      /> */}
 
       <RatingModal modalVisible={modalVisible} setModalVisible={setModalVisible} handleRatingSubmit={handleRatingSubmit} />
     </>
@@ -337,7 +425,13 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     marginVertical: 5,
-  }
+  },
+  reviewsHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    marginLeft: 15,
+  },
 })
 
 const mapToStateProps = (state: ApplicationState) => {
