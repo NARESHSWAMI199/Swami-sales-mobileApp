@@ -161,16 +161,19 @@ const StoreDetail = (props: any) => {
             <Badge textStyle={styles.badgeText} badgeStyle={styles.badge} status='primary' value={store?.storeCategory?.category} />
           </View>
 
-          <Text style={styles.title} variant="titleLarge">{toTitleCase(store.name.trim())} </Text>
+
           <View style={styles.rating}>
-            <Text style={{ ...styles.subtitle, marginTop: 0, marginRight: 10 }}>{"Rating : "}</Text>
-            <Rating type='custom' imageSize={25} readonly startingValue={store.rating} />
-            <Text style={{marginHorizontal : 10}}>
-                {totalRatings} ratings
+            <View style={styles.ratingCount}>
+              <Text style={styles.ratingText}>{Math.round(store.rating)}</Text>
+              <Icon name="star" type="material" size={20} color="white" />
+            </View>
+            <Text style={{marginHorizontal : 5}}>
+              {totalRatings} ratings
             </Text>
           </View>
 
-          <View style={styles.aboutUsContainer}>
+          <Text style={styles.title} variant="titleLarge">{toTitleCase(store.name.trim())} </Text>
+          <View>
               <Text style={styles.subtitle}>About us:</Text>
               <ViewMoreText
                 numberOfLines={3}
@@ -255,7 +258,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   body: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingTop: 10,
     shadowColor: "#000",
     shadowOffset: {
@@ -286,15 +289,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     marginRight: 'auto',
-    marginBottom: 10,
   },
   rating: {
-    marginTop: 10,
+    marginVertical: 10,
     marginRight: 'auto',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  ratingCount: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 10,
+    backgroundColor: 'green',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 4
+  },
+  ratingText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    marginRight: 2
   },
   subtitle: {
     marginTop: 12,
@@ -306,9 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginVertical: 20,
   },
-  aboutUsContainer: {
-    marginTop: 20,
-  },
+
   description: {
     fontSize: 14,
     fontWeight: '500',

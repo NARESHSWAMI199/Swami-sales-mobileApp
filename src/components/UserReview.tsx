@@ -20,8 +20,8 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.ratingCount}>
-          <Icon name="star" type="material" size={20} color="white" />
           <Text style={styles.ratingText}>{review.rating}</Text>
+          <Icon name="star" type="material" size={20} color="white" />
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.username}>{review.user.username}</Text>
@@ -56,7 +56,7 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingVertical: 10,
     backgroundColor: 'white',
     borderRadius: 10,
     marginVertical: 5,
@@ -80,10 +80,10 @@ const styles = StyleSheet.create({
     borderRadius: 4
   },
   ratingText: {
-    marginLeft: 5,
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
+    marginRight : 2
   },
   userInfo: {
     marginLeft: 5,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   message: {
-    marginVertical: 3,
+    marginVertical: 1,
     fontSize: 14,
     padding: 10,
     borderRadius: 5,

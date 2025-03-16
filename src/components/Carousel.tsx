@@ -19,7 +19,10 @@ function CustomCarousel(props:any) {
         <View style={{
             display : 'flex',
             justifyContent : 'center',
-            alignItems : 'center'
+            alignItems : 'center',
+            padding : 0,
+            margin : 0
+
         }}>
             <Carousel
                 loop
@@ -45,6 +48,13 @@ function CustomCarousel(props:any) {
                 )}
             />
 
+            <View style={{
+                display : 'flex',
+                justifyContent : 'center',
+                alignItems : 'center',
+                height : 20, 
+                width : '100%'
+                }}>
             <AnimatedDotsCarousel
                 length={props.images.length}
                 currentIndex={itemIndex}
@@ -61,6 +71,7 @@ function CustomCarousel(props:any) {
                     margin: 3,
                     opacity: 0.5,
                     size: 8,
+                    
                 }}
                 decreasingDots={[
                     {
@@ -73,6 +84,7 @@ function CustomCarousel(props:any) {
                     },
                 ]}
             />
+            </View>
         </View> 
     )
 }
