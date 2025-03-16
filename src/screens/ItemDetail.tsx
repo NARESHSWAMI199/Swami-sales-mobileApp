@@ -456,6 +456,7 @@ const styles = StyleSheet.create({
 const mapToStateProps = (state: ApplicationState) => {
   return {
     isAuthenticated: !!state.userReducer.token,
+    user : state.userReducer.user
   }
 }
 
