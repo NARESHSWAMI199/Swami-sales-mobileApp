@@ -7,20 +7,20 @@ import { itemsUrl, reviewUrl, themeColor } from '../utils/utils';
 import { logError, logInfo } from '../utils/logger';
 
 const AddItemReview = ({ route, navigation }) => {
-  const { itemId } = route.params;
+  const { item } = route.params;
   const [rating, setRating] = useState(3);
   const [review, setReview] = useState('');
 
   const handleRatingSubmit = () => {
     axios.post(reviewUrl + 'add', {
-      itemId,
+      itemId : item?.id,
       rating,
       message : review
     })
     .then(res => {
       Alert.alert("Thank you", "Your review has been submitted successfully.");
       logInfo(res.data.message);
-      navigation.goBack();
+      navigation.navigate("itemDetail",{item : item , review : res.data.res});
     })
     .catch(err => {
       logError(`Error submitting review: ${!!err.response ? err.response.data?.message : err.message}`);

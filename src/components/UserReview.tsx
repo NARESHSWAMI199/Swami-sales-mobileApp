@@ -7,7 +7,7 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
 
   useEffect(() => {
-    if (review.message.length < 100) {
+    if (!!review && review?.message.length < 100) {
       setShowFullMessage(true);
     }
   }, []);
@@ -17,6 +17,8 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
   };
 
   return (
+    <>
+    {!!review &&
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.ratingCount}>
@@ -51,6 +53,8 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
         </View>
       </View>
     </View>
+  }
+</>
   );
 };
 
