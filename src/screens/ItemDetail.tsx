@@ -230,8 +230,21 @@ const ItemDetail = (props: any) => {
         <View style={styles.body}>
             {/* Item details */}
                 <View>
+                  <View>
+                    <Text style={styles.title} variant="titleLarge">{toTitleCase(item.name.trim())}</Text>
+                </View>
+                <View>
+                  <Text style={styles.price} variant="titleLarge">{"\u20B9 " + (item.price - item.discount)}</Text>              
+                </View>
 
-                <View style={styles.rating}>
+              <View style={styles.priceParent}>
+                <Text style={styles.totalPrice}>{"\u20B9 " + item.price}</Text>
+                <Text style={styles.discount}>
+                    {Math.floor(getPercentage(item.discount, item.price) * 1) + "% "} off
+                  </Text>
+              </View>
+
+              <View style={styles.rating}>
                     <View style={styles.ratingCount}>
                         <Text style={styles.ratingText}>{Math.round(item?.rating)}</Text>
                         <Icon name="star" type="material" size={20} color="white" />
@@ -240,22 +253,6 @@ const ItemDetail = (props: any) => {
                       {totalRatings} ratings
                     </Text>
                 </View>
-                  <View>
-                    <Text style={styles.title} variant="titleLarge">{toTitleCase(item.name.trim())}</Text>
-                </View>
-                <View style={styles.priceParent}>
-                  <Text style={styles.price} variant="titleLarge">{"\u20B9 " + (item.price - item.discount)}</Text>
-                  <Text style={{ ...styles.price, marginLeft: 20 }} variant="titleLarge">
-                    <Text style={styles.discount}>
-                      {Math.floor(getPercentage(item.discount, item.price) * 1) + "% "}
-                    </Text>
-                    {"OFF"}
-                  </Text>
-                </View>
-
-              <View>
-                <Text style={styles.totalPrice}>{"\u20B9 " + item.price}</Text>
-              </View>
 
               <View style={{ display: 'flex', flexDirection: 'row' }}>
                 <Text style={styles.subtitle}>Store : </Text>
@@ -325,8 +322,11 @@ const styles = StyleSheet.create({
 
   body: {
     paddingHorizontal: 15,
-    paddingTop: 20,
-    // opacity: 0.8
+    paddingTop: 10,
+    backgroundColor : '#fff',
+    marginVertical : 25,
+    borderRadius : 10
+    
   },
   carousel : {
     backgroundColor: '#f5f9ff',
@@ -365,31 +365,32 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'black',
     marginRight: 'auto',
   },
   priceParent: {
     display: 'flex',
+    alignItems : 'center',
     flex: 1,
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop : 10
   },
   price: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'black',
-    opacity: 0.8
+    marginTop : 10
   },
   discount: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#0D6900',
   },
   totalPrice: {
-    marginTop: 10,
-    fontSize: 16,
+    fontSize: 14,
+    marginRight : 10,
     fontWeight: 'bold',
     color: '#939393',
     textDecorationLine: 'line-through'
@@ -400,7 +401,7 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
     flexDirection: 'row',
     width: '100%',
-    marginBottom : 10
+    marginTop : 10
   },
   ratingCount: {
     flexDirection: 'row',
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
     marginRight: 2
   },
   subtitle: {
-    marginVertical: 5,
+    marginTop : 10,
     fontSize: 16,
     fontWeight: '700'
   },

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { longToDate, themeColor } from '../utils/utils';
+import { Rating } from 'react-native-elements';
+
 
 const UserReview = ({ review, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
@@ -22,8 +24,11 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.ratingCount}>
-          <Text style={styles.ratingText}>{review.rating}</Text>
-          <Icon name="star" type="material" size={20} color="white" />
+          <Rating
+            readonly
+            startingValue={review.rating}
+            imageSize={15}
+          />
         </View>
         <View style={styles.userInfo}>
           <Text style={styles.username}>{review.user.username}</Text>
@@ -32,7 +37,7 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
       <Text style={styles.message}>
         {showFullMessage ? review.message : `${review.message.substring(0, 100)}...`}
       </Text>
-      {review.message.length > 100 && (
+      {review.message?.length > 100 && (
         <TouchableOpacity onPress={toggleMessage}>
           <Text style={styles.viewMoreText}>{showFullMessage ? 'View Less' : 'View More'}</Text>
         </TouchableOpacity>
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 10,
-    backgroundColor: 'green',
     paddingHorizontal: 5,
     paddingVertical: 1,
     borderRadius: 4
@@ -86,7 +90,6 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'white',
     marginRight : 2
   },
   userInfo: {
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   message: {
     marginVertical: 1,
