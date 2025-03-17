@@ -1,21 +1,20 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, TextInput, View, Text, TouchableOpacity, Pressable, Modal } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, Image } from 'react-native-elements';
 import { Rating } from 'react-native-ratings';
-import axios from 'axios';
-import { itemImageUrl, itemsUrl, reviewUrl, themeColor } from '../utils/utils';
-import { logError, logInfo } from '../utils/logger';
 import ViewMoreText from 'react-native-view-more-text';
-import ItemCard from '../components/ItemCard';
 import { connect } from 'react-redux'; // Import connect
 import { ApplicationState } from '../redux'; // Import ApplicationState
+import { logError, logInfo } from '../utils/logger';
+import { itemImageUrl, reviewUrl, themeColor } from '../utils/utils';
 
 const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAuthenticated prop
   const { item } = route.params;
   const [review, setReview] = useState('');
-  const [modalVisible, setModalVisible] = useState(false); // Add state for modal visibility
   const avatars : [] =  item.avatars?.split(',')
   const [itemAvatar,setItemAvatar] = useState();
+  const [rating, setRating] = useState(3);
 
   useEffect(()=>{
     if(!!avatars && avatars.length > 0){
@@ -23,10 +22,10 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
     }
   },[])
 
-  const handleRatingSubmit = (rating : number) => {
+  const handleRatingSubmit = () => {
     axios.post(reviewUrl + 'add', {
       itemId : item?.id,
-      rating : rating,
+      rating,
       message : review
     })
     .then(res => {
@@ -38,19 +37,7 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
       logError(`Error submitting review: ${!!err.response ? err.response.data?.message : err.message}`);
     });
   };
-
-  const openRatingModal = () => {
-    if (!isAuthenticated) {
-      navigation.navigate('login');
-      return;
-    }
-    setModalVisible(true);
-  };
-
-  const closeRatingModal = () => {
-    setModalVisible(false);
-  };
-
+  
   // Function to render "View More" text
   const renderViewMore = (onPress: any) => {
     return (
@@ -79,13 +66,16 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
             name="arrow-back"
             type="material"
             size={24}
-            color="white"
+            color = 'white'
             style={{ fontWeight: 'bold', marginHorizontal: 5 }}
           />
           <Text style={styles.headerText}>Write a Review</Text>
         </TouchableOpacity>
       </View>
+
       <View style={styles.container}>
+
+      {/* Item card */}
         <View style={styles.itemCard}>
           <Image
               style={styles.image}
@@ -111,6 +101,19 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
             </View>
         </View>
 
+
+        <View style={{backgroundColor : '#fff',padding : 20}}>
+          <Text style={{textAlign : 'center',...styles.label}}>
+              How would you rate this product overall?
+          </Text>
+          <Rating
+              imageSize={25}
+              onFinishRating={setRating}
+              style={{ marginVertical: 20 }}
+            />
+        </View>
+
+
         {/* Review section */}
         <View style={styles.reviewBody}>
           <Text style={styles.label}>Write a review:</Text>
@@ -125,7 +128,7 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
         </View>
         <View style={{ display: 'flex', alignItems: 'center' }}>
           <Pressable
-            onPress={openRatingModal} // Open modal on press
+            onPress={handleRatingSubmit}
             style={styles.button}
             accessibilityLabel="Submit your review"
           >
@@ -134,27 +137,6 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
         </View>
       </View>
 
-      {/* Rating Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeRatingModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Rate this product</Text>
-            <Rating
-              showRating
-              onFinishRating={(rating:number)=>{
-                closeRatingModal();
-                handleRatingSubmit(rating);
-              }}
-              style={{ paddingVertical: 10 }}
-            />
-          </View>
-        </View>
-      </Modal>
     </>
   );
 };
@@ -183,8 +165,8 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'white',
+    fontWeight: '600',
+    color : 'white',
     marginLeft: 10,
   },
   card: {
@@ -204,7 +186,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
   },
   subtitle: {
@@ -218,7 +200,7 @@ const styles = StyleSheet.create({
     overflowWrap: 'break-word', // Add this line
   },
   label: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
     marginVertical: 10,
   },
@@ -229,9 +211,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   button: {
-    borderRadius: 10,
+    borderRadius: 5,
     height: 45,
-    width: '100%',
+    width : '95%',
     backgroundColor: themeColor,
     alignItems: 'center',
     justifyContent: 'center',
