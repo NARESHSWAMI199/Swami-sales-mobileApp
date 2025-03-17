@@ -5,8 +5,10 @@ import { longToDate, themeColor } from '../utils/utils';
 import { Rating } from 'react-native-elements';
 
 
-const UserReview = ({ review, onLike, onDisLike }: any) => {
+const UserReview = ({ reviewObj, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
+  const review = reviewObj?.itemReview;
+
 
   useEffect(() => {
     if (!!review && review?.message.length < 100) {
@@ -20,7 +22,7 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
 
   return (
     <>
-    {!!review &&
+  {!!review && !!review.message &&
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.ratingCount}>
@@ -31,7 +33,7 @@ const UserReview = ({ review, onLike, onDisLike }: any) => {
           />
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.username}>{review.user.username}</Text>
+          <Text style={styles.username}>{reviewObj?.username}</Text>
         </View>
       </View>
       <Text style={styles.message}>

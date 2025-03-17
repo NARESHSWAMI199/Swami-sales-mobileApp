@@ -18,7 +18,7 @@ const Login = (props: any) => {
   useEffect(() => {
     const getData = async () => {
       let authToken = await props.token;
-      if (!!authToken) navigation.navigate('tab');
+      if (!!authToken) navigation.goBack();
       setToken(authToken);
       logInfo(`Token set: ${authToken}`);
     };
@@ -30,6 +30,7 @@ const Login = (props: any) => {
   const handleLogin = () => {
     if (!!email && !!password) {
       dispatch(onSignIn(email, password));
+
       logInfo(`Login attempted with email: ${email}`);
     } else {
       let error = "Email and password both are required.";

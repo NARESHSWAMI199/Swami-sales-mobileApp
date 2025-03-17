@@ -196,6 +196,13 @@ const ItemDetail = (props: any) => {
       })
   }
 
+  const handleAddReview = () => {
+    if (!props.isAuthenticated) {
+      navigation.navigate('login');
+      return;
+    }
+    navigation.navigate('addItemReview', { item: item });
+  };
 
   // Render component
   return (
@@ -205,13 +212,14 @@ const ItemDetail = (props: any) => {
         <Icon name='arrow-back' color='white' />
       </TouchableOpacity>
       <ScrollView style={styles.mainScroll} keyboardShouldPersistTaps={'handled'} 
-        onScroll={({ nativeEvent }) => {
-            if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
-                fetchReviews();
-            }
-        }} 
-      scrollEventThrottle={400}>
-        <View style={styles.imageParent}>
+          onScroll={({ nativeEvent }) => {
+              if (nativeEvent.layoutMeasurement.height + nativeEvent.contentOffset.y >= nativeEvent.contentSize.height - 20) {
+                  fetchReviews();
+              }
+          }} 
+          scrollEventThrottle={400}
+        >
+
           <CustomCarousel images={
             item.avatars && item.avatars.split(',').map(avtar => {
               return (
@@ -224,7 +232,6 @@ const ItemDetail = (props: any) => {
               )
             })}
           />
-        </View>
 
 
         <View style={styles.body}>
@@ -277,7 +284,7 @@ const ItemDetail = (props: any) => {
                 </ViewMoreText>
 
                 <Pressable style={{justifyContent : 'center', alignItems : 'flex-end'}}
-                  onPress={() => navigation.navigate('addItemReview', { item : item})}>
+                  onPress={handleAddReview}>
                   <Text style={{
                     color : 'blue',
                     marginHorizontal : 10
@@ -304,7 +311,7 @@ const ItemDetail = (props: any) => {
               ) : (
                 itemReviews.map((review: any, index) => {
                   return (
-                    <UserReview review={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                    <UserReview reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )
                 })
               )}
@@ -324,7 +331,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 10,
     backgroundColor : '#fff',
-    marginVertical : 25,
     borderRadius : 10
     
   },
@@ -349,14 +355,14 @@ const styles = StyleSheet.create({
     padding: 5,
     zIndex: 1,
   },
-  imageParent: {
-    width: '100%',
-    height: 300,
-    padding: 0,
-    margin : 0,
-    zIndex : 0,
-    backgroundColor : 'red'
-  },
+  // imageParent: {
+  //   width: '100%',
+  //   height: 300,
+  //   padding: 0,
+  //   margin : 0,
+  //   zIndex : 0,
+  //   backgroundColor : 'red'
+  // },
   image: {
     width: '100%',
     height: '100%',

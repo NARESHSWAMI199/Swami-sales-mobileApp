@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Icon, Image } from 'react-native-elements';
 import { Rating } from 'react-native-ratings';
 import ViewMoreText from 'react-native-view-more-text';
@@ -21,6 +21,12 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
       setItemAvatar([...avatars][0])
     }
   },[])
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigation.navigate('login');
+    }
+  }, [isAuthenticated]);
 
   const handleRatingSubmit = () => {
     axios.post(reviewUrl + 'add', {
@@ -73,70 +79,68 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
         </TouchableOpacity>
       </View>
 
-      <View style={styles.container}>
-
-      {/* Item card */}
-        <View style={styles.itemCard}>
-          <Image
+      <KeyboardAvoidingView style={styles.container}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+          {/* Item card */}
+          <View style={styles.itemCard}>
+            <Image
               style={styles.image}
               source={{ uri: itemImageUrl + item.slug + "/" + itemAvatar }}
-              resizeMode='cover' 
+              resizeMode='cover'
               alt='Item Images'
             />
-           <View style={{display : 'flex',flexDirection : 'column'}}>
-            {/* Item name */}
-            <View>
+            <View style={{ display: 'flex', flexDirection: 'column' }}>
+              {/* Item name */}
+              <View>
                 <Text style={styles.title}>{item.name}</Text>
+              </View>
+              {/* Description */}
+              <View style={{ width: '90%' }}>
+                <ViewMoreText
+                  numberOfLines={3}
+                  renderViewMore={renderViewMore}
+                  renderViewLess={renderViewLess}
+                >
+                  <Text style={styles.description}>{item.description.trim()}</Text>
+                </ViewMoreText>
+              </View>
             </View>
-            {/* Description */}
-              <View style={{width : '90%'}}>
-                  <ViewMoreText
-                    numberOfLines={3}
-                    renderViewMore={renderViewMore}
-                    renderViewLess={renderViewLess}
-                  >
-                    <Text style={styles.description}>{item.description.trim()}</Text>
-                  </ViewMoreText>
-              </View> 
-            </View>
-        </View>
+          </View>
 
-
-        <View style={{backgroundColor : '#fff',padding : 20}}>
-          <Text style={{textAlign : 'center',...styles.label}}>
+          <View style={{ backgroundColor: '#fff', padding: 20 }}>
+            <Text style={{ textAlign: 'center', ...styles.label }}>
               How would you rate this product overall?
-          </Text>
-          <Rating
+            </Text>
+            <Rating
               imageSize={25}
               onFinishRating={setRating}
               style={{ marginVertical: 20 }}
             />
-        </View>
+          </View>
 
-
-        {/* Review section */}
-        <View style={styles.reviewBody}>
-          <Text style={styles.label}>Write a review:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Would you like to write anything about this product."
-            multiline
-            numberOfLines={10}
-            onChangeText={setReview}
-            value={review}
-          />
-        </View>
-        <View style={{ display: 'flex', alignItems: 'center' }}>
-          <Pressable
-            onPress={handleRatingSubmit}
-            style={styles.button}
-            accessibilityLabel="Submit your review"
-          >
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>Submit Review</Text>
-          </Pressable>
-        </View>
-      </View>
-
+          {/* Review section */}
+          <View style={styles.reviewBody}>
+            <Text style={styles.label}>Write a review:</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Would you like to write anything about this product."
+              multiline
+              numberOfLines={10}
+              onChangeText={setReview}
+              value={review}
+            />
+          </View>
+          <View style={{ display: 'flex', alignItems: 'center' }}>
+            <Pressable
+              onPress={handleRatingSubmit}
+              style={styles.button}
+              accessibilityLabel="Submit your review"
+            >
+              <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>Submit Review</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </>
   );
 };
@@ -203,6 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     marginVertical: 10,
+    textAlign : 'center'
   },
   input: {
     marginBottom: 20,

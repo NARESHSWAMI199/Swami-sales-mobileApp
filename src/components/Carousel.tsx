@@ -20,7 +20,7 @@ function CustomCarousel(props: any) {
             <Carousel
                 loop
                 width={375}
-                height={320}
+                height={350}
                 autoPlay={false}
                 data={props.images}
                 scrollAnimationDuration={1000}
@@ -52,11 +52,11 @@ function CustomCarousel(props: any) {
                                 }}
                                 decreasingDots={[
                                     {
-                                        config: { color: '#F96B2B', margin: 3, opacity: 0.5, size: 6 },
+                                        config: { color: '#4A4A4A', margin: 3, opacity: 0.5, size: 6 },
                                         quantity: 1,
                                     },
                                     {
-                                        config: { color: '#F96B2B', margin: 3, opacity: 0.5, size: 4 },
+                                        config: { color: '#7A7A7A', margin: 3, opacity: 0.5, size: 4 },
                                         quantity: 1,
                                     },
                                 ]}
@@ -77,14 +77,12 @@ const styles = StyleSheet.create({
         padding: 0,
         margin: 0,
         backgroundColor: '#fff', // Add background color
-        borderRadius: 10, // Add border radius
         overflow: 'hidden', // Ensure content stays within the container
     },
     carouselItem: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10,
         overflow: 'hidden',
         backgroundColor: '#f5f5f5',
         position: 'relative', // Add position relative
