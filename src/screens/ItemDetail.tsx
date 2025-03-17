@@ -29,6 +29,7 @@ const ItemDetail = (props: any) => {
   const [itemReviews, setItemReviews] = useState<any>([review]);
   const [totalReviesElement, setTotalReviewsElement] = useState(0);
   const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(true); // Add state for loading indicator
    const [data,setData] = useState({
         pageSize : 10,
         pageNumber: 0
@@ -47,14 +48,17 @@ const ItemDetail = (props: any) => {
 
   // Function to get ratings
   useEffect(() => {
+    setIsLoadingReviews(true); // Set loading to true before fetching reviews
     axios.post(reviewUrl + 'all', { itemId: item?.id, ...data,pageNumber : 0 })
       .then(res => {
         let response = res.data;
         setItemReviews(response.content);
         setTotalReviewsElement(response.totalElements);
+        setIsLoadingReviews(false); // Set loading to false after fetching reviews
       })
       .catch(err => {
         logError(`Error fetching item reviews: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
+        setIsLoadingReviews(false); // Set loading to false in case of error
       });
   }, [item]);
 
@@ -298,11 +302,15 @@ const ItemDetail = (props: any) => {
             {/* Item reviews */}
             <View>
               <Text style={styles.reviewsHeader}> {totalReviesElement} reviews</Text>
-              {itemReviews.map((review: any, index) => {
-                return (
-                  <UserReview review={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
-                )
-              })}
+              {isLoadingReviews ? (
+                <ActivityIndicator size="large" color={themeColor} /> // Add ActivityIndicator
+              ) : (
+                itemReviews.map((review: any, index) => {
+                  return (
+                    <UserReview review={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                  )
+                })
+              )}
               {isFetchingMore && <ActivityIndicator size="large" color={themeColor} />}
             </View>
         </View>

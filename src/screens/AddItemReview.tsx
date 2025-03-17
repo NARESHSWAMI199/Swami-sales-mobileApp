@@ -1,20 +1,32 @@
-import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, TextInput, View, Text, TouchableOpacity, Pressable } from 'react-native';
-import { Icon } from 'react-native-elements';
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, StyleSheet, TextInput, View, Text, TouchableOpacity, Pressable, Modal } from 'react-native';
+import { Icon, Image } from 'react-native-elements';
 import { Rating } from 'react-native-ratings';
 import axios from 'axios';
-import { itemsUrl, reviewUrl, themeColor } from '../utils/utils';
+import { itemImageUrl, itemsUrl, reviewUrl, themeColor } from '../utils/utils';
 import { logError, logInfo } from '../utils/logger';
+import ViewMoreText from 'react-native-view-more-text';
+import ItemCard from '../components/ItemCard';
+import { connect } from 'react-redux'; // Import connect
+import { ApplicationState } from '../redux'; // Import ApplicationState
 
-const AddItemReview = ({ route, navigation }) => {
+const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAuthenticated prop
   const { item } = route.params;
-  const [rating, setRating] = useState(3);
   const [review, setReview] = useState('');
+  const [modalVisible, setModalVisible] = useState(false); // Add state for modal visibility
+  const avatars : [] =  item.avatars?.split(',')
+  const [itemAvatar,setItemAvatar] = useState();
 
-  const handleRatingSubmit = () => {
+  useEffect(()=>{
+    if(!!avatars && avatars.length > 0){
+      setItemAvatar([...avatars][0])
+    }
+  },[])
+
+  const handleRatingSubmit = (rating : number) => {
     axios.post(reviewUrl + 'add', {
       itemId : item?.id,
-      rating,
+      rating : rating,
       message : review
     })
     .then(res => {
@@ -27,6 +39,38 @@ const AddItemReview = ({ route, navigation }) => {
     });
   };
 
+  const openRatingModal = () => {
+    if (!isAuthenticated) {
+      navigation.navigate('login');
+      return;
+    }
+    setModalVisible(true);
+  };
+
+  const closeRatingModal = () => {
+    setModalVisible(false);
+  };
+
+  // Function to render "View More" text
+  const renderViewMore = (onPress: any) => {
+    return (
+      <View style={styles.viewMoreLess}>
+        <Icon name='chevron-small-down' color='black' type="entypo" />
+        <Text onPress={onPress}>Read more</Text>
+      </View>
+    )
+  }
+
+  // Function to render "View Less" text
+  const renderViewLess = (onPress: any) => {
+    return (
+      <View style={styles.viewMoreLess}>
+        <Icon name='chevron-small-up' type="entypo" />
+        <Text onPress={onPress}>Read less</Text>
+      </View>
+    )
+  }
+
   return (
     <>
       <View style={styles.headerContainer}>
@@ -38,35 +82,79 @@ const AddItemReview = ({ route, navigation }) => {
             color="white"
             style={{ fontWeight: 'bold', marginHorizontal: 5 }}
           />
-          <Text style={styles.headerText}>Add Item Review</Text>
+          <Text style={styles.headerText}>Write a Review</Text>
         </TouchableOpacity>
       </View>
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <Rating
-          showRating
-          onFinishRating={setRating}
-          style={{ paddingVertical: 10 }}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Write your review here..."
-          multiline
-          numberOfLines={4}
-          onChangeText={setReview}
-          value={review}
-        />
+      <View style={styles.container}>
+        <View style={styles.itemCard}>
+          <Image
+              style={styles.image}
+              source={{ uri: itemImageUrl + item.slug + "/" + itemAvatar }}
+              resizeMode='cover' 
+              alt='Item Images'
+            />
+           <View style={{display : 'flex',flexDirection : 'column'}}>
+            {/* Item name */}
+            <View>
+                <Text style={styles.title}>{item.name}</Text>
+            </View>
+            {/* Description */}
+              <View style={{width : '90%'}}>
+                  <ViewMoreText
+                    numberOfLines={3}
+                    renderViewMore={renderViewMore}
+                    renderViewLess={renderViewLess}
+                  >
+                    <Text style={styles.description}>{item.description.trim()}</Text>
+                  </ViewMoreText>
+              </View> 
+            </View>
+        </View>
+
+        {/* Review section */}
+        <View style={styles.reviewBody}>
+          <Text style={styles.label}>Write a review:</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Would you like to write anything about this product."
+            multiline
+            numberOfLines={10}
+            onChangeText={setReview}
+            value={review}
+          />
+        </View>
         <View style={{ display: 'flex', alignItems: 'center' }}>
           <Pressable
-            onPress={handleRatingSubmit}
+            onPress={openRatingModal} // Open modal on press
             style={styles.button}
-            accessibilityLabel="Learn more about this purple button"
+            accessibilityLabel="Submit your review"
           >
-            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>Submit</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: 'white' }}>Submit Review</Text>
           </Pressable>
         </View>
       </View>
-    </View>
+
+      {/* Rating Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeRatingModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Rate this product</Text>
+            <Rating
+              showRating
+              onFinishRating={(rating:number)=>{
+                closeRatingModal();
+                handleRatingSubmit(rating);
+              }}
+              style={{ paddingVertical: 10 }}
+            />
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };
@@ -74,9 +162,13 @@ const AddItemReview = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7fbfc',
   },
+
+  reviewBody: {
+    padding : 15,
+  },
+
   headerContainer: {
     backgroundColor: themeColor,
     paddingTop: 50,
@@ -98,19 +190,43 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 10,
-    elevation: 3, // Android shadow
-    shadowColor: '#000', // iOS shadow
-    shadowOffset: { width: 0, height: 2 }, // iOS shadow
-    shadowOpacity: 0.25, // iOS shadow
-    shadowRadius: 3.84, // iOS shadow
+    padding: 15,
+    marginBottom: 20
+  },
+
+  itemCard : {
+    display : 'flex',
+    flexDirection : 'row',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingVertical : 20,
+    padding : 15,
+  },
+
+  title: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  subtitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 5,
+  },
+  description: {
+    fontSize: 14,
+    fontWeight: '400',
+    overflowWrap: 'break-word', // Add this line
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginVertical: 10,
   },
   input: {
-    height: 100,
-    borderColor: 'gray',
-    borderWidth: 1,
     marginBottom: 20,
-    paddingHorizontal: 10,
+    backgroundColor : '#fff',
+    padding : 15,
+    borderRadius: 10,
   },
   button: {
     borderRadius: 10,
@@ -125,7 +241,42 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, // iOS shadow
     shadowOpacity: 0.25, // iOS shadow
     shadowRadius: 3.84, // iOS shadow
-  }
+  },
+  viewMoreLess: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginVertical: 5,
+  },
+  image : {
+    height : 80, 
+    width : 80,
+    borderRadius : 5,
+    marginRight : 10
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
 });
 
-export default AddItemReview;
+const mapToStateProps = (state: ApplicationState) => {
+  return {
+    isAuthenticated: !!state.userReducer.token,
+  };
+};
+
+export default connect(mapToStateProps)(AddItemReview);
