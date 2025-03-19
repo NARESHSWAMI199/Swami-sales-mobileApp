@@ -1,12 +1,8 @@
 import { StyleSheet, View } from 'react-native';
-import { Button, Card, Text } from 'react-native-paper';
-import { itemImageUrl, storeImageUrl, storeUrl } from '../utils/utils';
+import { Badge, Rating } from 'react-native-elements';
+import { Card, Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
-import { Avatar, Badge, Rating } from 'react-native-elements';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Subcategory } from '../redux';
-import { logError, logInfo } from '../utils/logger'; // Import loggers
+import { storeImageUrl } from '../utils/utils';
 
 const StoreCard = (props: any) => {
     const {
@@ -21,9 +17,6 @@ const StoreCard = (props: any) => {
     } = props.store
 
     const avtar = storeImageUrl + slug + "/" + avatar;
-
-    // Log store details
-    logInfo(`Rendering StoreCard for ${name}`);
 
     return (
         <View style={style.card}>

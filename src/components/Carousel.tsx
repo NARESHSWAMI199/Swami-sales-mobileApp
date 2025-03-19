@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Image, Text, View, StyleSheet } from 'react-native'
-import Carousel from 'react-native-reanimated-carousel'
+import { StyleSheet, View } from 'react-native'
 import AnimatedDotsCarousel from 'react-native-animated-dots-carousel'
-import { logError, logInfo } from '../utils/logger' // Import logger
+import Carousel from 'react-native-reanimated-carousel'
+import { logInfo } from '../utils/logger'; // Import logger
 
 function CustomCarousel(props: any) {
     // State variable for current item index

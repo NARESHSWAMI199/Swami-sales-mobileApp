@@ -7,7 +7,7 @@ import ViewMoreText from 'react-native-view-more-text';
 import { connect } from 'react-redux'; // Import connect
 import { ApplicationState } from '../redux'; // Import ApplicationState
 import { logError, logInfo } from '../utils/logger';
-import { itemImageUrl, reviewUrl, themeColor } from '../utils/utils';
+import { backgroundThemeColor, itemImageUrl, reviewUrl, themeColor } from '../utils/utils';
 
 const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAuthenticated prop
   const { item } = route.params;
@@ -89,13 +89,13 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
               resizeMode='cover'
               alt='Item Images'
             />
-            <View style={{ display: 'flex', flexDirection: 'column' }}>
+            <View style={{ display: 'flex', flexDirection: 'column', flex : 1}}>
               {/* Item name */}
               <View>
                 <Text style={styles.title}>{item.name}</Text>
               </View>
               {/* Description */}
-              <View style={{ width: '90%' }}>
+              <View>
                 <ViewMoreText
                   numberOfLines={3}
                   renderViewMore={renderViewMore}
@@ -148,11 +148,15 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f7fbfc',
+    backgroundColor: backgroundThemeColor,
   },
 
   reviewBody: {
     padding : 15,
+    display : 'flex',
+    flexDirection : 'column',
+    justifyContent : 'center',
+    alignItems : 'center'
   },
 
   headerContainer: {
@@ -201,7 +205,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     fontWeight: '400',
-    overflowWrap: 'break-word', // Add this line
   },
   label: {
     fontSize: 20,

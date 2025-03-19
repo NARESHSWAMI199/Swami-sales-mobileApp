@@ -4,7 +4,6 @@ import { Badge, Rating } from 'react-native-elements';
 import { Text } from 'react-native-paper';
 import { toTitleCase } from '../utils';
 import { itemImageUrl } from '../utils/utils';
-import { logError, logInfo } from '../utils/logger'; // Import loggers
 
 const ItemCard = (props: any) => {
     const {
@@ -17,6 +16,7 @@ const ItemCard = (props: any) => {
         itemSubCategory,
         itemCategory,
         capacity,
+        totalRatingCount
     } = props.item;
 
     // Log item details
@@ -63,6 +63,7 @@ const ItemCard = (props: any) => {
             </Text>
             <View style={style.ratingContainer}>
                 <Rating type='custom' imageSize={15} readonly startingValue={rating} />
+                <Text> {`(${totalRatingCount})`} </Text>
             </View>
             <View style={style.priceContainer}>
                 <Text style={style.price}>{"\u20B9 " + (price - discount)}</Text>
