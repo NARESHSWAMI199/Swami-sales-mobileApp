@@ -30,6 +30,7 @@ const _LandingScreen = (props: any) => {
                         [{ text: "Okay" }]
                     );
                     dispatch(onUpdateLocation({ postalCode: 0 }));
+                    props.navigation.navigate('tab')
                     return;
                 }
 

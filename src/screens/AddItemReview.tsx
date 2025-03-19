@@ -37,7 +37,7 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
     .then(res => {
       Alert.alert("Thank you", "Your review has been submitted successfully.");
       logInfo(res.data.message);
-      navigation.navigate("itemDetail",{item : item , review : res.data.res});
+      navigation.goBack()
     })
     .catch(err => {
       logError(`Error submitting review: ${!!err.response ? err.response.data?.message : err.message}`);
@@ -101,7 +101,7 @@ const AddItemReview = ({ route, navigation, isAuthenticated }) => { // Add isAut
                   renderViewMore={renderViewMore}
                   renderViewLess={renderViewLess}
                 >
-                  <Text style={styles.description}>{item.description.trim()}</Text>
+                  <Text style={styles.description}>{item.description?.trim()}</Text>
                 </ViewMoreText>
               </View>
             </View>

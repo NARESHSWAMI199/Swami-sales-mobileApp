@@ -4,7 +4,7 @@ import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator, Alert,
 import { Avatar, Button, Icon, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
-import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl, itemsUrl } from '../utils/utils'
+import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl, itemsUrl, backgroundThemeColor } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
 import { ScrollView } from 'react-native-gesture-handler'
 import RatingModal from '../components/RatingModal'
@@ -164,8 +164,8 @@ function SlipItems(props:any) {
           orderItems.map((orderItem , index)=>{
             let order = orderItem.itemOrder;
             if(!order?.item) return null;
-            let actualPrice = order.item?.price - order.item?.discount;
-            let totalPrice = (actualPrice * order.quantity).toLocaleString('en-US')
+            let actualPrice = order.item?.price;
+            let totalPrice = ((actualPrice - order.item?.discount) * order.quantity).toLocaleString('en-US')
             let name = order.item?.name;
             name = name.substring(0,20) +((order.item?.name)?.length > 20 ? ".." : '')
 
@@ -178,28 +178,45 @@ function SlipItems(props:any) {
                     <Avatar source={{uri : itemImageUrl+order.item?.slug+"/"+(order.item?.avatars.split(","))[0]}} size={60} rounded/>
                     <View style={style.itemDetails}>
                       <Text style={style.itemTitle}>{order.item?.name}</Text>
+                      <View style={style.storeContainer}>
+                        <Icon name="store" type="material" size={16} color="#000" />
+                        <Text style={style.storeName}>{order.item?.storeName}</Text>
+                      </View>
                       <Rating imageSize={18} readonly startingValue={order.item?.rating} style={style.rating} />
-                      <Text style={style.price}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
-                      <Text style={style.discount}>Discount: {discountPercentage}%</Text>
-                      <Text style={style.quantity}>Quantity: {order.quantity}</Text>
+                      <View style={style.priceView}>
+                        <Text style={style.price}>{(actualPrice - order.item?.discount) +" "+ruppeCurrencyIcon}</Text>
+                        <Text style={style.mutedPrice}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
+                      </View>
+                      <View style={style.discountContainer}>
+                        <Icon name="local-offer" type="material" size={16} color="green" />
+                        <Text style={style.discount}>{discountPercentage}%</Text>
+                      </View>
+                      <View style={style.quantityContainer}>
+                        <Icon name="shopping-cart" type="material" size={16} color="#000" />
+                        <Text style={style.quantity}>{order.quantity}</Text>
+                      </View>
                       {order.item?.discount > 0 && (
-                        <Text style={style.savedPrice}>Saved: {savedPrice+" "+ruppeCurrencyIcon}</Text>
+                        <View style={style.savedPriceContainer}>
+                          <Icon name="attach-money" type="material" size={16} color="#0D6900" />
+                          <Text style={style.savedPrice}>{savedPrice+" "+ruppeCurrencyIcon}</Text>
+                        </View>
                       )}
-                      <Text style={style.totalPrice}>Total: {totalPrice+" "+ruppeCurrencyIcon}</Text>
-                      <Text style={style.storeName}>Store: {order.item?.storeName}</Text>
+                      <View style={style.totalPriceContainer}>
+                        <Icon name="account-balance-wallet" type="material" size={16} color="#000" />
+                        <Text style={style.totalPrice}>{totalPrice+" "+ruppeCurrencyIcon}</Text>
+                      </View>
                     </View>
                     <TouchableOpacity onPress={() => handleRemoveOrder(orderItem.id)} style={style.deleteButton}>
                       <Icon name="delete" type="material" size={24} color="red" />
                     </TouchableOpacity>
                   </View>
-                    <TouchableOpacity style={style.ratingButton} onPress={()=> {
-                        setModalVisible(!modalVisible)
-                        setSelectedItem(order.item?.id)
+                    <Pressable style={style.ratingButton} onPress={()=> {
+                       navigation.navigate('addItemReview', { item: order.item });
                       }}>
-                      <Text style={{color : '#fff', fontWeight : 'bold'}}>
-                        Rate this product
+                      <Text style={{color : 'blue', fontWeight : 'bold'}}>
+                        Want add a review ?
                       </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
               </Pressable>
             )
@@ -211,13 +228,6 @@ function SlipItems(props:any) {
           </View>
         }
       </ScrollView>
-
-
-
-      <RatingModal modalVisible={modalVisible} setModalVisible={setModalVisible} handleRatingSubmit={handleRatingSubmit} />
-    
-                      
-
     </>
   )
 }
@@ -225,7 +235,7 @@ function SlipItems(props:any) {
 const style = StyleSheet.create({
   body: {
     height: '100%',
-    backgroundColor: '#f8f9fa'
+    backgroundColor: backgroundThemeColor
   },
   headerContainer: {
     backgroundColor: themeColor,
@@ -291,7 +301,7 @@ const style = StyleSheet.create({
   },
   itemTitle: {
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 20,
     color: '#000',
   },
   rating: {
@@ -299,26 +309,28 @@ const style = StyleSheet.create({
     marginVertical: 5,
   },
   price: {
-    fontSize: 14,
-    color: 'green',
+    fontSize: 16,
+    marginRight : 10,
+    fontWeight : '500',
   },
   discount: {
     fontSize: 14,
-    color: '#FF6347'
+    fontWeight : '400',
+    color: 'green'
   },
   quantity: {
     fontSize: 14,
+    fontWeight : '400',
     color: '#000',
   },
   totalPrice: {
-    fontSize: 16,
-    color: 'green',
+    fontSize: 18,
     fontWeight: 'bold',
   },
   savedPrice: {
     fontSize: 14,
     color: '#0D6900',
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   storeName: {
     fontSize: 14,
@@ -346,15 +358,43 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
   ratingButton : {
-    backgroundColor : themeColor,
     display : 'flex',
     justifyContent : 'center',
-    alignItems : 'center',
-    height : 45,
-    marginTop : 10,
-    borderRadius : 20
-  }
-
+    alignItems : 'flex-end',
+    marginVertical : 10
+  },
+  priceView : {
+    display : 'flex',
+    flexDirection :'row'
+  },
+  mutedPrice :  {
+    textDecorationLine: 'line-through',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  storeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  discountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  savedPriceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  totalPriceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
 })
 
 const mapToStateProps = (state:ApplicationState) =>{
