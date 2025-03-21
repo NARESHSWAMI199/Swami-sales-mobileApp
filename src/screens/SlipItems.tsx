@@ -197,12 +197,12 @@ function SlipItems(props:any) {
                       </View>
                       {order.item?.discount > 0 && (
                         <View style={style.savedPriceContainer}>
-                          <Icon name="attach-money" type="material" size={16} color="#0D6900" />
+                          <Text>Saved : </Text>
                           <Text style={style.savedPrice}>{savedPrice+" "+ruppeCurrencyIcon}</Text>
                         </View>
                       )}
                       <View style={style.totalPriceContainer}>
-                        <Icon name="account-balance-wallet" type="material" size={16} color="#000" />
+                        <Text>Total : </Text>
                         <Text style={style.totalPrice}>{totalPrice+" "+ruppeCurrencyIcon}</Text>
                       </View>
                     </View>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StatusBar, StyleSheet, Text, View, ActivityIndicator, Pressable, Modal, TextInput, Alert } from 'react-native'
 import { Avatar, Badge, Icon } from 'react-native-elements'
-import { bodyColor, dummyImageUrl, longToDate, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
+import { backgroundThemeColor, bodyColor, dummyImageUrl, longToDate, ruppeCurrencyIcon, slipsUrl, themeColor } from '../utils/utils'
 import { ApplicationState } from '../redux'
 import { connect } from 'react-redux'
 import axios from 'axios'
@@ -287,7 +287,7 @@ const openEditModal = (slip) => {
 const style = StyleSheet.create({
   body: {
     height: '100%',
-    backgroundColor: '#f8f9fa'
+    backgroundColor: backgroundThemeColor
   },
   headerContainer: {
     backgroundColor: themeColor,
