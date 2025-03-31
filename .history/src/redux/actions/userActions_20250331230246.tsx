@@ -1,3 +1,4 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
@@ -117,7 +118,7 @@ export const onSignIn :any = (email : string, password : string) => {
             logInfo("the dispatch : "+dispatch)
 
             dispatch(onSingInAction(payload));
-            dispatch(checkAuthTimeout((JWT_TOKEN_VALIDITY - BUFFER_TIME) * 1000));
+            dispatch(checkAuthTimeout(JWT_TOKEN_VALIDITY - BUFFER_TIME) * 1000));
         })
         .catch(err => {
             logError("Auth login : "+err)

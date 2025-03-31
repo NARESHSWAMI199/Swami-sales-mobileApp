@@ -12,11 +12,12 @@ const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
 
 
   useEffect(() => {
+    console.log("called")
     if (!!review && review?.message.length < 100) {
       setShowFullMessage(true);
+      setReview(reviewObj.itemReview)
     }
-    setReview(reviewObj.itemReview)
-  }, [changed]);
+  }, [onLike, onDisLike, changed]);
 
   const toggleMessage = () => {
     setShowFullMessage(!showFullMessage);

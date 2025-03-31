@@ -4,10 +4,6 @@ import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
 import { tokens } from 'react-native-paper/lib/typescript/styles/themes/v3/tokens';
 import { logError, logInfo } from '../../utils/logger';
-import Login from '../../screens/Login';
-
-const JWT_TOKEN_VALIDITY = 5 * 60 * 60; // 5 hours in seconds
-const BUFFER_TIME = 30; // 30 seconds
 
 export interface UpdateLocationAction {
     readonly type : 'ON_UPDATE_LOCATION',
@@ -95,36 +91,34 @@ const  onSingInAction = (payload:any) => {
 
 
 
-export const onSignIn :any = (email : string, password : string) => {
-    return async(dispatch : any)=>{
+export const onSignIn: any = (email: string, password: string) => {
+    return async (dispatch: any) => {
         let data = {
-            email : email,
-            password : password
-        }
-        await axios.post(userUrl+"login",data)
-        .then(async(res)=>{
-            let response = res.data;
-            let authToken = response.token;
-            let user = response.user;
-            axios.defaults.headers['Authorization'] = authToken
-            await AsyncStorage.setItem('token',authToken)
-            await AsyncStorage.setItem('user', JSON.stringify(user))
-            let payload = {
-                token : authToken,
-                user : user,
-                error : null
-            }
-            logInfo("the dispatch : "+dispatch)
-
-            dispatch(onSingInAction(payload));
-            dispatch(checkAuthTimeout((JWT_TOKEN_VALIDITY - BUFFER_TIME) * 1000));
-        })
-        .catch(err => {
-            logError("Auth login : "+err)
-            dispatch(onAuthFailed(!!err.response ? err.response.data.message : err.message))
-        })
-    }
-}
+            email: email,
+            password: password
+        };
+        await axios.post(userUrl + "login", data)
+            .then(async (res) => {
+                let response = res.data;
+                let authToken = response.token;
+                let user = response.user;
+                axios.defaults.headers['Authorization'] = authToken;
+                await AsyncStorage.setItem('token', authToken);
+                await AsyncStorage.setItem('user', JSON.stringify(user));
+                let payload = {
+                    token: authToken,
+                    user: user,
+                    error: null
+                };
+                dispatch(onSingInAction(payload)); // Ensure dispatch is passed correctly
+                dispatch(checkAuthTimeout(72 * 60 * 60 * 60));
+            })
+            .catch(err => {
+                logError("Auth login : " + err.response?.data.message);
+                dispatch(onAuthFailed(!!err.response ? err.response.data.message : err.message));
+            });
+    };
+};
 
 
 export const onLogout : any = () => {

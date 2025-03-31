@@ -92,7 +92,7 @@ const ItemDetail = (props: any) => {
       .then(res => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
+              if (review.id == reviewId) {
                 review.itemReview.likes += (!!response.likes) ? response.likes : 0;
                 review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
                 review.itemReview.isLiked = response.isLiked;
@@ -120,7 +120,7 @@ const ItemDetail = (props: any) => {
       .then(res => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
+              if (review.id == reviewId) {
                 review.itemReview.likes += (!!response.likes) ? response.likes : 0;
                 review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
                 review.itemReview.isLiked = response.isLiked;
@@ -314,7 +314,7 @@ const ItemDetail = (props: any) => {
               ) : (
                 itemReviews.map((review: any, index) => {
                   return (
-                    <UserReview changed={changed} reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                    <UserReview changed reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )
                 })
               )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View, StatusBar, TouchableOpacity } from 'react-native';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
 import { Icon } from '@rneui/themed';
@@ -13,8 +13,6 @@ const Login = (props: any) => {
   const [error, setError] = useState('');
   const dispatch = useDispatch();
   const [token, setToken] = useState(null);
-  const [localError, setLocalError] = useState<string | null>(null); // Local state for temporary error
-  const globalError = useSelector((state: ApplicationState) => state.userReducer?.error);
 
   // Effect to get token from props and navigate if token exists
   useEffect(() => {
@@ -120,8 +118,6 @@ const Login = (props: any) => {
                 </TouchableOpacity>
                 <View style={style.errorBlock}>
                   {!!error && <Text style={style.error}>{error}</Text>}
-                  {!!localError && <Text style={style.error}>{localError}</Text>}
-                  {!!globalError && <Text style={style.error}>{globalError}</Text>}
                 </View>
               </View>
             </View>

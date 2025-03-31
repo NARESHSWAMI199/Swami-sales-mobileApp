@@ -6,7 +6,7 @@ import { Rating } from 'react-native-elements';
 import { logInfo } from '../utils/logger';
 
 
-const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
+const UserReview = ({ reviewObj, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [review,setReview] = useState(reviewObj?.itemReview);
 
@@ -14,9 +14,11 @@ const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
   useEffect(() => {
     if (!!review && review?.message.length < 100) {
       setShowFullMessage(true);
+      logInfo(review.isLiked)
+      logInfo(review.isDisliked)
+      setReview(reviewObj.itemReview)
     }
-    setReview(reviewObj.itemReview)
-  }, [changed]);
+  }, [reviewObj]);
 
   const toggleMessage = () => {
     setShowFullMessage(!showFullMessage);

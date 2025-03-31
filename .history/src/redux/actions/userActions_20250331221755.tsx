@@ -1,13 +1,10 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
 import { tokens } from 'react-native-paper/lib/typescript/styles/themes/v3/tokens';
 import { logError, logInfo } from '../../utils/logger';
-import Login from '../../screens/Login';
-
-const JWT_TOKEN_VALIDITY = 5 * 60 * 60; // 5 hours in seconds
-const BUFFER_TIME = 30; // 30 seconds
 
 export interface UpdateLocationAction {
     readonly type : 'ON_UPDATE_LOCATION',
@@ -114,13 +111,11 @@ export const onSignIn :any = (email : string, password : string) => {
                 user : user,
                 error : null
             }
-            logInfo("the dispatch : "+dispatch)
-
             dispatch(onSingInAction(payload));
-            dispatch(checkAuthTimeout((JWT_TOKEN_VALIDITY - BUFFER_TIME) * 1000));
+            dispatch(checkAuthTimeout(72 * 60 * 60 * 60));
         })
         .catch(err => {
-            logError("Auth login : "+err)
+            console.log("Auth login : ",err.response.data.message)
             dispatch(onAuthFailed(!!err.response ? err.response.data.message : err.message))
         })
     }
@@ -134,8 +129,8 @@ export const onLogout : any = () => {
 }
 
 
-export const checkAuthTimeout = (expirationTime:number) => {
-    return (dispatch : any) => {
+export const checkAuthTimeout = expirationTime => {
+    return dispatch => {
         setTimeout(() => {
             dispatch(onLogoutAction());
         }, expirationTime)

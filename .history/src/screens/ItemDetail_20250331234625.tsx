@@ -313,6 +313,7 @@ const ItemDetail = (props: any) => {
                 <ActivityIndicator size="large" color={themeColor} /> // Add ActivityIndicator
               ) : (
                 itemReviews.map((review: any, index) => {
+                  console.log(JSON.stringify(review))
                   return (
                     <UserReview changed={changed} reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )

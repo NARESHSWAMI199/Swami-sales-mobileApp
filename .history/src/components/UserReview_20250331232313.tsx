@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { longToDate, themeColor } from '../utils/utils';
 import { Rating } from 'react-native-elements';
-import { logInfo } from '../utils/logger';
 
 
-const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
+const UserReview = ({ reviewObj, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [review,setReview] = useState(reviewObj?.itemReview);
 
@@ -14,9 +13,9 @@ const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
   useEffect(() => {
     if (!!review && review?.message.length < 100) {
       setShowFullMessage(true);
+      setReview(reviewObj.itemReview)
     }
-    setReview(reviewObj.itemReview)
-  }, [changed]);
+  }, []);
 
   const toggleMessage = () => {
     setShowFullMessage(!showFullMessage);

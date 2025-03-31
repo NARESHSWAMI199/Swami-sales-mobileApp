@@ -73,15 +73,19 @@ const  onLogoutAction = () => {
 }
 
 
-const onAuthFailed = (error:string) =>{
-    return {
-        type: 'ON_AUTH_ERROR',
-        payload : {
-            error: error
-        }
-    }
-}
+export const onAuthFailed = (error: string) => {
+    return async (dispatch: any) => {
+        dispatch({
+            type: 'ON_AUTH_ERROR',
+            payload: { error }
+        });
 
+        // Automatically clear the error after 5 seconds
+        setTimeout(() => {
+            dispatch({ type: 'CLEAR_AUTH_ERROR' });
+        }, 5000); // 5000ms = 5 seconds
+    };
+};
 
 
 const  onSingInAction = (payload:any) => {

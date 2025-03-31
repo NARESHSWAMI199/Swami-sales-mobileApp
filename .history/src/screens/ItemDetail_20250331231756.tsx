@@ -34,7 +34,6 @@ const ItemDetail = (props: any) => {
         pageSize : 10,
         pageNumber: 0
     })
-  const [changed,setChanged] = useState(false)
 
   // Get item ratings
   useEffect(()=>{
@@ -91,25 +90,26 @@ const ItemDetail = (props: any) => {
   await axios.get(reviewUrl + "like/" + reviewId)
       .then(res => {
           let response = res.data;
-          setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
-              }
-              return review;
-          }))
-        setChanged(!changed)
+          setItemReviews(previous => 
+              previous.map((review: any) => {
+                  if (review.id === reviewId) {
+                      return {
+                          ...review,
+                          likes: response.likes ?? review.likes,
+                          dislikes: response.dislikes ?? review.dislikes,
+                          isLiked: response.isLiked,
+                          isDisliked: response.isDisliked
+                      };
+                  }
+                  return review;
+              })
+          );
           logInfo(`Liked review with ID: ${reviewId}`);
       })
       .catch(err => {
-          logError(`Error updating likes: ${err.message}`)
-      })
-
+          logError(`Error updating likes: ${err.message}`);
+      });
   };
-
-
 
   const handleDisLike = async (reviewId: number) => {
     if (!props.isAuthenticated) {
@@ -119,25 +119,26 @@ const ItemDetail = (props: any) => {
   await axios.get(reviewUrl + "dislike/" + reviewId)
       .then(res => {
           let response = res.data;
-          setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
-              }
-              return review;
-          }))
-          setChanged(!changed)
-          logInfo(`Liked review with ID: ${reviewId}`);
+          setItemReviews(previous => 
+              previous.map((review: any) => {
+                  if (review.id === reviewId) {
+                      return {
+                          ...review,
+                          likes: response.likes ?? review.likes,
+                          dislikes: response.dislikes ?? review.dislikes,
+                          isLiked: response.isLiked,
+                          isDisliked: response.isDisliked
+                      };
+                  }
+                  return review;
+              })
+          );
+          logInfo(`Disliked review with ID: ${reviewId}`);
       })
       .catch(err => {
-          logError(`Error updating dislikes: ${err.message}`)
-      })
-
+          logError(`Error updating dislikes: ${err.message}`);
+      });
   };
-
-
 
   // Function to render "View More" text
   const renderViewMore = (onPress: any) => {
@@ -314,7 +315,7 @@ const ItemDetail = (props: any) => {
               ) : (
                 itemReviews.map((review: any, index) => {
                   return (
-                    <UserReview changed={changed} reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                    <UserReview reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )
                 })
               )}

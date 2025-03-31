@@ -34,7 +34,6 @@ const ItemDetail = (props: any) => {
         pageSize : 10,
         pageNumber: 0
     })
-  const [changed,setChanged] = useState(false)
 
   // Get item ratings
   useEffect(()=>{
@@ -92,15 +91,14 @@ const ItemDetail = (props: any) => {
       .then(res => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
+              if (review.id == reviewId) {
+                review.likes += (!!response.likes) ? response.likes : 0;
+                review.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                review.isLiked = response.isLiked;
+                review.isDisliked = response.isDisliked;
               }
               return review;
           }))
-        setChanged(!changed)
           logInfo(`Liked review with ID: ${reviewId}`);
       })
       .catch(err => {
@@ -120,15 +118,14 @@ const ItemDetail = (props: any) => {
       .then(res => {
           let response = res.data;
           setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
+              if (review.id == reviewId) {
+                  review.likes += (!!response.likes) ? response.likes : 0;
+                  review.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                  review.isLiked = response.isLiked;
+                  review.isDisliked = response.isDisliked;
               }
               return review;
           }))
-          setChanged(!changed)
           logInfo(`Liked review with ID: ${reviewId}`);
       })
       .catch(err => {
@@ -314,7 +311,7 @@ const ItemDetail = (props: any) => {
               ) : (
                 itemReviews.map((review: any, index) => {
                   return (
-                    <UserReview changed={changed} reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                    <UserReview reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )
                 })
               )}

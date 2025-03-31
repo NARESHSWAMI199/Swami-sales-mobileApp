@@ -16,6 +16,7 @@ const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
       setShowFullMessage(true);
     }
     setReview(reviewObj.itemReview)
+    console.log(reviewObj.itemReview)
   }, [changed]);
 
   const toggleMessage = () => {
