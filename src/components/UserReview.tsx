@@ -5,7 +5,7 @@ import { Rating } from 'react-native-elements';
 import { longToDate, themeColor } from '../utils/utils';
 
 
-const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
+const UserReview = ({ reviewObj, onLike, onDisLike }: any) => {
   const [showFullMessage, setShowFullMessage] = useState(false);
   const [review,setReview] = useState(reviewObj?.itemReview);
 

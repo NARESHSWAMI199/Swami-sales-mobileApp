@@ -61,9 +61,9 @@ const ItemDetail = (props: any) => {
     axios.post(reviewUrl + 'all', { itemId: item.id, ...data })
       .then(res => {
         let response = res.data;
-        setItemReviews(prevReviews => {
+        setItemReviews((prevReviews : any) => {
           const newReviews = response.content.filter(newReview => 
-            !prevReviews.some(existingReview => existingReview.id === newReview.id)
+            !prevReviews.some((existingReview : any) => existingReview.id === newReview.id)
           );
           return [...prevReviews, ...newReviews];
         });
