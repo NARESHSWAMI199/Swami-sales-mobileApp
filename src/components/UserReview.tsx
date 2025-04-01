@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { longToDate, themeColor } from '../utils/utils';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Rating } from 'react-native-elements';
-import { logInfo } from '../utils/logger';
+import { longToDate, themeColor } from '../utils/utils';
 
 
 const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
@@ -16,7 +15,7 @@ const UserReview = ({ reviewObj, onLike, onDisLike,changed }: any) => {
       setShowFullMessage(true);
     }
     setReview(reviewObj.itemReview)
-  }, [changed]);
+  }, [reviewObj]);
 
   const toggleMessage = () => {
     setShowFullMessage(!showFullMessage);

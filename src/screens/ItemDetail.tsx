@@ -15,15 +15,9 @@ import { bodyColor, getPercentage, itemImageUrl, itemsUrl, reviewUrl, storeUrl, 
 
 const ItemDetail = (props: any) => {
   const { route, navigation } = props;
-  const [state, setState] = useState("")
-  const [commentUpdated, setCommentUpdated] = useState(false)
-  const commentRef = useRef(null);
-  const [parentId, setParentId] = useState<number>(0)
   const [storeName, setStoreName] = useState<string>("");
-  const [newComment, setNewComment] = useState<string>("");
   const [modalVisible, setModalVisible] = useState(false);
   const [totalRatings,setTotalRatings] = useState(0)
-  // const item: Item = route.params;
   const [item,setItem] = useState<Item>(route.params)
   const {review} = route.params
   const [itemReviews, setItemReviews] = useState<any>([review]);
@@ -34,7 +28,6 @@ const ItemDetail = (props: any) => {
         pageSize : 10,
         pageNumber: 0
     })
-  const [changed,setChanged] = useState(false)
 
   // Get item ratings
   useEffect(()=>{
@@ -91,16 +84,16 @@ const ItemDetail = (props: any) => {
   await axios.get(reviewUrl + "like/" + reviewId)
       .then(res => {
           let response = res.data;
-          setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
+          setItemReviews((previous : any) => previous.filter((review: any) => {
+            let itemReview = review.itemReview;
+            if (itemReview.id == reviewId) {
+                itemReview.likes += (!!response.likes) ? response.likes : 0;
+                itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                itemReview.isLiked = response.isLiked;
+                itemReview.isDisliked = response.isDisliked;
               }
               return review;
           }))
-        setChanged(!changed)
           logInfo(`Liked review with ID: ${reviewId}`);
       })
       .catch(err => {
@@ -119,16 +112,16 @@ const ItemDetail = (props: any) => {
   await axios.get(reviewUrl + "dislike/" + reviewId)
       .then(res => {
           let response = res.data;
-          setItemReviews(previous => previous.filter((review: any) => {
-            if (review.itemReview.id == reviewId) {
-                review.itemReview.likes += (!!response.likes) ? response.likes : 0;
-                review.itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
-                review.itemReview.isLiked = response.isLiked;
-                review.itemReview.isDisliked = response.isDisliked;
+          setItemReviews((previous : any) => previous.filter((review: any) => {
+            let itemReview = review.itemReview;
+            if (itemReview.id == reviewId) {
+                itemReview.likes += (!!response.likes) ? response.likes : 0;
+                itemReview.dislikes += (!!response.dislikes) ? response.dislikes : 0;
+                itemReview.isLiked = response.isLiked;
+                itemReview.isDisliked = response.isDisliked;
               }
               return review;
           }))
-          setChanged(!changed)
           logInfo(`Liked review with ID: ${reviewId}`);
       })
       .catch(err => {
@@ -314,7 +307,7 @@ const ItemDetail = (props: any) => {
               ) : (
                 itemReviews.map((review: any, index) => {
                   return (
-                    <UserReview changed={changed} reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
+                    <UserReview reviewObj={review} key={index} onLike={handleLike} onDisLike={handleDisLike} />
                   )
                 })
               )}
