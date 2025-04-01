@@ -28,6 +28,13 @@ const Login = (props: any) => {
     setError(props.error);
   }, [props.error, props.token]);
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(''), 5000); // Hide error after 5 seconds
+      return () => clearTimeout(timer); // Clear timeout on component unmount or error change
+    }
+  }, [error]);
+
   // Function to handle login
   const handleLogin = () => {
     if (!!email && !!password) {
@@ -119,9 +126,11 @@ const Login = (props: any) => {
                   <Text style={style.buttonText}>Don't have an account?</Text>
                 </TouchableOpacity>
                 <View style={style.errorBlock}>
-                  {!!error && <Text style={style.error}>{error}</Text>}
-                  {!!localError && <Text style={style.error}>{localError}</Text>}
-                  {!!globalError && <Text style={style.error}>{globalError}</Text>}
+                  {!!error && (
+                    <View style={style.errorContainer}>
+                      <Text style={style.errorText}>{error}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             </View>
@@ -209,7 +218,23 @@ const style = StyleSheet.create({
   },
   errorBlock: {
     marginVertical: 10,
-    height: 20
+    height: 40, // Increased height for better visuals
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    backgroundColor: 'rgba(255, 0, 0, 0.1)', // Light red background
+    borderColor: 'red',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   backButton: {
     flexDirection: 'row',
