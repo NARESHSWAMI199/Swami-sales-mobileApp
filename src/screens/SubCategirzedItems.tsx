@@ -5,7 +5,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import ItemCard from '../components/ItemCard';
 import { Item } from '../redux';
 import { toTitleCase } from '../utils';
-import { bodyColor, itemsUrl, notFoundImage } from '../utils/utils';
+import { bodyColor, itemsUrl, notFoundImage, themeColor } from '../utils/utils';
 import { Avatar } from 'react-native-elements';
 import { logError, logInfo } from '../utils/logger'; // Import logger
 
@@ -59,18 +59,18 @@ function SubCategirzedItems(props:any) {
         {items.length > 0 ? 
         <ScrollView style={style.body}>
             <View style={style.outerView}>
-                {loading ? (
-                    <ActivityIndicator size="large" color={bodyColor} />
-                ) : (
-                    items.map((item:Item , i) =>{
+                {items.map((item:Item , i) =>{
                         return(<TouchableOpacity key={i} style={style.innerView} onPress={(e) => handleNavigation(item)}> 
                             <ItemCard  item={item}/>
                         </TouchableOpacity>)
                     })
-                )}
+                }
             </View>
         </ScrollView>
         :    
+        loading ? (
+            <ActivityIndicator style={style.activityIndicator} size="large" color={themeColor} />
+        ) : 
         <View style={style.notFound}> 
             <Avatar source={{uri : notFoundImage}} size={150}  />
             <Text style={style.notFoundText}>
@@ -84,7 +84,7 @@ function SubCategirzedItems(props:any) {
 // Styles
 const style = StyleSheet.create({
     body : {
-        paddingHorizontal : 10,
+        padding : 10,
         backgroundColor : bodyColor,
         height : '100%',
         flex : 1
@@ -118,6 +118,11 @@ const style = StyleSheet.create({
     notFoundText : {
         fontWeight : 'bold',
         fontSize : 14
+    }, 
+    activityIndicator : {
+        flex : 1,
+        justifyContent : 'center',
+        alignItems : 'center'
     }
 })
 
