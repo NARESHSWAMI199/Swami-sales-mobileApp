@@ -170,17 +170,21 @@ function SlipItems(props:any) {
             return (
               <View style={style.cardContainer} key={index}>
                 <Pressable style={style.card} onPress={()=>handleRedirect(order)}>
+                <View style={{backgroundColor : backgroundThemeColor }}>
                   <Image
                     source={{uri : itemImageUrl+order.item?.slug+"/"+(order.item?.avatars.split(","))[0]}}
                     style={style.itemImage}
                   />
+                  </View>
                   <View style={style.itemDetails}>
                     <Text style={style.itemTitle}>{order.item?.name}</Text>
                     <View style={style.detailContainer}>
                       <Text style={style.label}>Store Name:</Text>
                       <View style={style.storeContainer}>
                         <Icon name="store" type="material" size={16} color="#000" />
-                        <Text style={style.storeName}>{order.item?.storeName}</Text>
+                      <Text style={style.storeName} numberOfLines={2}>
+                        {order.item?.storeName}
+                      </Text>
                       </View>
                     </View>
                     <View style={style.detailContainer}>
@@ -262,22 +266,30 @@ const style = StyleSheet.create({
   },
   cardContainer: {
     marginVertical: 2,
-    marginHorizontal: 15,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    // elevation: 2,
+    marginHorizontal: 10,
+    backgroundColor: bodyColor,
   },
   card: {
-    padding: 15,
+    paddingTop: 10,
+    paddingHorizontal: 12,
+    paddingBottom: 10,
+    borderWidth : 0.1
   },
   itemImage: {
     width: '100%',
     height: 150,
-    borderRadius: 10,
+    marginHorizontal: 'auto',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     resizeMode: 'cover',
   },
   itemDetails: {
-    marginTop: 10,
+    // marginTop: 10,
+    borderWidth: 0.1,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderTopWidth: 2,
+    // borderColor: themeColor,
   },
   itemTitle: {
     fontSize: 18,
@@ -296,10 +308,13 @@ const style = StyleSheet.create({
   storeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    width : '65%',
   },
   storeName: {
     fontSize: 16,
     marginLeft: 5,
+    flexShrink: 1, // allow text to wrap
+    flexWrap: 'wrap', // enable wrapping
   },
   priceContainer: {
     flexDirection: 'row',
