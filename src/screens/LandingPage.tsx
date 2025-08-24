@@ -1,9 +1,10 @@
 import * as Location from 'expo-location'
 import React, { useEffect, useState } from 'react'
-import { Alert, Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Dimensions, Image, Linking, StyleSheet, Text, View } from 'react-native'
 import { connect, useDispatch } from 'react-redux'
 import { ApplicationState, onUpdateLocation } from '../redux'
 import { logError, logInfo } from '../utils/logger' // Import logger
+import { set } from 'react-native-reanimated'
 
 const screenWidth = Dimensions.get('screen').width
 
@@ -20,17 +21,32 @@ const _LandingScreen = (props: any) => {
     useEffect(() => {
         (async () => {
             try {
-                var { status } = await Location.requestForegroundPermissionsAsync()
-                logInfo(`Location permission status: ${status}`)
+                var { status } = await Location.requestForegroundPermissionsAsync();
+                logInfo(`Location permission status: ${status}`);
                 if (status !== 'granted') {
-                    setErrorMsg('Permission to access location is not granted.')
+                    setErrorMsg('Permission to access location is not granted.');
                     Alert.alert(
                         "Insufficient permissions!",
-                        "Sorry, we need location permissions to make this work! Make sure location is enable",
-                        [{ text: "Okay" }]
+                        "Sorry, we need location permissions to make this work! Make sure location is enabled.",
+                        [
+                            {
+                                text: "Try Again",
+                                onPress: () => {
+                                    Linking.openSettings()
+                                    setAsk(pre => !pre) // Toggle to re-trigger useEffect
+                                }
+                            
+                            },
+                            {
+                                text: "Skip",
+                                style: "cancel",
+                                onPress: () => {
+                                    dispatch(onUpdateLocation({ postalCode: 0 }));
+                                    props.navigation.navigate('tab');
+                                }
+                            }
+                        ]
                     );
-                    dispatch(onUpdateLocation({ postalCode: 0 }));
-                    props.navigation.navigate('tab')
                     return;
                 }
 

@@ -1,11 +1,11 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator, Alert, TouchableOpacity } from 'react-native'
+import { Pressable, StatusBar, StyleSheet, Text, View, ActivityIndicator, Alert, TouchableOpacity, Image } from 'react-native'
 import { Avatar, Button, Icon, Rating } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ApplicationState } from '../redux'
 import { bodyColor, itemImageUrl, ruppeCurrencyIcon, slipsUrl, themeColor, storeUrl, itemsUrl, backgroundThemeColor } from '../utils/utils'
-import { logError, logInfo } from '../utils/logger' // Import logger
+import { logError, logInfo } from '../utils/logger' 
 import { ScrollView } from 'react-native-gesture-handler'
 import RatingModal from '../components/RatingModal'
 
@@ -112,7 +112,6 @@ function SlipItems(props:any) {
     );
   }
 
-
   const handleRatingSubmit = (rating:Number) => {
     axios.post(itemsUrl + `update/ratings`,
       {
@@ -128,18 +127,10 @@ function SlipItems(props:any) {
       })
   }
 
-
   const handleBack = () => {
     navigation.goBack();
   }
 
-  if (loading) {
-    return (
-      <View style={style.spinnerContainer}>
-        <ActivityIndicator size="large" color={themeColor} />
-      </View>
-    );
-  }
 
   // Render component
   return (
@@ -160,7 +151,12 @@ function SlipItems(props:any) {
             </Text>
           </Pressable>
         </View>
-        {orderItems.length > 0 ? 
+        {
+        loading ?
+          <View style={style.spinnerContainer}>
+            <ActivityIndicator size="large" color={themeColor} />
+          </View> :
+        orderItems.length > 0 ? 
           orderItems.map((orderItem , index)=>{
             let order = orderItem.itemOrder;
             if(!order?.item) return null;
@@ -172,53 +168,62 @@ function SlipItems(props:any) {
             let discountPercentage = (( (order.item?.discount) / order.item?.price) * 100).toFixed(2);
             let savedPrice = (order.item?.discount * order.quantity).toLocaleString('en-US');
             return (
-              <Pressable key={index} style={style.list} onPress={()=>handleRedirect(order)}>
-                <View style={style.card}>
-                  <View style={style.listItem}>
-                    <Avatar source={{uri : itemImageUrl+order.item?.slug+"/"+(order.item?.avatars.split(","))[0]}} size={60} rounded/>
-                    <View style={style.itemDetails}>
-                      <Text style={style.itemTitle}>{order.item?.name}</Text>
+              <View style={style.cardContainer} key={index}>
+                <Pressable style={style.card} onPress={()=>handleRedirect(order)}>
+                  <Image
+                    source={{uri : itemImageUrl+order.item?.slug+"/"+(order.item?.avatars.split(","))[0]}}
+                    style={style.itemImage}
+                  />
+                  <View style={style.itemDetails}>
+                    <Text style={style.itemTitle}>{order.item?.name}</Text>
+                    <View style={style.detailContainer}>
+                      <Text style={style.label}>Store Name:</Text>
                       <View style={style.storeContainer}>
                         <Icon name="store" type="material" size={16} color="#000" />
                         <Text style={style.storeName}>{order.item?.storeName}</Text>
                       </View>
-                      <Rating imageSize={18} readonly startingValue={order.item?.rating} style={style.rating} />
-                      <View style={style.priceView}>
+                    </View>
+                    <View style={style.detailContainer}>
+                      <Text style={style.label}>Price:</Text>
+                      <View style={style.priceContainer}>
                         <Text style={style.price}>{(actualPrice - order.item?.discount) +" "+ruppeCurrencyIcon}</Text>
                         <Text style={style.mutedPrice}>{actualPrice.toLocaleString('en-US')+" "+ruppeCurrencyIcon}</Text>
                       </View>
-                      <View style={style.discountContainer}>
-                        <Icon name="local-offer" type="material" size={16} color="green" />
-                        <Text style={style.discount}>{discountPercentage}%</Text>
-                      </View>
-                      <View style={style.quantityContainer}>
-                        <Icon name="shopping-cart" type="material" size={16} color="#000" />
-                        <Text style={style.quantity}>{order.quantity}</Text>
-                      </View>
-                      {order.item?.discount > 0 && (
-                        <View style={style.savedPriceContainer}>
-                          <Text>Saved : </Text>
-                          <Text style={style.savedPrice}>{savedPrice+" "+ruppeCurrencyIcon}</Text>
-                        </View>
-                      )}
-                      <View style={style.totalPriceContainer}>
-                        <Text>Total : </Text>
-                        <Text style={style.totalPrice}>{totalPrice+" "+ruppeCurrencyIcon}</Text>
-                      </View>
                     </View>
-                    <TouchableOpacity onPress={() => handleRemoveOrder(orderItem.id)} style={style.deleteButton}>
-                      <Icon name="delete" type="material" size={24} color="red" />
-                    </TouchableOpacity>
+                    <View style={style.detailContainer}>
+                      <Text style={style.label}>Discount:</Text>
+                      <Text style={style.discount}>{discountPercentage}% off</Text>
+                    </View>
+                    <View style={style.detailContainer}>
+                      <Text style={style.label}>Quantity:</Text>
+                      <Text style={style.quantity}>{order.quantity}</Text>
+                    </View>
+                    {order.item?.discount > 0 && (
+                      <View style={style.detailContainer}>
+                        <Text style={style.label}>Saved:</Text>
+                        <Text style={style.savedPrice}>{savedPrice+" "+ruppeCurrencyIcon}</Text>
+                      </View>
+                    )}
+                    <View style={style.detailContainer}>
+                      <Text style={style.label}>Total Price:</Text>
+                      <Text style={style.totalPrice}>{totalPrice+" "+ruppeCurrencyIcon}</Text>
+                    </View>
                   </View>
-                    <Pressable style={style.ratingButton} onPress={()=> {
-                       navigation.navigate('addItemReview', { item: order.item });
-                      }}>
-                      <Text style={{color : 'blue', fontWeight : 'bold'}}>
-                        Want add a review ?
-                      </Text>
-                    </Pressable>
-                  </View>
-              </Pressable>
+                </Pressable>
+                <View style={style.cardActions}>
+                  <TouchableOpacity onPress={() => handleRemoveOrder(orderItem.id)} style={style.deleteButton}>
+                    <Icon name="delete" type="material" size={24} color="red" />
+                    <Text style={style.deleteText}>Remove</Text>
+                  </TouchableOpacity>
+                  <Pressable style={style.ratingButton} onPress={()=> {
+                     navigation.navigate('addItemReview', { item: order.item });
+                    }}>
+                    <Text style={{color : 'blue', fontWeight : 'bold'}}>
+                      Add a Review
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
             )
           }) :
           <View style={style.noOrders}>
@@ -239,11 +244,11 @@ const style = StyleSheet.create({
   },
   headerContainer: {
     backgroundColor: themeColor,
-    paddingTop: 50, // Increased height
+    paddingTop: 50, 
     paddingBottom: 20,
     paddingHorizontal: 10,
     elevation: 5,
-    marginBottom: 10, // Fix margin from bottom
+    marginBottom: 10, 
   },
   mainHeader: {
     flexDirection: 'row',
@@ -255,145 +260,107 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     marginLeft: 10,
   },
-  listHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    backgroundColor: bodyColor,
-    marginHorizontal: 10,
-    marginTop: 10, // Fix margin from top
-  },
-  listHeaderText: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#000', // Dark text color
-    width: 100,
-    textAlign: 'center'
-  },
-  list: {
-    width: '100%',
-    marginVertical: 5
+  cardContainer: {
+    marginVertical: 2,
+    marginHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    // elevation: 2,
   },
   card: {
-    borderRadius: 15, // Increased border radius for premium look
     padding: 15,
-    marginHorizontal: 15, // Perfect margin from both x sides
-    backgroundColor: 'white',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1, // Small shadow height
-    },
-    shadowOpacity: 0.22, // Small shadow opacity
-    shadowRadius: 4.84, // Small shadow radius
-    elevation: 2, // Small elevation
-  
   },
-  listItem: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+  itemImage: {
+    width: '100%',
+    height: 150,
+    borderRadius: 10,
+    resizeMode: 'cover',
   },
   itemDetails: {
-    marginLeft: 10,
-    flex: 1,
+    marginTop: 10,
   },
   itemTitle: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: '#000',
-  },
-  rating: {
-    alignSelf: 'flex-start',
-    marginVertical: 5,
-  },
-  price: {
-    fontSize: 16,
-    marginRight : 10,
-    fontWeight : '500',
-  },
-  discount: {
-    fontSize: 14,
-    fontWeight : '400',
-    color: 'green'
-  },
-  quantity: {
-    fontSize: 14,
-    fontWeight : '400',
-    color: '#000',
-  },
-  totalPrice: {
     fontSize: 18,
     fontWeight: 'bold',
   },
-  savedPrice: {
-    fontSize: 14,
-    color: '#0D6900',
-    fontWeight: '500',
+  detailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    width: 100,
+  },
+  storeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   storeName: {
-    fontSize: 14,
-    color: '#000',
+    fontSize: 16,
+    marginLeft: 5,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  price: {
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  mutedPrice: {
+    fontSize: 14,
+    textDecorationLine: 'line-through',
+    marginLeft: 10,
+  },
+  discount: {
+    fontSize: 14,
+    color: 'green',
+  },
+  quantity: {
+    fontSize: 16,
+  },
+  savedPrice: {
+    fontSize: 14,
+    color: 'green',
+  },
+  totalPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cardActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
   },
   deleteButton: {
-    marginLeft: 'auto',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  deleteText: {
+    fontSize: 16,
+    color: 'red',
+    marginLeft: 5,
+  },
+  ratingButton: {
+    padding: 5,
   },
   noOrders: {
-    display: 'flex',
-    flexDirection: 'column',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
   },
   noOrdersText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'gray'
+    fontSize: 16,
+    color: 'gray',
   },
   spinnerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  ratingButton : {
-    display : 'flex',
-    justifyContent : 'center',
-    alignItems : 'flex-end',
-    marginVertical : 10
-  },
-  priceView : {
-    display : 'flex',
-    flexDirection :'row'
-  },
-  mutedPrice :  {
-    textDecorationLine: 'line-through',
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  storeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  discountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  savedPriceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  totalPriceContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 5,
   },
 })
 

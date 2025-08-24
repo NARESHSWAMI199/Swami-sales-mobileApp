@@ -122,7 +122,7 @@ const Items = (props : any) => {
                 setLoading(false)
                 logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             })
-    }, [search])
+    }, [search,data])
 
     // Effect to fetch categories
     useEffect(() => {
