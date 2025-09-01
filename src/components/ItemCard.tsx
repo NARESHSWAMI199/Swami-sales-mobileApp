@@ -16,14 +16,12 @@ const ItemCard = (props: any) => {
         itemSubCategory,
         itemCategory,
         capacity,
-        totalRatingCount
+        totalRatingCount,
+        images
     } = props.item;
 
     // Log item details
     // logInfo(`Rendering ItemCard for ${name}`);
-
-    const avatar = itemImageUrl + slug + "/" + avatars?.split(',')[0];
-
     return (
         <View style={style.main}>
           <View style={style.card}>
@@ -31,7 +29,7 @@ const ItemCard = (props: any) => {
                 <Image
                     style={style.cardCover}
                     resizeMode='contain'
-                    source={{ uri: !!avatars ? avatar : props.url }} />
+                    source={{ uri: images.length > 0 ? images[0] : props.url }} />
                 <View style={style.discountLabel}>
                     <Text style={style.discountText}>{Math.floor((discount / price) * 100) + "% OFF"}</Text>
                 </View>
