@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Subcategory } from '../redux';
-import { itemsUrl, storeUrl } from '../utils/utils';
+import { getErrorMessage, itemsUrl, storeUrl } from '../utils/utils';
 import { ItemSubCategoryCard, StoreSubCategoryCard } from './SubCategoryCard';
 import { logError, logInfo } from '../utils/logger'; // Import loggers
 
@@ -41,18 +41,21 @@ const ItemSubCategories = (props: any) => {
 }
 
 const StoreSubCategories = (props: any) => {
+    const {retry} = props;
     const [subcategories, setSubcategories] = useState([]);
-
     useEffect(() => {
+        logInfo(`Fetching store subcategories : ${retry}`);
         axios.post(storeUrl + "subcategory", { pageSize: 6 })
             .then(res => {
                 let data = res.data;
                 setSubcategories(data);
                 logInfo(`Fetched ${data.length} store subcategories`);
             }).catch(err => {
-                logError(`Error fetching store subcategories: ${!!err.response?.data.message ? err.response.data.message : err.message}`);
+                logError(`Error fetching store subcategories: ${getErrorMessage(err)}`);
             })
-    }, [])
+    }, [retry])
+
+
 
     const handleNavigation = (subcategory: Subcategory) => {
         logInfo(`Navigating to subcategorized stores for ${subcategory.subcategory}`);

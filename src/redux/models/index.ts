@@ -78,6 +78,7 @@ export interface Item {
     wholesaleId : number,
     capacity : number,
     itemSubCategory : Subcategory
+    images : [string]
 }
 
 export interface Store {
@@ -91,7 +92,8 @@ export interface Store {
     rating: Float,
     slug : string,
     storeCategory : Category,
-    storeSubCategory : Subcategory
+    storeSubCategory : Subcategory,
+    address : any
 }
 
 

@@ -151,7 +151,7 @@ const StoreDetail = (props: any) => {
       >
         <View style={styles.imageParent}>
           <Image style={styles.image}
-            source={{ uri: storeImageUrl + store.slug + "/" + store.avatar }}
+            source={{ uri:store.avatar }}
             resizeMode={'cover'} />
         </View>
 
@@ -183,6 +183,21 @@ const StoreDetail = (props: any) => {
                 <Text style={styles.description}>{store.description.trim()}</Text>
               </ViewMoreText>
             </View>
+
+
+          <View>
+            <Text style={styles.subtitle}>Address:</Text>
+            <View style={{
+              flexDirection : 'row',
+              justifyContent : 'flex-start',
+              alignItems : 'center',
+            }}>
+            <Text>{store?.address?.street}, </Text> 
+              <Text style={{fontWeight : 'bold'}}>
+                {store?.address?.city?.name}, {store?.address?.zipCode}
+              </Text>
+            </View>
+          </View>
 
           <View>
             {items.length > 0 && 

@@ -8,6 +8,7 @@ import StoreCard from '../components/StoreCard'
 import { ApplicationState, Category, Store } from '../redux'
 import { bodyColor, storeUrl, themeColor } from '../utils/utils'
 import { logError, logInfo } from '../utils/logger' // Import logger
+import { log } from 'react-native-reanimated'
 
 // Component function
 function Stores(props : any) {
@@ -83,6 +84,7 @@ function Stores(props : any) {
 
   // Effect to set showCategory based on props
   useEffect(()=>{
+    logInfo(`Setting showCategory from props: ${props.key}`)
     if(props.showCategory == true || props.showCategory == false )
     setShowCategory(props.showCategory)
     logInfo(`ShowCategory set to ${props.showCategory}`)

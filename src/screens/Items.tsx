@@ -62,6 +62,7 @@ const Items = (props : any) => {
     const [query, setQuery] = useState("") 
     const [showCategory, setShowCategory] = useState(true)
     const {route, navigation} = props;
+    const {retry} = route.params || {};
     const [loading, setLoading] = useState(true)
     const [data,setData] = useState({
         searchKey : query,
@@ -122,7 +123,7 @@ const Items = (props : any) => {
                 setLoading(false)
                 logError(`Error fetching items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
             })
-    }, [search,data])
+    }, [search,data,retry])
 
     // Effect to fetch categories
     useEffect(() => {
@@ -139,7 +140,7 @@ const Items = (props : any) => {
                 })
         }
         getCategories()
-    }, [])
+    }, [retry])
 
     // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {

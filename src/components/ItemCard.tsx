@@ -138,6 +138,7 @@ const style = StyleSheet.create({
     },
     ratingContainer: {
         display: 'flex',
+        flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         marginVertical: 5,

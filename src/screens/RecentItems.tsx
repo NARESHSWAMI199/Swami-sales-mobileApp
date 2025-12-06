@@ -10,6 +10,8 @@ import { logError, logInfo } from '../utils/logger' // Import logger
 
 const RecentItems = (props : any) => {
 
+    const {retry} = props;
+
     // Styles
     const style = StyleSheet.create({
         price : {
@@ -72,7 +74,7 @@ const RecentItems = (props : any) => {
         }).catch(err => {
             logError(`Error fetching recent items: ${!!err.response?.data.message ? err.response.data.message : err.message}`)
         })
-    }, [])
+    }, [retry])
 
     // Function to handle navigation to item detail
     const handleNavigation = (item : Item) => {
@@ -84,13 +86,12 @@ const RecentItems = (props : any) => {
     return (
         <View style={style.container}>
         {items.map((item:Item , i) =>{
-                const avtar = itemImageUrl+item.slug+"/"+item.avatars?.split(',')[0]
                 return(
                 <TouchableOpacity style={style.recentItems} key={i} onPress={(e) => handleNavigation(item)}> 
                     < Card.Cover 
                         style={style.cardCover}
                         resizeMode='contain'
-                        source = {{ uri: !!item.avatars ? avtar : props.url}} 
+                        source = {{ uri: item?.images.length > 0  ? item.images[0] : props.url}} 
                     />
                     <Text variant="titleLarge" style={style.itemTitle} >
                         { toTitleCase(item.name.substring(0,10))}

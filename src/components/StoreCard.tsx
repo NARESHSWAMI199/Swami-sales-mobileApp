@@ -16,14 +16,12 @@ const StoreCard = (props: any) => {
         storeSubCategory
     } = props.store
 
-    const avtar = storeImageUrl + slug + "/" + avatar;
-
     return (
         <View style={style.card}>
             <Card.Cover
                 style={style.cardCover}
                 resizeMode='contain'
-                source={{ uri: !!avatar ? avtar : props.url }} />
+                source={{ uri: !!avatar ? avatar : props.url }} />
 
             <View style={style.badge}>
                 <Badge

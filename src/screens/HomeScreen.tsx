@@ -16,7 +16,12 @@ import Stores from './Stores'
 
 // Main component
 const HomeScreen = (props: any) => {
-    const { navigation } = props;
+    const {route, navigation } = props;
+    const { retry } = route.params || {};
+
+    useEffect(() => {
+        console.log("Home Screen Retry Param:", retry);
+    },[retry])
 
     // Adding auth token to axios headers
     useEffect(() => {
@@ -25,7 +30,7 @@ const HomeScreen = (props: any) => {
             axios.defaults.headers['Authorization'] = token;
         }
         updateToken();
-    }, [props.token])
+    }, [props.token,retry])
 
     // Function to hide the tab bar
     const hideTabBar = () => {
@@ -76,7 +81,7 @@ const HomeScreen = (props: any) => {
             })
         // authcheck
         authCheckState();
-    }, [])
+    }, [retry])
 
     // Handle filter navigation
     const handleFilter = () => {
@@ -191,7 +196,7 @@ const HomeScreen = (props: any) => {
                                     horizontal
                                     showsHorizontalScrollIndicator={false}
                                 >
-                                    <RecentItems {...props} marginHorizontal={5} />
+                                    <RecentItems {...props} retry={retry} marginHorizontal={5} />
                                 </ScrollView>
                             </View>
                         </View>
@@ -201,11 +206,11 @@ const HomeScreen = (props: any) => {
                             <Text style={{ ...style.titleHeadings, marginVertical: 12 }}>
                                 Item Categories
                             </Text>
-                            <ItemSubCategories {...props} />
+                            <ItemSubCategories {...props} retry={retry} />
                         </View>
 
                         <View style={style.parentView}>
-                            <ItemCategories  {...props} />
+                            <ItemCategories  {...props} retry={retry} />
                         </View>
 
                         {/* Popular stores section */}
@@ -218,6 +223,7 @@ const HomeScreen = (props: any) => {
                                     width={"32%"}
                                     {...props}
                                     showCategory={false}
+                                    retry={retry}
                                 />
                             </ScrollView>
                         </View>
@@ -225,7 +231,8 @@ const HomeScreen = (props: any) => {
                             <Text style={{ ...style.titleHeadings, marginVertical: 12 }}>
                                 Store Categories
                             </Text>
-                            <StoreSubCategories {...props} />
+                            <StoreSubCategories {...props} retry={retry}
+                            />
                         </View>
 
                         {/* Most popular items section */}
@@ -240,6 +247,7 @@ const HomeScreen = (props: any) => {
                                 {...props}
                                 size={51}
                                 selfPadding={false}
+                                retry={retry}
                             />
 
                             <TouchableOpacity style={style.paginate} onPress={() => handleNavigationItems()} >
@@ -261,6 +269,7 @@ const HomeScreen = (props: any) => {
                                 size={100}
                                 showCategory={false}
                                 selfPadding={false}
+                                retry={retry}
                             />
                             <TouchableOpacity style={style.paginate} onPress={() => handleNavigationStore()} >
                                 <Text style={style.paginateText}>See all stores</Text>
@@ -280,13 +289,13 @@ const HomeScreen = (props: any) => {
                                 <Text style={style.titleHeadings}>
                                     Related Categoires
                                 </Text>
-                                <ItemSubCategories {...props} categoryId={category.id} size={6} />
+                                <ItemSubCategories {...props} categoryId={category.id} size={6} retry={retry} />
                             </View>
                             <View style={{ flex: 1 }}>
                                 <Text style={style.titleHeadings}>
                                     Related Items
                                 </Text>
-                                <TabItems {...props} showCategory={false} categoryId={category.id} />
+                                <TabItems {...props} showCategory={false} categoryId={category.id} retry={retry} />
                             </View>
                         </ScrollView>
                     </TabView.Item>
