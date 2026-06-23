@@ -2,7 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
 import { LocationGeocodedAddress } from "expo-location";
 import { userUrl } from "../../utils/utils";
+import { tokens } from 'react-native-paper/lib/typescript/styles/themes/v3/tokens';
 import { logError, logInfo } from '../../utils/logger';
+import Login from '../../screens/Login';
 
 const JWT_TOKEN_VALIDITY = 5 * 60 * 60; // 5 hours in seconds
 const BUFFER_TIME = 30; // 30 seconds
@@ -34,14 +36,8 @@ export interface UserLoginAction  {
     payload: any
 } 
 
-interface ClearAuthErrorAction {
-    readonly type: 'CLEAR_AUTH_ERROR';
-}
 
-
-
-
-export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction | ClearAuthErrorAction
+export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
 
 export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
     return (dispatch : any) => {
@@ -97,13 +93,6 @@ const  onSingInAction = (payload:any) => {
     }
 }   
 
-export const onClearAuthError = () => {
-    return {
-        type : "CLEAR_AUTH_ERROR",  
-        error: null // Reset back to null
-    }
-};
-
 
 
 export const onSignIn :any = (email : string, password : string) => {
@@ -131,7 +120,7 @@ export const onSignIn :any = (email : string, password : string) => {
             dispatch(checkAuthTimeout((JWT_TOKEN_VALIDITY - BUFFER_TIME) * 1000));
         })
         .catch(err => {
-            logError(`Auth login : ${!!err.response ? err.response.data.message : err.message}`)
+            logError("Auth login : "+err)
             dispatch(onAuthFailed(!!err.response ? err.response.data.message : err.message))
         })
     }

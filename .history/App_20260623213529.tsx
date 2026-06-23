@@ -25,111 +25,14 @@ import SlipItems from './src/screens/SlipItems';
 import { Ionicons } from '@expo/vector-icons';
 import AddToSlip from './src/screens/AddToSlip';
 import AddItemReview from './src/screens/AddItemReview';
-import NetworkError from './src/screens/NetworkError';
-import { useEffect, useState } from 'react';
-import { logInfo } from './src/utils/logger';
-import { useNetInfo } from '@react-native-community/netinfo';
-import { handleNetworkError } from './src/utils/commonUtils';
-import { log } from 'react-native-reanimated';
 
 const { Navigator, Screen } = createStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
-const BottomTabNavigator = (props) => {
-  const {route, navigation} = props;
-  const {retry} = route.params || {};
-  const netInfo = useNetInfo();
-
-  const tabScreensInitial = [
-      {
-        name: "Home",
-        component: HomeScreen,
-        options: {
-          title: "Swami Sales",
-          headerTintColor: "white",
-          headerTitleAlign: "left",
-          headerStyle: {
-            backgroundColor: themeColor,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderWidth: 0,
-          },
-          header: () => null,
-          tabBarLabel: "Home",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "home-sharp" : "home-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        },
-      },
-
-      {
-        name: "Items",
-        component: Items,
-        options: {
-          header: () => null,
-          tabBarLabel: "Items",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "pricetag-sharp" : "pricetag-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        },
-      },
-
-      {
-        name: "Stores",
-        component: Stores,
-        key: "stores",
-        options: {
-          header: () => null,
-          tabBarLabel: "Stores",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "cart-sharp" : "cart-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        },
-      },
-
-      {
-        name: "Settings",
-        component: Settings,
-        options: {
-          header: () => null,
-          tabBarLabel: "Settings",
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons
-              name={focused ? "settings-sharp" : "settings-outline"}
-              size={24}
-              color={color}
-            />
-          ),
-        },
-      },
-
-    ]
-
-  const [tabScreens, setTabScreens] = useState([...tabScreensInitial]);
-  useEffect(()=>{
-    if(netInfo.isConnected != null && netInfo.isConnected == false){
-      handleNetworkError("Internet is not connected", navigation);
-    }
-    logInfo(`BottomTabNavigator detected retry param change: ${retry}`);
-    setTabScreens([...tabScreens]);
-  },[retry,netInfo.isConnected]);
-
+const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      key={retry}
       initialRouteName="Home"
       screenOptions={{
         tabBarStyle: { height: 60 },
@@ -137,15 +40,59 @@ const BottomTabNavigator = (props) => {
         tabBarInactiveTintColor: 'gray',
       }}
     >
-    {tabScreens.map((screen) => (
       <Tab.Screen
-        key={screen.name + '_' + retry}
-        name={screen.name}
-        component={screen.component}
-        initialParams={{retry}}
-        options={screen.options}
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: 'Swami Sales',
+          headerTintColor: 'white',
+          headerTitleAlign: 'left',
+          headerStyle: {
+            backgroundColor: themeColor,
+            elevation: 0,
+            shadowOpacity: 0,
+            borderWidth: 0,
+          },
+          header: () => null,
+          tabBarLabel: 'Home',
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons name={focused ? "home-sharp" : "home-outline"} size={24} color={color} />
+          ),
+        }}
       />
-    ))}
+      <Tab.Screen
+        name="Items"
+        component={Items}
+        options={{
+          header: () => null,
+          tabBarLabel: 'Items',
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons name={focused ? "pricetag-sharp" : "pricetag-outline"} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Stores"
+        component={Stores}
+        options={{
+          header: () => null,
+          tabBarLabel: 'Stores',
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons name={focused ? "cart-sharp" : "cart-outline"} size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings}
+        options={{
+          header: () => null,
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons name={focused ? "settings-sharp" : "settings-outline"} size={24} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -173,7 +120,6 @@ export default function App() {
           <Screen name="slipItems" component={SlipItems} options={{ header: () => null }} />
           <Screen name="AddToSlip" component={AddToSlip} options={{ header: () => null }} />
           <Screen name="addItemReview" component={AddItemReview} options={{ header: () => null }} />
-          <Screen name="networkError" component={NetworkError} options={{ header: () => null }} />
         </Navigator>
       </NavigationContainer>
     </Provider>

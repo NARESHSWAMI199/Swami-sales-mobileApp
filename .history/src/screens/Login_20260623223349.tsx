@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View, StatusBar, TouchableOpacity } from 'react-native';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { ApplicationState, onLogout, onSignIn, onClearAuthError } from '../redux';
+import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
 import { Icon } from '@rneui/themed';
 import { logError, logInfo } from '../utils/logger'; // Import logger
@@ -25,8 +25,14 @@ const Login = (props: any) => {
       logInfo(`Token set: ${authToken}`);
     };
     getData();
-    setError(props.error);
-  }, [props.error, props.token]);
+  }, [props.token]);
+
+  useEffect(() => {
+    if(props.error) {
+      setError(props.error);
+    }
+    logError(`Login error: ${props.error}`);
+  },[props.error]);
 
   useEffect(() => {
     if (error) {
@@ -36,10 +42,13 @@ const Login = (props: any) => {
   }, [error]);
 
   // Function to handle login
-  const handleLogin = () => {
-    dispatch(onClearAuthError()); // Clear previous error before new login attempt
+  const handleLogin = async () => {
     if (!!email && !!password) {
-      dispatch(onSignIn(email, password));
+      try {
+      await dispatch(onSignIn(email, password));
+      }catch(err){
+        logError(`Login dispatch error: ${err}`);
+      }
 
       logInfo(`Login attempted with email: ${email}`);
     } else {

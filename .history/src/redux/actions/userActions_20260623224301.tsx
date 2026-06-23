@@ -34,14 +34,10 @@ export interface UserLoginAction  {
     payload: any
 } 
 
-interface ClearAuthErrorAction {
-    readonly type: 'CLEAR_AUTH_ERROR';
-}
 
 
 
-
-export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction | ClearAuthErrorAction
+export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
 
 export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
     return (dispatch : any) => {
@@ -97,7 +93,7 @@ const  onSingInAction = (payload:any) => {
     }
 }   
 
-export const onClearAuthError = () => {
+const onClearAuthError = () => {
     return {
         type : "CLEAR_AUTH_ERROR",  
         error: null // Reset back to null

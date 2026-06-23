@@ -217,11 +217,11 @@ const ItemDetail = (props: any) => {
         >
 
           <CustomCarousel images={
-            item.images.map(image => {
+            item.avatars && item.avatars.split(',').map(avtar => {
               return (
                 <Image
                     style={styles.image}
-                    source={{ uri: image}}
+                    source={{ uri: itemImageUrl + item.slug + "/" + avtar }}
                     resizeMode='cover' 
                     alt='Item Images'
                   />

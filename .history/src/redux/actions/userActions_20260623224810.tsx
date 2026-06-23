@@ -34,14 +34,10 @@ export interface UserLoginAction  {
     payload: any
 } 
 
-interface ClearAuthErrorAction {
-    readonly type: 'CLEAR_AUTH_ERROR';
-}
 
 
 
-
-export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction | ClearAuthErrorAction
+export type UserAction = UpdateLocationAction | UserErrorAction | UserLoginAction | UserLogoutAction | UserAuthErorrAction
 
 export const onUpdateLocation:any = (location : LocationGeocodedAddress)=> {
     return (dispatch : any) => {

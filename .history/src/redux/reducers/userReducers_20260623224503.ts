@@ -34,11 +34,13 @@ const userReducer = (state: UserState = initialState, action  : UserAction) => {
                 ...state,
                 error : action.payload.error
             }
-        case 'CLEAR_AUTH_ERROR':
+        case : "CLEAR_AUTH_ERROR":
             return {
                 ...state,
                 error : null
             }
+        
+        }
         default :
             return state
          

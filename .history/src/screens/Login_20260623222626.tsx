@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, StyleSheet, Text, TextInput, View, StatusBar, TouchableOpacity } from 'react-native';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { ApplicationState, onLogout, onSignIn, onClearAuthError } from '../redux';
+import { ApplicationState, onLogout, onSignIn } from '../redux';
 import { bodyColor, themeColor } from '../utils/utils';
 import { Icon } from '@rneui/themed';
 import { logError, logInfo } from '../utils/logger'; // Import logger
@@ -25,19 +25,24 @@ const Login = (props: any) => {
       logInfo(`Token set: ${authToken}`);
     };
     getData();
-    setError(props.error);
-  }, [props.error, props.token]);
+  }, [props.token]);
 
   useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(''), 5000); // Hide error after 5 seconds
-      return () => clearTimeout(timer); // Clear timeout on component unmount or error change
+    if(props.error) {
+      setError(props.error);
+      logError(`Login error: ${props.error}`);
     }
-  }, [error]);
+  },[props.error]);
+
+  // useEffect(() => {
+  //   if (error) {
+  //     const timer = setTimeout(() => setError(''), 5000); // Hide error after 5 seconds
+  //     return () => clearTimeout(timer); // Clear timeout on component unmount or error change
+  //   }
+  // }, [error]);
 
   // Function to handle login
   const handleLogin = () => {
-    dispatch(onClearAuthError()); // Clear previous error before new login attempt
     if (!!email && !!password) {
       dispatch(onSignIn(email, password));
 
